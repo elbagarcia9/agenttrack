@@ -22,7 +22,7 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Otros insumos: ANALISIS CLIENTE IDEAL.docx (avatar Laura, 38), PROPUESTA DE VALOR.docx (Versión 1 ganadora; 3 razones: ganar dinero, escapar del dolor mental, ahorrar tiempo)
 
 ## Secuencia maestra
-- Estado: nada construido aún. Ruta: `/` → `/onboarding` → `/paywall` → `/login` → `/app`
+- Estado: aún sin código (fase de definición). Ruta: `/` → `/onboarding` → `/paywall` → `/login` → `/app`
 - Ficha-avatar / mercado / modelo / arte: pendientes
 
 ## Dirección de arte
@@ -38,3 +38,6 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 ## Notas
 - ⚠️ El resumen no indica país/idioma del agente (nombres en inglés, textos en español). Verificar en FICHA-MERCADO antes de fijar precio y pasarela (Hotmart).
 - ⚠️ El formato del resumen no es idéntico a los 20 campos del SO; se tomó como contexto base.
+
+## Problemas conocidos ⚠️
+- FICHA-MODELO pendiente (aplazada a propósito): aún no hay código; se elige la app modelo y se crea FICHA-MODELO.md justo después de la pregunta de diseño, antes de escribir código.
