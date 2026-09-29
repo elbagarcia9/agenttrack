@@ -25,7 +25,7 @@
 ## Trazabilidad y vetos
 - Ruta de diseño: referencia parcial + 3 interpretaciones fieles
 - Protocolo A/B/C: elegida A (Panel claro) con la tipografía de la B (Sora + Inter Tight) · descartadas: B (alertas primero, lista densa), C (dos calendarios con cabecera pizarra) — sus ideas de aviso dorado y calendario doble pueden reaparecer como componentes · comparativa: direcciones-abc.html
-- Tour de la app: PENDIENTE (se hace con la landing y pantallas reales)
+- Tour de la app: vista-previa-app.html (5 vistas: inicio, registrar venta, resultado del cuestionario, oferta de pago, calendario) · screenshot docs/revisiones/vista-previa-app.png · aprobado por el usuario: PENDIENTE de respuesta (me encanta / ajustar / repensar)
 - Paleta derivada de: referencia del usuario · Dispositivo ownable: tarjeta héroe + alerta dorada
 - Registro anti-repetición: paleta azul #226697/dorado #BE8C2D + Sora/Inter Tight vetados para el próximo proyecto
 - Modo claro derivado por: avatar consulta el celular de noche y de día, contexto de trabajo/finanzas y referencia del usuario clara
