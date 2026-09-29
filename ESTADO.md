@@ -23,7 +23,9 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 
 ## Secuencia maestra
 - Estado: aún sin código (fase de definición). Ruta: `/` → `/onboarding` → `/paywall` → `/login` → `/app`
-- Ficha-avatar / mercado / modelo / arte: pendientes
+- FICHA-AVATAR.md: BORRADOR creada 2026-09-29 (falta confirmación del usuario) · FICHA-MODELO.md: BORRADOR (falta 2ª señal de revenue) · FICHA-MERCADO y FICHA-ARTE: pendientes
+- Avatar: Laura, 38, agente independiente Host · dolor #1: no saber si su comisión cayó / se venció a 90 días · deseo #1: que el celular le avise antes de perder una comisión · consciencia alta, sofisticación media-baja
+- Propuesta de valor ganadora (V1): garantizar el cobro del 100% de comisiones · razones dominantes: ganar dinero, escapar del dolor mental, ahorrar tiempo
 
 ## Dirección de arte
 - Ruta de diseño: pendiente de respuesta del usuario (propuesta propia vs réplica de referencia)
@@ -32,6 +34,7 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Pendientes (framework, monetización con matriz 02C, auth, modelo de datos+RLS)
 
 ## Pendientes del usuario
+- [ ] Confirmar FICHA-AVATAR.md ("así es tu cliente ideal, ¿lo confirmas?")
 - [ ] Elegir ruta de diseño (1 o 2)
 - [ ] Confirmar el mercado/país objetivo (ver notas)
 
