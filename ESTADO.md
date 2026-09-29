@@ -1,7 +1,7 @@
 # ESTADO — HostAgent Commission Guard (nombre tentativo)
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: direcciones-abc.html creado con 3 opciones / Siguiente acción exacta: usuario elige A, B o C; luego FICHA-ARTE.md, FICHA-MERCADO y modelo de monetización (02C).
+⏸️ CHECKPOINT — Última acción completada: usuario eligió A + tipografía B; mercado inicial México / Siguiente acción exacta: FICHA-ARTE.md, FICHA-MERCADO (MX), monetización 02C, luego página de ventas.
 
 ## Qué es esta app
 Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de carga en Commissions Hub a las 24h; alerta anti-pérdida a los 90 días). Suscripción SaaS.
@@ -30,15 +30,15 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 ## Dirección de arte
 - Ruta de diseño: referencia PARCIAL del usuario (paleta = contrato + capturas TravelJoy + set de íconos de línea) + pidió 3 propuestas propias → 3 interpretaciones fieles en direcciones-abc.html (2026-09-29)
 - Paleta del usuario: principal #226697 · fondo #EAEAEA · secundario #304A57 · destaque #BE8C2D · texto negro. Azul atenuado permitido para fondos.
-- Decisión del agente: MANTENER el azul (familiaridad en herramientas de negocio de viajes/finanzas, confianza) y diferenciar con el dorado como color de alerta+dinero y con la forma de mostrar los cobros. Elección A/B/C: pendiente.
+- Decisión del agente: MANTENER el azul (familiaridad en herramientas de negocio de viajes/finanzas, confianza) y diferenciar con el dorado como color de alerta+dinero y con la forma de mostrar los cobros. Elección del usuario: opción A (Panel claro) con la tipografía de la B (Sora + Inter Tight), 2026-09-29.
 
 ## Decisiones técnicas
 - Pendientes (framework, monetización con matriz 02C, auth, modelo de datos+RLS)
 
 ## Pendientes del usuario
-- [ ] Elegir A, B o C en direcciones-abc.html (o combinar/ajustar)
+- [ ] Confirmar: lanzar solo México + Archer primero (decisión del agente)
 
-- [ ] Confirmar el mercado/país objetivo (ver notas)
+- [ ] Confirmar el plazo real de reclamo y el nombre del portal de cada agencia Host (Archer primero), antes de anunciarlos en la venta
 
 ## Notas
 - ⚠️ El resumen no indica país/idioma del agente (nombres en inglés, textos en español). Verificar en FICHA-MERCADO antes de fijar precio y pasarela (Hotmart).
@@ -46,3 +46,5 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 
 ## Problemas conocidos ⚠️
 - FICHA-MODELO pendiente (aplazada a propósito): aún no hay código; se elige la app modelo y se crea FICHA-MODELO.md justo después de la pregunta de diseño, antes de escribir código.
+- Mercado (2026-09-29): usuario en México; hay agentes Archer en LatAm, EE.UU. y España. Decisión del agente: lanzar México + Archer primero; construir listo para ampliar (moneda por reserva, plazos y nombre del portal configurables por agencia, textos sin regionalismos).
+- ⚠️ Claims de integridad (61): "90 días" y "Commissions Hub" salen del resumen del usuario; verificar por agencia Host antes de usarlos en la página de ventas. FICHA-MERCADO pendiente.
