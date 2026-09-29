@@ -1,9 +1,9 @@
 # FICHA DE AVATAR — HostAgent Commission Guard (nombre tentativo)
 
-- Estado: BORRADOR (pendiente de que el usuario la confirme; fuentes: ANALISIS CLIENTE IDEAL.docx, PROPUESTA DE VALOR.docx, RESUMEN FINAL-HubTravel assistant.docx — 2026-09-29)
+- Estado: APROBADA por el usuario el 2026-09-29 (edad ajustada a 35; fuentes: ANALISIS CLIENTE IDEAL.docx, PROPUESTA DE VALOR.docx, RESUMEN FINAL-HubTravel assistant.docx — 2026-09-29)
 
 ## El avatar
-- Arquetipo: Laura, 38 · Agente de viajes independiente afiliada a agencia Host (Archer, Evolution, InteleTravel, Nexion), trabaja desde casa · País: por confirmar (ver ESTADO.md)
+- Arquetipo: Laura, 35 · Agente de viajes independiente afiliada a agencia Host (Archer, Evolution, InteleTravel, Nexion), trabaja desde casa · País: por confirmar (ver ESTADO.md)
 - Poder adquisitivo: sensible al costo; le duele pagar $40/mes, tolera <$10/mes · Dispositivo: celular (edita en móvil) + laptop para cotizar
 - IDENTIDAD: "quiero sentirme una empresaria organizada y profesional, no una aficionada con un Excel pegado con alfileres"
 - MOMENTO DEL DÍA: de noche en la cama, con el celular, preguntándose si el crucero vendido hace 3 meses ya pagó su comisión; le da flojera abrir la laptop
@@ -67,4 +67,4 @@
 ## Cierre
 - INVENTARIO DE PRUEBA DÍA-1: sin testimonios ni resultados propios aún → usar demo real, garantía y beta honesta
 - ¿Entrevistas del 44?: NO (investigación documental)
-- Aprobada por el usuario: NO
+- Aprobada por el usuario: SÍ (2026-09-29)

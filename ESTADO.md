@@ -1,7 +1,7 @@
 # ESTADO — HostAgent Commission Guard (nombre tentativo)
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: SO instalado, idea validada leída y guardada / Siguiente acción exacta: pregunta de referencia visual (54 PASO 0), luego FICHA-AVATAR, FICHA-MERCADO, FICHA-MODELO, FICHA-ARTE y nombre final.
+⏸️ CHECKPOINT — Última acción completada: direcciones-abc.html creado con 3 opciones / Siguiente acción exacta: usuario elige A, B o C; luego FICHA-ARTE.md, FICHA-MERCADO y modelo de monetización (02C).
 
 ## Qué es esta app
 Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de carga en Commissions Hub a las 24h; alerta anti-pérdida a los 90 días). Suscripción SaaS.
@@ -19,23 +19,25 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Competidores: Travefy ($39-59), Tern ($35-39), TravelJoy ($19-39)
 - Precio propuesto en el resumen: $8.99/mes · $69/año · trial 14 días · plan gratis 5 reservas (a contrastar con matriz 02C y gate del 40)
 - Canal #1: comunidad de agentes afiliados. Ángulo ganador: "seguro anti-pérdida de comisiones". Objeción clave: "Excel es gratis" y doble carga de datos.
-- Otros insumos: ANALISIS CLIENTE IDEAL.docx (avatar Laura, 38), PROPUESTA DE VALOR.docx (Versión 1 ganadora; 3 razones: ganar dinero, escapar del dolor mental, ahorrar tiempo)
+- Otros insumos: ANALISIS CLIENTE IDEAL.docx (avatar Laura, 35), PROPUESTA DE VALOR.docx (Versión 1 ganadora; 3 razones: ganar dinero, escapar del dolor mental, ahorrar tiempo)
 
 ## Secuencia maestra
 - Estado: aún sin código (fase de definición). Ruta: `/` → `/onboarding` → `/paywall` → `/login` → `/app`
-- FICHA-AVATAR.md: BORRADOR creada 2026-09-29 (falta confirmación del usuario) · FICHA-MODELO.md: BORRADOR (falta 2ª señal de revenue) · FICHA-MERCADO y FICHA-ARTE: pendientes
-- Avatar: Laura, 38, agente independiente Host · dolor #1: no saber si su comisión cayó / se venció a 90 días · deseo #1: que el celular le avise antes de perder una comisión · consciencia alta, sofisticación media-baja
+- FICHA-AVATAR.md: APROBADA 2026-09-29 (Laura, 35) · FICHA-MODELO.md: BORRADOR (falta 2ª señal de revenue) · FICHA-MERCADO y FICHA-ARTE: pendientes
+- Avatar: Laura, 35, agente independiente Host · dolor #1: no saber si su comisión cayó / se venció a 90 días · deseo #1: que el celular le avise antes de perder una comisión · consciencia alta, sofisticación media-baja
 - Propuesta de valor ganadora (V1): garantizar el cobro del 100% de comisiones · razones dominantes: ganar dinero, escapar del dolor mental, ahorrar tiempo
 
 ## Dirección de arte
-- Ruta de diseño: pendiente de respuesta del usuario (propuesta propia vs réplica de referencia)
+- Ruta de diseño: referencia PARCIAL del usuario (paleta = contrato + capturas TravelJoy + set de íconos de línea) + pidió 3 propuestas propias → 3 interpretaciones fieles en direcciones-abc.html (2026-09-29)
+- Paleta del usuario: principal #226697 · fondo #EAEAEA · secundario #304A57 · destaque #BE8C2D · texto negro. Azul atenuado permitido para fondos.
+- Decisión del agente: MANTENER el azul (familiaridad en herramientas de negocio de viajes/finanzas, confianza) y diferenciar con el dorado como color de alerta+dinero y con la forma de mostrar los cobros. Elección A/B/C: pendiente.
 
 ## Decisiones técnicas
 - Pendientes (framework, monetización con matriz 02C, auth, modelo de datos+RLS)
 
 ## Pendientes del usuario
-- [ ] Confirmar FICHA-AVATAR.md ("así es tu cliente ideal, ¿lo confirmas?")
-- [ ] Elegir ruta de diseño (1 o 2)
+- [ ] Elegir A, B o C en direcciones-abc.html (o combinar/ajustar)
+
 - [ ] Confirmar el mercado/país objetivo (ver notas)
 
 ## Notas
