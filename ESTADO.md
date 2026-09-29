@@ -1,7 +1,7 @@
 # ESTADO — HostAgent Commission Guard (nombre tentativo)
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: usuario eligió A + tipografía B; mercado inicial México / Siguiente acción exacta: FICHA-ARTE.md, FICHA-MERCADO (MX), monetización 02C, luego página de ventas.
+⏸️ CHECKPOINT — Última acción completada: FICHA-ARTE, FICHA-MERCADO (MX) y monetización decididas / Siguiente acción exacta: página de ventas (leer 19, 55, 52, 57; copy en docs/copy/landing.md antes de codear).
 
 ## Qué es esta app
 Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de carga en Commissions Hub a las 24h; alerta anti-pérdida a los 90 días). Suscripción SaaS.
@@ -23,7 +23,7 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 
 ## Secuencia maestra
 - Estado: aún sin código (fase de definición). Ruta: `/` → `/onboarding` → `/paywall` → `/login` → `/app`
-- FICHA-AVATAR.md: APROBADA 2026-09-29 (Laura, 35) · FICHA-MODELO.md: BORRADOR (falta 2ª señal de revenue) · FICHA-MERCADO y FICHA-ARTE: pendientes
+- FICHA-AVATAR.md: APROBADA 2026-09-29 (Laura, 35) · FICHA-MODELO.md: BORRADOR (falta 2ª señal de revenue) · FICHA-ARTE: APROBADA (brand kit por confirmar con la landing) · FICHA-MERCADO: BORRADOR MX (2026-09-29)
 - Avatar: Laura, 35, agente independiente Host · dolor #1: no saber si su comisión cayó / se venció a 90 días · deseo #1: que el celular le avise antes de perder una comisión · consciencia alta, sofisticación media-baja
 - Propuesta de valor ganadora (V1): garantizar el cobro del 100% de comisiones · razones dominantes: ganar dinero, escapar del dolor mental, ahorrar tiempo
 
@@ -33,7 +33,8 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Decisión del agente: MANTENER el azul (familiaridad en herramientas de negocio de viajes/finanzas, confianza) y diferenciar con el dorado como color de alerta+dinero y con la forma de mostrar los cobros. Elección del usuario: opción A (Panel claro) con la tipografía de la B (Sora + Inter Tight), 2026-09-29.
 
 ## Decisiones técnicas
-- Pendientes (framework, monetización con matriz 02C, auth, modelo de datos+RLS)
+- Monetización (02C, matriz nicho Finanzas + tie-breaker, decidido 2026-09-29): Modelo 2 = onboarding con primera victoria (registrar 1 reserva y ver el cronograma de alertas) → paywall → prueba 14 días con tarjeta → mensual + anual; SIN plan gratis al inicio (baja conversión y menos caja; el resumen lo proponía, lo dejo para revisar con datos). Garantía 30 días si Hotmart lo permite.
+- Pendientes: framework (regla del stack), auth, modelo de datos+RLS, plazos reales de Hotmart, gate de unit economics (40)
 
 ## Pendientes del usuario
 - [ ] Confirmar: lanzar solo México + Archer primero (decisión del agente)
