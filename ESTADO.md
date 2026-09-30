@@ -47,6 +47,7 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 
 ## Problemas conocidos ⚠️
 - FICHA-MODELO pendiente (aplazada a propósito): aún no hay código; se elige la app modelo y se crea FICHA-MODELO.md justo después de la pregunta de diseño, antes de escribir código.
+- veredicto landing: revisión independiente en curso (subagente lanzado 2026-09-29); pendiente docs/revisiones/landing-veredicto.md. La landing NO se declara aprobada hasta que exista con LISTA, usabilidad ≥36/40 y craft ≥16/20.
 - Mercado (2026-09-29): usuario en México; hay agentes Archer en LatAm, EE.UU. y España. Decisión del agente: lanzar México + Archer primero; construir listo para ampliar (moneda por reserva, plazos y nombre del portal configurables por agencia, textos sin regionalismos).
 - ⚠️ Claims de integridad (61): "90 días" y "Commissions Hub" salen del resumen del usuario; verificar por agencia Host antes de usarlos en la página de ventas. FICHA-MERCADO pendiente.
 - direcciones-abc: la auditoría automática marca >80% de similitud de DOM entre A/B/C porque comparten chasis, barra de estado, tab bar y hero de landing; en escala de grises las 3 composiciones se ven distintas (panel con héroe, lista con aviso, calendario con cabecera). El usuario ya eligió A; no se rehace.
@@ -74,4 +75,3 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Decisiones: sin garantía de reembolso hasta verificar Hotmart (solo "Prueba de 14 días"); sin stack de valor tachado (sin precios falsos); carrusel con placeholders honestos hasta tener la app; hero con mock realista (AppMockInicio) rotulado como ejemplo.
 - Pendientes de la landing: nombre final de marca (provisional "Commission Guard") · email de soporte real (hoy soporte@tu-dominio.mx) · precios MXN a confirmar en Hotmart · screenshots reales al cerrar la app · textos legales reales (privacidad/términos) · analítica (landing_vista, atribución, ?qa=1) · verificar claim "Archer México y Latinoamérica" y los 3 plazos con el usuario · veredicto del revisor: docs/revisiones/landing-veredicto.md
 - Screenshots: docs/revisiones/landing-375.png y landing-1280.png
-- veredicto landing: revisión independiente en curso (subagente lanzado 2026-09-29); pendiente el archivo docs/revisiones/landing-veredicto.md. La landing NO se declara aprobada hasta que exista con LISTA, usabilidad ≥36/40 y craft ≥16/20.
