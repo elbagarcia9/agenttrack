@@ -1,10 +1,10 @@
 # ESTADO — HostAgent Commission Guard (nombre tentativo)
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: FICHA-ARTE, FICHA-MERCADO (MX) y monetización decididas / Siguiente acción exacta: página de ventas (leer 19, 55, 52, 57; copy en docs/copy/landing.md antes de codear).
+⏸️ CHECKPOINT — Última acción completada: reglas reales de Archer incorporadas, tour móvil v2 y muestra de escritorio / Siguiente acción exacta: usuario aprueba tour; luego copy y página de ventas (docs/copy/landing.md).
 
 ## Qué es esta app
-Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de carga en Commissions Hub a las 24h; alerta anti-pérdida a los 90 días). Suscripción SaaS.
+Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de alta en el portal dentro de 30 días; alerta de revisión y de reclamo hasta 18 meses después del viaje). Suscripción SaaS.
 
 ## Promesa central
 "Ayudo a agentes de viajes independientes afiliados a agencias Host a garantizar el cobro del 100% de sus comisiones sin perder cientos de dólares por olvidar registrar ventas o confiar en Excel pasivo."
@@ -12,7 +12,7 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 ## Idea validada (contexto base, viene de RESUMEN FINAL-HubTravel assistant.docx — NO revalidar)
 - Nombre: HostAgent Commission Guard · alt: CommisSentry, TravelPay Tracker
 - Usuario: agente independiente afiliado a Host, 3-20 reservas/mes, Excel+WhatsApp, sensible a precio (<$10/mes)
-- Dolores núcleo: comisión se paga a 30-90 días; olvido de registro en Commissions Hub frena el pago; caducidad de reclamo a 90 días; Excel ilegible en móvil; CRMs a $35-59/mes
+- Dolores núcleo: comisión se paga en 60-90 días; hay que dar de alta la venta en el portal dentro de 30 días de la compra; el reclamo caduca a los 18 meses de la fecha de inicio del viaje (datos oficiales de Archer México/LatAm dados por el usuario, 2026-09-29); Excel ilegible en móvil; CRMs a $35-59/mes
 - Primera victoria (<5 min): registrar 1ª reserva en <2 min y ver el cronograma de alertas generarse solo
 - MVP núcleo: tabla rápida de reservas, motor de alertas (24h hub, recordatorio pago cliente, viaje mañana, 90 días), calendario doble (viajes vs cobros), filtros, etiquetas
 - NO construir: itinerarios PDF, cobros con tarjeta, APIs complejas, email masivo
@@ -51,3 +51,17 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - ⚠️ Claims de integridad (61): "90 días" y "Commissions Hub" salen del resumen del usuario; verificar por agencia Host antes de usarlos en la página de ventas. FICHA-MERCADO pendiente.
 - direcciones-abc: la auditoría automática marca >80% de similitud de DOM entre A/B/C porque comparten chasis, barra de estado, tab bar y hero de landing; en escala de grises las 3 composiciones se ven distintas (panel con héroe, lista con aviso, calendario con cabecera). El usuario ya eligió A; no se rehace.
 - Auditoría de conversión (scripts/audit-conversion.sh): sus críticos actuales vienen de las plantillas del SO en plantillas-codigo/ (aún no hay landing propia); se re-corre al construir la landing.
+
+## REGLAS DE NEGOCIO VERIFICADAS (usuario, Travel Café Archer MX/LatAm, 2026-09-29) — CORRIGEN el RESUMEN FINAL
+- Plazo para subir (dar de alta) una venta: 30 días desde la compra (NO 24 h)
+- Comisiones: se pagan en 60-90 días
+- Plazo para reclamar: 18 meses desde la fecha de inicio del viaje (NO 90 días)
+- NO mostrar "por cobrar este mes": la comisión puede llegar meses después → mostrar TOTAL por cobrar general
+- Campos de reserva: Cliente, Contacto, Destino, Tipo de reserva, Proveedor, Precio venta, Comisión, Fecha de compra, Fecha de viaje, Comentarios
+- Estatus (botón al final de cada reserva): Pagado · Pendiente de alta · Pendiente de pago · Solicitar revisión
+- Alertas: Pendiente de alta (desde la compra; límite 30 días) · Pendiente de pago (desde la compra hasta 18 meses tras el viaje) · Salida de viajeros (2 días antes hasta el día de salida) · Solicitud de revisión (desde 60 días hasta 18 meses tras la fecha de viaje)
+- Color: dorado SOLO cuando faltan ≤5 días para vencer alta/pago/revisión · rojo cuando el plazo venció ("Plazo vencido")
+- Vistas: Reservas = tabla tipo Excel (filtros por fecha, rango, cliente, proveedor, comisiones pendientes; orden A-Z o fecha de creación) · Calendario tipo Google Calendar (mes con eventos por día; clic → lista del día)
+- Escritorio importa: la app es web responsive (móvil + computadora)
+- Botón "Registrar venta nueva": azul oscuro #304A57
+- Decisiones del agente 2026-09-29: producto = web app responsive (celular + computadora), instalable; avisos por notificación y correo. Texto para plazo vencido: "Plazo vencido" + "Consulta con tu agencia si aún puedes gestionarla" (no afirmar "perdiste tu comisión": la app no sabe si la agencia aún la acepta). Dudas abiertas: cuál es el plazo límite exacto de "Pendiente de alta" tras los 30 días y cuándo cuenta "60 días" de revisión (desde fecha de viaje o de regreso).

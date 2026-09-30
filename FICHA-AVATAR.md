@@ -1,5 +1,6 @@
 # FICHA DE AVATAR — HostAgent Commission Guard (nombre tentativo)
 
+- ⚠️ CORRECCIÓN 2026-09-29 (datos oficiales de Archer MX/LatAm dados por el usuario): plazo de alta = 30 días desde la compra; pago en 60-90 días; reclamo = 18 meses desde el inicio del viaje. Toda mención de "24 horas" o "90 días" en esta ficha viene del análisis original y NO se usa en copy: ver ESTADO.md > REGLAS DE NEGOCIO VERIFICADAS.
 - Estado: APROBADA por el usuario el 2026-09-29 (edad ajustada a 35; fuentes: ANALISIS CLIENTE IDEAL.docx, PROPUESTA DE VALOR.docx, RESUMEN FINAL-HubTravel assistant.docx — 2026-09-29)
 
 ## El avatar
