@@ -109,9 +109,7 @@ export function Hero({
           {/* Visual del producto: asoma en el primer viewport e invita al scroll */}
           <div className="mt-10 w-full max-w-[720px]">
             {visual ? (
-              <div className="overflow-hidden rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--accent)_18%,transparent)] shadow-[var(--shadow-2)]">
-                {visual}
-              </div>
+              <div className="flex flex-col items-center pb-8">{visual}</div>
             ) : (
               /* Placeholder HONESTO (55 §1.3): dashed + ratio fijo (CLS 0) + sugerencia.
                  Queda anotado como pendiente en ESTADO.md hasta montar el visual real. */

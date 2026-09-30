@@ -160,7 +160,7 @@ export function Oferta({
                 <div className="mt-4">
                   <Precio plan={anual} />
                   {/* El total anual SIEMPRE visible — regla de oro de 02C */}
-                  <p className="mt-1 text-[12px] text-[var(--text-secondary)]">{anual.totalAnual}</p>
+                  <p className="mt-1 text-[14px] text-[var(--text-secondary)]">{anual.totalAnual}</p>
                   <p className="mt-2 text-[15px] font-semibold text-[var(--accent)]">{anual.ahorro}</p>
                 </div>
                 <Features items={anual.features} origen="Oferta → anual" />

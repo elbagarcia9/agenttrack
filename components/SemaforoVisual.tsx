@@ -1,3 +1,6 @@
+'use client';
+
+import { motion, useReducedMotion } from 'motion/react';
 import { CircleCheck, TriangleAlert, CircleX } from 'lucide-react';
 
 // Muestra el mecanismo (Semáforo de Comisiones) con sus tres estados y los plazos verificados de Archer MX/LatAm.
@@ -13,18 +16,26 @@ const PLAZOS = [
 ];
 
 export function SemaforoVisual() {
+  const reducir = useReducedMotion();
   return (
     <section aria-label="Cómo funciona el semáforo" className="bg-[var(--bg)] pb-12">
-      <div className="mx-auto w-full max-w-5xl px-4">
+      <div className="mx-auto w-full max-w-[1140px] px-5">
         <div className="grid gap-3 md:grid-cols-3">
-          {ESTADOS.map(({ Icon, titulo, detalle, clase }) => (
-            <div key={titulo} className={`flex items-start gap-3 rounded-[var(--radius-card)] p-4 ${clase}`}>
+          {ESTADOS.map(({ Icon, titulo, detalle, clase }, i) => (
+            <motion.div
+              key={titulo}
+              initial={reducir ? false : { opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.4, delay: i * 0.12 }}
+              className={`flex items-start gap-3 rounded-[var(--radius-card)] p-4 ${clase}`}
+            >
               <Icon size={24} aria-hidden="true" className="mt-px shrink-0" />
               <div>
                 <p className="font-bold [font-family:var(--font-display)]">{titulo}</p>
                 <p className="text-sm">{detalle}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
         <p className="mt-4 text-center text-sm text-[var(--text-secondary)]">

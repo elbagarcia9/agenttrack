@@ -6,7 +6,7 @@ Mecanismo bautizado: el Semáforo de Comisiones (verde en plazo · dorado a 5 d�
 Reglas de negocio usadas (usuario, Archer MX/LatAm, 2026-09-29): alta 30 días · pago 60-90 días · reclamo 18 meses.
 
 ## 1 HERO (deseo #1 + dolor #1)
-H1: [acento]Cobra cada comisión[/acento] que ya te ganaste
+H1: [acento]Ninguna comisión[/acento] se te vence sin que lo sepas
 Subtítulo: El Semáforo de Comisiones te avisa antes de que venza [b]cada plazo[/b]
 CTA: Empezar mis 14 días gratis
 Prueba: Hecho para agentes de agencias Host en México · sin cobro hoy

@@ -30,11 +30,11 @@ export default function Landing() {
         appName={BRAND}
         logo={<Logo />}
         loginHref="/entrar"
-        h1Marked="[acento]Cobra cada comisión[/acento] que ya te ganaste"
+        h1Marked="[acento]Ninguna comisión[/acento] se te vence sin que lo sepas"
         subtitleMarked="El Semáforo de Comisiones te avisa antes de que venza [b]cada plazo[/b]"
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
-        socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Sin cobro hoy.</span>}
+        socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Tarjeta al empezar, sin cobro hoy.</span>}
         visual={
           <div>
             <AppMockInicio />
@@ -55,8 +55,9 @@ export default function Landing() {
 
       <Agitacion
         frases={[
+          'De noche, en la cama: ¿aquel viaje [b]ya te pagó[/b] la comisión?',
           'Cada venta corre [b]tres relojes[/b]: alta, pago y reclamo.',
-          'Una venta sin dar de alta a tiempo puede [b]quedarse sin pago[/b].',
+          'Trabajar el viaje entero para terminar [b]trabajando de a gratis[/b].',
           'Si dejas vencer el plazo de reclamo, [acento]ya no puedes pedirla[/acento].',
         ]}
         contraste={{
@@ -72,9 +73,9 @@ export default function Landing() {
         mecanismo="el Semáforo de Comisiones"
         bigIdeaMarked="No es descuido: cada plazo vive en un lugar distinto. El Semáforo los junta y [b]te avisa antes de que venzan[/b]."
         pasos={[
-          { titulo: 'Registra la venta', detalle: 'Los datos clave, pensado para 30 segundos.' },
-          { titulo: 'El Semáforo cuenta', detalle: 'Alta, pago y reclamo, cada uno con su fecha.' },
-          { titulo: 'Actúas a tiempo', detalle: 'Dorado a 5 días de vencer; rojo si ya venció.' },
+          { titulo: 'Registra la venta', detalle: 'Los datos clave, en segundos.' },
+          { titulo: 'El Semáforo cuenta', detalle: 'Alta, pago y reclamo, con su fecha.' },
+          { titulo: 'Actúas a tiempo', detalle: 'Dorado a 5 días; rojo si venció.' },
         ]}
         antesDespues={{
           labelAntes: 'Antes',
@@ -87,12 +88,13 @@ export default function Landing() {
       <SemaforoVisual />
 
       <AppPorDentro
+        kicker="VISTAS DE EJEMPLO DE LA APP"
         tituloMarked="Tu negocio, [acento]a un vistazo[/acento]"
         frames={[
-          { label: 'Tu total por cobrar, hoy', nombrePantalla: 'Inicio · próximamente' },
-          { label: 'Registra una venta en segundos', nombrePantalla: 'Nueva reserva · próximamente' },
-          { label: 'Tu tabla, como un Excel que avisa', nombrePantalla: 'Reservas · próximamente' },
-          { label: 'Viajes y cobros en un calendario', nombrePantalla: 'Calendario · próximamente' },
+          { src: '/mock/inicio.png', alt: 'Vista de ejemplo: inicio con el total por cobrar', label: 'Tu total por cobrar, hoy' },
+          { src: '/mock/nueva-reserva.png', alt: 'Vista de ejemplo: formulario de nueva reserva', label: 'Registra una venta en segundos' },
+          { src: '/mock/resultado.png', alt: 'Vista de ejemplo: plazos programados de una reserva', label: 'Tu primera reserva, ya vigilada' },
+          { src: '/mock/calendario.png', alt: 'Vista de ejemplo: calendario del mes', label: 'Viajes y cobros en un calendario' },
         ]}
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
@@ -107,7 +109,7 @@ export default function Landing() {
           precioMes: '$99',
           sufijo: 'MXN/mes',
           totalAnual: 'Se cobra $1,190 MXN al año',
-          ahorro: '4 meses gratis',
+          ahorro: 'Ahorras 4 meses',
           descomposicionDia: 'menos de $3.30 MXN al día',
           ctaLabel: 'Empezar mis 14 días gratis',
           ctaHref: '/onboarding?plan=anual',
