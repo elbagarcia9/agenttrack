@@ -48,7 +48,7 @@ export function CtaFinal({
       id={id}
       aria-label="Empieza hoy"
       className="relative overflow-hidden py-20 md:py-24"
-      style={{ background: 'var(--text-primary)' }}
+      style={{ background: 'var(--text-primary)', '--accent': 'var(--accent-on-dark)', '--on-accent': 'var(--text-primary)' } as import('react').CSSProperties}
     >
       {/* Profundidad también en el bloque invertido: radial sutil del acento */}
       <div

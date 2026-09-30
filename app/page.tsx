@@ -16,6 +16,8 @@ import { CtaFinal } from '@/components/landing/CtaFinal';
 import { FooterLegal } from '@/components/landing/FooterLegal';
 import { StickyCtaMobile } from '@/components/landing/ui';
 import { AppMockInicio } from '@/components/AppMockInicio';
+import { Logo } from '@/components/Logo';
+import { SemaforoVisual } from '@/components/SemaforoVisual';
 
 const BRAND = 'Commission Guard'; // provisional — el nombre final lo elige el usuario
 const CTA_HREF = '/onboarding';
@@ -26,12 +28,19 @@ export default function Landing() {
     <div className="min-h-dvh bg-[var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
       <Hero
         appName={BRAND}
+        logo={<Logo />}
+        loginHref="/entrar"
         h1Marked="[acento]Cobra cada comisión[/acento] que ya te ganaste"
         subtitleMarked="El Semáforo de Comisiones te avisa antes de que venza [b]cada plazo[/b]"
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
-        socialProof={<span>Hecho para agentes de agencias Host en México · sin cobro hoy</span>}
-        visual={<AppMockInicio />}
+        socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Sin cobro hoy.</span>}
+        visual={
+          <div>
+            <AppMockInicio />
+            <p className="mt-3 text-center text-xs text-[var(--text-tertiary)]">Vista de ejemplo con datos ficticios</p>
+          </div>
+        }
       />
 
       <Problema
@@ -75,13 +84,15 @@ export default function Landing() {
         }}
       />
 
+      <SemaforoVisual />
+
       <AppPorDentro
         tituloMarked="Tu negocio, [acento]a un vistazo[/acento]"
         frames={[
-          { label: 'Tu total por cobrar, hoy', nombrePantalla: 'Inicio' },
-          { label: 'Registra una venta en segundos', nombrePantalla: 'Nueva reserva' },
-          { label: 'Tu tabla, como un Excel que avisa', nombrePantalla: 'Reservas' },
-          { label: 'Viajes y cobros en un calendario', nombrePantalla: 'Calendario' },
+          { label: 'Tu total por cobrar, hoy', nombrePantalla: 'Inicio · próximamente' },
+          { label: 'Registra una venta en segundos', nombrePantalla: 'Nueva reserva · próximamente' },
+          { label: 'Tu tabla, como un Excel que avisa', nombrePantalla: 'Reservas · próximamente' },
+          { label: 'Viajes y cobros en un calendario', nombrePantalla: 'Calendario · próximamente' },
         ]}
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
@@ -99,12 +110,12 @@ export default function Landing() {
           ahorro: '4 meses gratis',
           descomposicionDia: 'menos de $3.30 MXN al día',
           ctaLabel: 'Empezar mis 14 días gratis',
-          ctaHref: CTA_HREF,
+          ctaHref: '/onboarding?plan=anual',
           features: [
+            'Avisos por correo y notificación antes de cada plazo',
             'Semáforo de plazos: alta, pago y reclamo',
             'Tabla de reservas con filtros y orden',
             'Calendario de viajes y de cobros',
-            'Registro rápido, pensado para 30 segundos',
             'Funciona en celular y en computadora',
           ],
         }}
@@ -113,8 +124,9 @@ export default function Landing() {
           precioMes: '$149',
           sufijo: 'MXN/mes',
           ctaLabel: 'Elegir mensual',
-          ctaHref: CTA_HREF,
+          ctaHref: '/onboarding?plan=mensual',
           features: [
+            'Avisos por correo y notificación antes de cada plazo',
             'Semáforo de plazos: alta, pago y reclamo',
             'Tabla de reservas con filtros y orden',
             'Calendario de viajes y de cobros',
@@ -124,7 +136,7 @@ export default function Landing() {
       />
 
       <Garantia
-        nombre="la Prueba de 14 Días"
+        nombre="Prueba de 14 días sin riesgo"
         condicionMarked="Pruébalo 14 días sin cobro. Si no te sirve, [b]cancelas antes[/b] y no pagas nada."
       />
 
@@ -151,7 +163,13 @@ export default function Landing() {
           },
           {
             pregunta: '¿Y si no me sirve?',
-            respuestaMarked: 'Tienes [b]14 días gratis[/b]. Si cancelas antes, no se te cobra nada.',
+            respuestaMarked:
+              'Tienes [b]14 días gratis[/b]. Te pedimos tu tarjeta al empezar, pero no se cobra hoy; si cancelas antes, no pagas nada.',
+          },
+          {
+            pregunta: '¿Vale la pena pagar otra suscripción?',
+            respuestaMarked:
+              'Cuesta [b]menos de $3.30 MXN al día[/b]. Una sola comisión que no dejes vencer puede cubrir varios meses de la app.',
           },
           {
             pregunta: '¿Qué pasa con los datos de mis clientes?',
@@ -166,12 +184,13 @@ export default function Landing() {
         futurePacingMarked="Mañana registras tu primera venta y el Semáforo empieza a vigilar cada plazo por ti."
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
-        recap="14 días gratis · sin cobro hoy · cancela cuando quieras"
+        recap="14 días gratis · tarjeta al empezar, sin cobro hoy · cancela cuando quieras"
         psMarked="PS: Cada venta que registres hoy tiene sus plazos vigilados desde el primer día. Empieza con 14 días gratis y decide después."
       />
 
       <FooterLegal
         appName={BRAND}
+        logo={<Logo tono="neutro" />}
         soporteEmail="soporte@tu-dominio.mx"
         enlaces={[
           { label: 'Privacidad', href: '/privacidad' },

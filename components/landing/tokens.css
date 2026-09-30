@@ -59,6 +59,12 @@
   --chip-oro-bg: #f3dfae;
   --chip-azul-bg: #e3edf5;
   --device-bezel: #101014;
+  --on-accent: var(--bg);
+  --chip-verde-bg: #e1f1ea;
+  --verde-text: #175c3e;
+  --chip-rojo-bg: #f8e6e3;
+  --rojo-text: #7a2218;
+  --accent-on-dark: #5aa9de;
 }
 
 /* ============================================================================
