@@ -1,7 +1,7 @@
 # ESTADO — HostAgent Commission Guard (nombre tentativo)
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: tour aprobado, botón principal dorado / Siguiente acción exacta: redactar docs/copy/landing.md (leer 19, 52, 55, 57) y construir la página de ventas.
+⏸️ CHECKPOINT — Última acción completada: landing construida y compilando; revisión visual independiente en curso / Siguiente acción exacta: aplicar defectos del veredicto, pedir OK del usuario a la landing, luego onboarding.
 
 ## Qué es esta app
 Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de alta en el portal dentro de 30 días; alerta de revisión y de reclamo hasta 18 meses después del viaje). Suscripción SaaS.
@@ -22,7 +22,7 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Otros insumos: ANALISIS CLIENTE IDEAL.docx (avatar Laura, 35), PROPUESTA DE VALOR.docx (Versión 1 ganadora; 3 razones: ganar dinero, escapar del dolor mental, ahorrar tiempo)
 
 ## Secuencia maestra
-- Estado: aún sin código (fase de definición). Ruta: `/` → `/onboarding` → `/paywall` → `/login` → `/app`
+- Estado: landing construida (ver sección Página de ventas); siguiente: onboarding. Ruta: `/` → `/onboarding` → `/paywall` → `/login` → `/app`
 - FICHA-AVATAR.md: APROBADA 2026-09-29 (Laura, 35) · FICHA-MODELO.md: BORRADOR (falta 2ª señal de revenue) · FICHA-ARTE: APROBADA (brand kit por confirmar con la landing) · FICHA-MERCADO: BORRADOR MX (2026-09-29)
 - Avatar: Laura, 35, agente independiente Host · dolor #1: no saber si su comisión cayó / se venció a 90 días · deseo #1: que el celular le avise antes de perder una comisión · consciencia alta, sofisticación media-baja
 - Propuesta de valor ganadora (V1): garantizar el cobro del 100% de comisiones · razones dominantes: ganar dinero, escapar del dolor mental, ahorrar tiempo
@@ -66,3 +66,11 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Botón "Registrar venta nueva": DORADO #BE8C2D con texto oscuro (decisión final del usuario 2026-09-29, reemplaza el pizarra)
 - Decisiones del agente 2026-09-29: producto = web app responsive (celular + computadora), instalable; avisos por notificación y correo. Texto para plazo vencido: "Plazo vencido" + "Consulta con tu agencia si aún puedes gestionarla" (no afirmar "perdiste tu comisión": la app no sabe si la agencia aún la acepta). Dudas abiertas: cuál es el plazo límite exacto de "Pendiente de alta" tras los 30 días y cuándo cuenta "60 días" de revisión (desde fecha de viaje o de regreso).
 - 🔔 RECORDAR AL USUARIO (antes de construir alertas/app interna): confirmar si "Pendiente de alta" sigue vivo tras los 30 días hasta 18 meses después del viaje, y qué pasa en esa etapa. Respuesta parcial: la revisión cuenta 60 días desde el REGRESO del viaje; como no se registra el regreso, la app usa la fecha de salida (más conservador); reclamo posible hasta 18 meses.
+
+## Página de ventas (2026-09-29)
+- Framework: Next.js 16 (App Router, TS, Tailwind v4) — decidido porque la landing necesita SEO. Kit copiado a components/landing/, tokens tematizados con FICHA-ARTE (tokens.css).
+- Landing construida en app/page.tsx con copy de docs/copy/landing.md. Rutas: / · /onboarding (stub) · /privacidad y /terminos (stubs "en redacción").
+- Big Idea + mecanismo bautizado: "el Semáforo de Comisiones" (verde en plazo · dorado ≤5 días · rojo vencido).
+- Decisiones: sin garantía de reembolso hasta verificar Hotmart (solo "Prueba de 14 días"); sin stack de valor tachado (sin precios falsos); carrusel con placeholders honestos hasta tener la app; hero con mock realista (AppMockInicio) rotulado como ejemplo.
+- Pendientes de la landing: nombre final de marca (provisional "Commission Guard") · email de soporte real (hoy soporte@tu-dominio.mx) · precios MXN a confirmar en Hotmart · screenshots reales al cerrar la app · textos legales reales (privacidad/términos) · analítica (landing_vista, atribución, ?qa=1) · verificar claim "Archer México y Latinoamérica" y los 3 plazos con el usuario · veredicto del revisor: docs/revisiones/landing-veredicto.md
+- Screenshots: docs/revisiones/landing-375.png y landing-1280.png

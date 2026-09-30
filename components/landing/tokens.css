@@ -1,0 +1,101 @@
+/* ============================================================================
+   KIT DE LANDING — tokens.css
+   EL ÚNICO ARCHIVO QUE SE TEMATIZA. Los componentes del kit consumen SOLO estas
+   variables: cambias estos valores con la FICHA-ARTE.md del proyecto y toda la
+   landing cambia de piel sin tocar un .tsx.
+
+   Cómo se usa (orden de "EL KIT PRIMERO" en 55-DISENO-DE-LANDING.md):
+   1. FICHA-ARTE.md aprobada (16 PASO 0 — jamás inventar hex aquí).
+   2. Reemplazar TODOS los valores marcados "← reemplazar con FICHA-ARTE".
+   3. Importar este archivo en app/globals.css DESPUÉS de @import "tailwindcss".
+   4. Verificar contraste AA (≥4.5:1 texto / ≥3:1 UI) con los valores finales.
+
+   Reglas que NO cambian al tematizar:
+   - Ni #000 ni #FFF puros; casi-negro y casi-blanco CON tinte (DESIGN-CORE §2).
+   - El acento va SOLO en CTA y dato clave (60-30-10) — el kit ya lo aplica así.
+   - --chip-bg y los color-mix derivados se recalculan solos desde --accent.
+   ============================================================================ */
+
+:root {
+  /* ── SUPERFICIES (3 niveles: base / elevada / hundida) ── */
+  --bg: #eaeaea;              /* ← reemplazar con FICHA-ARTE — fondo base (jamás #FFF/#000 puros) */
+  --surface: #f6f8fa;         /* ← reemplazar con FICHA-ARTE — secciones elevadas y cards */
+  --surface-2: #e6eef4;       /* ← reemplazar con FICHA-ARTE — hundido: wells, frames placeholder */
+
+  /* ── TEXTO (casi-negro CON tinte, familia única de neutros) ── */
+  --text-primary: #111518;    /* ← reemplazar con FICHA-ARTE */
+  --text-secondary: #46535a;  /* ← reemplazar con FICHA-ARTE */
+  --text-tertiary: #4f5b62;   /* ← reemplazar con FICHA-ARTE — SIEMPRE ≥4.5:1 sobre --bg/--surface/--surface-2 (audit-conversion lo verifica; este placeholder da 5.0-5.8:1) */
+
+  /* ── MARCA ── */
+  --accent: #226697;          /* ← reemplazar con FICHA-ARTE — el acento del brand kit */
+  --accent-2: #be8c2d;        /* ← reemplazar con FICHA-ARTE — 2ª nota SOLO si la ficha la define;
+                                 si no hay 2ª nota, repetir aquí el valor de --accent */
+
+  /* ── FORMA (radios del brand kit — UNO por rol, toda la página) ── */
+  --radius-card: 14px;        /* ← reemplazar con FICHA-ARTE — cards, frames, secciones */
+  --radius-button: 11px;      /* ← reemplazar con FICHA-ARTE — botones y chips de ícono */
+
+  /* ── TIPOGRAFÍA (2 familias de la ficha — jamás Inter/Roboto/system-ui de marca) ── */
+  --font-display: var(--font-sora), 'Segoe UI', sans-serif;      /* ← reemplazar con FICHA-ARTE (display) */
+  --font-body: var(--font-inter-tight), 'Segoe UI', sans-serif;    /* ← reemplazar con FICHA-ARTE (body) */
+
+  /* ── SOMBRAS con el TINTE del neutro de marca (49 Parte 2c — nunca negro puro) ── */
+  --shadow-1: 0 1px 2px rgb(34 60 80 / 0.08);          /* ← reemplazar el tinte RGB con FICHA-ARTE */
+  --shadow-2: 0 12px 32px -12px rgb(34 60 80 / 0.20);  /* ← reemplazar el tinte RGB con FICHA-ARTE */
+
+  /* ── DERIVADOS (no se tocan: se recalculan solos desde --accent) ── */
+  --chip-bg: color-mix(in oklab, var(--accent) 10%, transparent);
+  /* ── SEMÁFORO Y MOCKS DE PRODUCTO (FICHA-ARTE: dorado = alerta de 5 días o menos y acción principal) ── */
+  --hero-from: #2b78ad;
+  --hero-mid: #226697;
+  --hero-to: #1c5680;
+  --btn-oro-from: #d1a044;
+  --btn-oro-to: #be8c2d;
+  --btn-oro-text: #2a1d05;
+  --alerta-bg: color-mix(in oklab, var(--accent-2) 18%, white);
+  --alerta-border: color-mix(in oklab, var(--accent-2) 55%, transparent);
+  --alerta-text: #4d3608;
+  --chip-oro-bg: #f3dfae;
+  --chip-azul-bg: #e3edf5;
+  --device-bezel: #101014;
+}
+
+/* ============================================================================
+   EJEMPLO LLENO (referencia de cómo queda tematizado — NO copiar estos hex a
+   una app real: fallan el test de intercambiabilidad de 16/DESIGN-CORE §4.
+   App ficticia de finanzas, modo oscuro DERIVADO, acento latón, display grotesk)
+
+:root {
+  --bg: #101216;
+  --surface: #171a21;
+  --surface-2: #12141a;
+  --text-primary: #e7e9ee;
+  --text-secondary: #9ca1ad;
+  --text-tertiary: #767c89;
+  --accent: #c9a24b;
+  --accent-2: #c9a24b;
+  --radius-card: 16px;
+  --radius-button: 12px;
+  --font-display: 'Archivo', 'Helvetica Neue', sans-serif;
+  --font-body: 'Instrument Sans', 'Segoe UI', sans-serif;
+  --shadow-1: 0 1px 2px rgb(5 6 10 / 0.5);
+  --shadow-2: 0 12px 32px -12px rgb(5 6 10 / 0.6);
+  --chip-bg: color-mix(in oklab, var(--accent) 10%, transparent);
+}
+============================================================================ */
+
+/* Base mínima que el kit asume (no tematizar) */
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
