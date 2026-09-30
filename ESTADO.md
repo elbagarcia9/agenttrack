@@ -1,7 +1,7 @@
 # ESTADO — HostAgent Commission Guard (nombre tentativo)
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: reglas reales de Archer incorporadas, tour móvil v2 y muestra de escritorio / Siguiente acción exacta: usuario aprueba tour; luego copy y página de ventas (docs/copy/landing.md).
+⏸️ CHECKPOINT — Última acción completada: tour aprobado, botón principal dorado / Siguiente acción exacta: redactar docs/copy/landing.md (leer 19, 52, 55, 57) y construir la página de ventas.
 
 ## Qué es esta app
 Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de alta en el portal dentro de 30 días; alerta de revisión y de reclamo hasta 18 meses después del viaje). Suscripción SaaS.
@@ -63,5 +63,5 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Color: dorado SOLO cuando faltan ≤5 días para vencer alta/pago/revisión · rojo cuando el plazo venció ("Plazo vencido")
 - Vistas: Reservas = tabla tipo Excel (filtros por fecha, rango, cliente, proveedor, comisiones pendientes; orden A-Z o fecha de creación) · Calendario tipo Google Calendar (mes con eventos por día; clic → lista del día)
 - Escritorio importa: la app es web responsive (móvil + computadora)
-- Botón "Registrar venta nueva": azul oscuro #304A57
+- Botón "Registrar venta nueva": DORADO #BE8C2D con texto oscuro (decisión final del usuario 2026-09-29, reemplaza el pizarra)
 - Decisiones del agente 2026-09-29: producto = web app responsive (celular + computadora), instalable; avisos por notificación y correo. Texto para plazo vencido: "Plazo vencido" + "Consulta con tu agencia si aún puedes gestionarla" (no afirmar "perdiste tu comisión": la app no sabe si la agencia aún la acepta). Dudas abiertas: cuál es el plazo límite exacto de "Pendiente de alta" tras los 30 días y cuándo cuenta "60 días" de revisión (desde fecha de viaje o de regreso).

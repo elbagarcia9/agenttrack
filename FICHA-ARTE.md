@@ -25,10 +25,10 @@
 ## Trazabilidad y vetos
 - Ruta de diseño: referencia parcial + 3 interpretaciones fieles
 - Protocolo A/B/C: elegida A (Panel claro) con la tipografía de la B (Sora + Inter Tight) · descartadas: B (alertas primero, lista densa), C (dos calendarios con cabecera pizarra) — sus ideas de aviso dorado y calendario doble pueden reaparecer como componentes · comparativa: direcciones-abc.html
-- Tour de la app v2: vista-previa-app.html (móvil, 5 vistas) + vista-previa-escritorio.html (Inicio, Reservas tabla, Calendario mes) · screenshots docs/revisiones/vista-previa-app.png y vista-previa-escritorio.png · aprobado por el usuario: PENDIENTE (feedback del 2026-09-29 aplicado: total por cobrar, botón pizarra, campos, estatus, calendario tipo Google, escritorio)
+- Tour de la app v2: vista-previa-app.html (móvil, 5 vistas) + vista-previa-escritorio.html (Inicio, Reservas tabla, Calendario mes) · screenshots docs/revisiones/vista-previa-app.png y vista-previa-escritorio.png · aprobado por el usuario: SÍ 2026-09-29 ("me encanta"; botón Registrar venta nueva en dorado) (feedback del 2026-09-29 aplicado: total por cobrar, botón pizarra, campos, estatus, calendario tipo Google, escritorio)
 - Paleta derivada de: referencia del usuario · Dispositivo ownable: tarjeta héroe + alerta dorada
 - Registro anti-repetición: paleta azul #226697/dorado #BE8C2D + Sora/Inter Tight vetados para el próximo proyecto
 - Modo claro derivado por: avatar consulta el celular de noche y de día, contexto de trabajo/finanzas y referencia del usuario clara
 
 ## Idioma UI: español neutro (México primero) · Fecha: 2026-09-29 · Aprobada por el usuario: SÍ (eligió A + tipografía B; brand kit definitivo por confirmar al ver la landing)
-- Regla de color (usuario 2026-09-29): dorado solo cuando faltan ≤5 días para vencer; rojo si venció; botón 'Registrar venta nueva' en pizarra #304A57
+- Regla de color (usuario 2026-09-29): dorado solo cuando faltan ≤5 días para vencer; rojo si venció; botón 'Registrar venta nueva' en dorado #BE8C2D con texto oscuro (usuario, versión final); el dorado ahora también es color de la acción principal además de alerta
