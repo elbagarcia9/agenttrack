@@ -5,7 +5,7 @@
 // primera acción real (registrar una reserva) · resultado personalizado con los plazos reales de Archer.
 
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { AnimatePresence, animate, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, MotionConfig, animate, motion, useReducedMotion } from 'motion/react';
 import {
   Check,
   ChevronLeft,
@@ -282,6 +282,7 @@ function PasoUnica({
   const esOtra = valor !== '' && !opciones.some((o) => o.texto === valor);
   const [otraAbierta, setOtraAbierta] = useState(esOtra);
   const [otraTexto, setOtraTexto] = useState(esOtra ? valor : '');
+  const [otraIntento, setOtraIntento] = useState(false);
 
   const elegir = (texto: string) => {
     if (bloqueada) return;
@@ -309,6 +310,7 @@ function PasoUnica({
             {otraAbierta && (
               <Campo
                 etiqueta="Escríbelo con tus palabras"
+                error={otraIntento && otraTexto.trim().length < 2 ? 'Escribe tu respuesta para continuar.' : undefined}
                 valor={otraTexto}
                 autoFocus
                 onCambio={(v) => {
@@ -322,7 +324,12 @@ function PasoUnica({
       </Pregunta>
       {otraAbierta && (
         <div className="sticky bottom-0 -mx-4 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
-          <BotonPrincipal deshabilitado={otraTexto.trim().length < 2} onClick={avanzar}>
+          <BotonPrincipal
+            onClick={() => {
+              if (otraTexto.trim().length < 2) setOtraIntento(true);
+              else avanzar();
+            }}
+          >
             Continuar
           </BotonPrincipal>
         </div>
@@ -336,7 +343,7 @@ function PasoReconocimiento({ estado, avanzar }: PantallaProps) {
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-        <span aria-hidden="true" className="flex size-20 items-center justify-center rounded-3xl bg-[var(--chip-bg)]">
+        <span aria-hidden="true" className="flex size-20 items-center justify-center rounded-[var(--radius-card)] bg-[var(--chip-bg)]">
           <ShieldCheck size={40} strokeWidth={1.6} color="var(--accent)" />
         </span>
         <h1 className="text-balance text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">Te entiendo, {nombre}</h1>
@@ -395,16 +402,16 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
           <Campo etiqueta="Destino" error={eDestino} valor={r.destino} placeholder="Miami" onCambio={(v) => set({ destino: v })} />
         </div>
         <Campo etiqueta="Proveedor (opcional)" valor={r.proveedor} placeholder="Royal Caribbean" onCambio={(v) => set({ proveedor: v })} />
-        <div className="grid grid-cols-[1fr_auto] items-end gap-3">
+        <div className="grid grid-cols-[1fr_auto] items-start gap-3">
           <Campo etiqueta="Tu comisión" error={eComision} valor={r.comision} inputMode="decimal" tipo="number" placeholder="344" onCambio={(v) => set({ comision: v })} />
-          <div role="group" aria-label="Moneda" className="grid h-12 grid-cols-2 rounded-[var(--radius-button)] bg-[color-mix(in_oklab,var(--text-primary)_8%,transparent)] p-1">
+          <div role="group" aria-label="Moneda" className="mt-5 grid h-12 grid-cols-2 rounded-[var(--radius-button)] bg-[color-mix(in_oklab,var(--text-primary)_8%,transparent)] p-1">
             {(['USD', 'MXN'] as const).map((m) => (
               <button
                 key={m}
                 type="button"
                 aria-pressed={r.moneda === m}
                 onClick={() => set({ moneda: m })}
-                className={`rounded-lg px-3 text-sm font-semibold ${r.moneda === m ? 'bg-[var(--surface)] shadow-[var(--shadow-1)]' : 'text-[var(--text-secondary)]'}`}
+                className={`rounded-[var(--radius-button)] px-3 text-sm font-semibold ${r.moneda === m ? 'bg-[var(--surface)] shadow-[var(--shadow-1)]' : 'text-[var(--text-secondary)]'}`}
               >
                 {m}
               </button>
@@ -415,7 +422,7 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
           <Campo etiqueta="Fecha de compra" error={eCompra} valor={r.compra} tipo="date" onCambio={(v) => set({ compra: v })} />
           <Campo etiqueta="Fecha de viaje" error={eViaje} valor={r.viaje} tipo="date" min={r.compra || undefined} onCambio={(v) => set({ viaje: v })} />
         </div>
-        <button type="button" onClick={usarEjemplo} className="self-start py-2 text-sm font-semibold text-[var(--accent)] underline underline-offset-4">
+        <button type="button" onClick={usarEjemplo} className="self-start py-3 text-sm font-semibold text-[var(--accent)] underline underline-offset-4">
           Usar datos de ejemplo
         </button>
       </Pregunta>
@@ -506,7 +513,7 @@ function PasoCargando({ estado, avanzar }: PantallaProps) {
                 {hecha ? (
                   <Check size={20} color="var(--accent)" />
                 ) : actual ? (
-                  <span className="size-3 animate-pulse rounded-full bg-[var(--accent)]" />
+                  <span className="size-3 motion-safe:animate-pulse rounded-full bg-[var(--accent)]" />
                 ) : (
                   <span className="size-3 rounded-full border-2 border-[var(--text-tertiary)]" />
                 )}
@@ -621,13 +628,14 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
         de comisión con sus plazos vigilados desde hoy.
       </p>
       <div className="sticky bottom-0 -mx-4 mt-auto bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
-        <a
+        <motion.a
+          whileTap={{ scale: 0.97 }}
           href="/paywall"
           className="flex h-14 w-full items-center justify-center rounded-[var(--radius-button)] bg-[var(--accent)] px-8 text-base font-semibold text-[var(--on-accent)] shadow-[var(--shadow-2)]"
         >
           Activar mis 14 días gratis
-        </a>
-        <p className="mt-3 text-center text-xs text-[var(--text-secondary)]">Tarjeta al empezar, sin cobro hoy · avisos por correo y notificación</p>
+        </motion.a>
+        <p className="mt-3 text-center text-xs text-[var(--text-secondary)]">Tarjeta al empezar, sin cobro hoy. Después, desde $99 MXN al mes; cancelas cuando quieras.</p>
       </div>
     </div>
   );
@@ -676,17 +684,23 @@ export function OnboardingFlow() {
   const indice = PASOS.indexOf(estado.paso);
   const progreso = Math.max(6, ((indice + 1) / PASOS.length) * 100); // la barra arranca en 6% (progreso otorgado)
 
+  const profundidad = useRef(0);
   const ir = useCallback((paso: Paso, direccion: 1 | -1) => {
     dispatch({ tipo: 'ir', paso, direccion });
-    if (direccion === 1) window.history.pushState({ p: paso }, '');
+    if (direccion === 1) {
+      window.history.pushState({ p: paso }, '');
+      profundidad.current += 1;
+    }
     window.scrollTo({ top: 0 });
   }, []);
 
   useEffect(() => {
     // el botón atrás del navegador o de Android recorre los pasos en vez de sacar a la persona del flujo
     const alVolver = (e: PopStateEvent) => {
-      const p = (e.state?.p ?? 'nombre') as Paso;
-      if (PASOS.includes(p) && p !== 'cargando') dispatch({ tipo: 'ir', paso: p, direccion: -1 });
+      const crudo = (e.state?.p ?? 'nombre') as Paso;
+      const p: Paso = crudo === 'cargando' ? 'reserva' : crudo;
+      profundidad.current = Math.max(0, profundidad.current - 1);
+      if (PASOS.includes(p)) dispatch({ tipo: 'ir', paso: p, direccion: -1 });
     };
     window.addEventListener('popstate', alVolver);
     return () => window.removeEventListener('popstate', alVolver);
@@ -698,6 +712,10 @@ export function OnboardingFlow() {
     ir(sig, 1);
   }, [indice, estado.paso, ir]);
   const atras = () => {
+    if (profundidad.current > 0) {
+      window.history.back(); // el historial real: un solo toque, sin desfase con el botón del navegador
+      return;
+    }
     const ant = indice === 7 ? 5 : indice - 1; // desde el resultado se puede volver a editar la reserva
     if (ant >= 0) ir(PASOS[ant], -1);
   };
@@ -708,6 +726,7 @@ export function OnboardingFlow() {
   const mostrarAtras = indice > 0 && estado.paso !== 'cargando';
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-dvh bg-[radial-gradient(520px_320px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%),var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pb-4 pt-4">
         <header className="flex h-11 items-center gap-2">
@@ -721,7 +740,7 @@ export function OnboardingFlow() {
           <div className="flex-1">
             <Progreso valor={progreso} />
           </div>
-          <span className="w-10 text-right text-xs tabular-nums text-[var(--text-secondary)]">{Math.round(progreso)}%</span>
+          <span className={`w-10 text-right text-xs tabular-nums text-[var(--text-secondary)] ${estado.paso === 'cargando' ? 'invisible' : ''}`}>{Math.round(progreso)}%</span>
         </header>
         <AnimatePresence mode="wait" initial={false} custom={estado.direccion}>
           <motion.main
@@ -751,5 +770,6 @@ export function OnboardingFlow() {
         </AnimatePresence>
       </div>
     </div>
+    </MotionConfig>
   );
 }
