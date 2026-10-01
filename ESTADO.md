@@ -47,6 +47,7 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 
 ## Problemas conocidos ⚠️
 - FICHA-MODELO pendiente (aplazada a propósito): aún no hay código; se elige la app modelo y se crea FICHA-MODELO.md justo después de la pregunta de diseño, antes de escribir código.
+- veredicto onboarding: revisión independiente en curso (2026-10-01); pendiente docs/revisiones/onboarding-veredicto.md. El onboarding NO se declara aprobado hasta que exista con LISTA, usabilidad ≥36/40 y craft ≥16/20.
 - veredicto landing: 4 revisiones independientes (2026-09-29/10-01): 28/40 y 14/20 → 31 y 14 → 31, 15, copy 17 → 29/40, 15/20, copy 17. NO LISTA (piso: usabilidad 36, craft 16). Pendientes del revisor: botón del mock del hero compite con el CTA real, carrusel descentrado en escritorio, texto 13px del cierre a 4.3:1, dorado decorativo en cita/hero, contenido repetido sobre Excel, plan mensual repetido, sin título en el bloque Semáforo. La usabilidad se estanca en 29-31 (la mayoría de criterios en 3, no 4). Decisión del usuario pendiente: seguir a onboarding con la landing anotada como pendiente.
 - Mercado (2026-09-29): usuario en México; hay agentes Archer en LatAm, EE.UU. y España. Decisión del agente: lanzar México + Archer primero; construir listo para ampliar (moneda por reserva, plazos y nombre del portal configurables por agencia, textos sin regionalismos).
 - ⚠️ Claims de integridad (61): "90 días" y "Commissions Hub" salen del resumen del usuario; verificar por agencia Host antes de usarlos en la página de ventas. FICHA-MERCADO pendiente.
