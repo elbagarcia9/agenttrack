@@ -4,7 +4,7 @@
 // Una decisión por pantalla · barra de progreso · cada pregunta ecoa un dolor de FICHA-AVATAR.md ·
 // primera acción real (registrar una reserva) · resultado personalizado con los plazos reales de Archer.
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { AnimatePresence, animate, motion, useReducedMotion } from 'motion/react';
 import {
   Check,
@@ -17,7 +17,8 @@ import {
   NotebookPen,
   Globe,
   Building2,
-  Sparkles,
+  ShieldCheck,
+  PenLine,
   type LucideIcon,
 } from 'lucide-react';
 import { calcularPlazos, diasRestantes, estadoSemaforo, formatoFecha, parseFecha, type EstadoSemaforo } from '@/lib/plazos';
@@ -161,10 +162,10 @@ function Opcion({
   );
 }
 
-function BotonPrincipal({ children, onClick, deshabilitado }: { children: React.ReactNode; onClick: () => void; deshabilitado?: boolean }) {
+function BotonPrincipal({ children, onClick, deshabilitado, enviar }: { children: React.ReactNode; onClick?: () => void; deshabilitado?: boolean; enviar?: boolean }) {
   return (
     <motion.button
-      type="button"
+      type={enviar ? 'submit' : 'button'}
       whileTap={deshabilitado ? undefined : { scale: 0.97 }}
       onClick={onClick}
       disabled={deshabilitado}
@@ -180,12 +181,26 @@ function Pregunta({ titulo, ayuda, children }: { titulo: string; ayuda?: string;
     <div className="flex flex-1 flex-col">
       <h1 className="text-balance text-3xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">{titulo}</h1>
       {ayuda && <p className="mt-2 text-sm text-[var(--text-secondary)]">{ayuda}</p>}
-      <div className="mt-6 flex flex-col gap-3">{children}</div>
+      <motion.div
+        className="mt-6 flex flex-col gap-3"
+        initial="oculto"
+        animate="visible"
+        variants={{ oculto: {}, visible: { transition: { staggerChildren: 0.055 } } }}
+      >
+        {React.Children.map(children, (h, i) =>
+          h ? (
+            <motion.div key={i} variants={{ oculto: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } } }}>
+              {h}
+            </motion.div>
+          ) : null,
+        )}
+      </motion.div>
     </div>
   );
 }
 
 function Campo({
+  error,
   etiqueta,
   valor,
   onCambio,
@@ -195,6 +210,7 @@ function Campo({
   inputMode,
   min,
 }: {
+  error?: string;
   etiqueta: string;
   valor: string;
   onCambio: (v: string) => void;
@@ -209,14 +225,16 @@ function Campo({
       <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">{etiqueta}</span>
       <input
         type={tipo}
+        aria-invalid={error ? true : undefined}
         value={valor}
         min={min}
         inputMode={inputMode}
         autoFocus={autoFocus}
         placeholder={placeholder}
         onChange={(e) => onCambio(e.target.value)}
-        className="mt-1 h-12 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)] px-4 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]"
+        className={`mt-1 h-12 w-full rounded-[var(--radius-button)] border bg-[var(--surface)] px-4 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)] ${error ? 'border-2 border-[var(--rojo-text)]' : 'border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)]'}`}
       />
+      {error && <span role="alert" className="mt-1 block text-xs font-medium text-[var(--rojo-text)]">{error}</span>}
     </label>
   );
 }
@@ -225,17 +243,21 @@ function Campo({
 
 function PasoNombre({ estado, dispatch, avanzar }: PantallaProps) {
   const listo = estado.nombre.trim().length >= 2;
+  const [intento, setIntento] = useState(false);
+  const enviar = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (listo) avanzar();
+    else setIntento(true);
+  };
   return (
-    <>
+    <form onSubmit={enviar} noValidate className="flex flex-1 flex-col">
       <Pregunta titulo="¿Cómo te llamas?" ayuda="Así tu plan se siente tuyo desde el primer día.">
-        <Campo etiqueta="Tu nombre" valor={estado.nombre} autoFocus placeholder="Laura" onCambio={(v) => dispatch({ tipo: 'campo', campo: 'nombre', valor: v })} />
+        <Campo etiqueta="Tu nombre" valor={estado.nombre} autoFocus placeholder="Laura" error={intento && !listo ? 'Escribe tu nombre para continuar.' : undefined} onCambio={(v) => dispatch({ tipo: 'campo', campo: 'nombre', valor: v })} />
       </Pregunta>
       <div className="sticky bottom-0 -mx-4 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
-        <BotonPrincipal deshabilitado={!listo} onClick={avanzar}>
-          Continuar
-        </BotonPrincipal>
+        <BotonPrincipal enviar>Continuar</BotonPrincipal>
       </div>
-    </>
+    </form>
   );
 }
 
@@ -279,6 +301,7 @@ function PasoUnica({
           <>
             <Opcion
               texto="Otra cosa (escribe la tuya)"
+              Icon={PenLine}
               seleccionada={otraAbierta}
               bloqueada={bloqueada}
               onElegir={() => setOtraAbierta(true)}
@@ -314,7 +337,7 @@ function PasoReconocimiento({ estado, avanzar }: PantallaProps) {
     <div className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
         <span aria-hidden="true" className="flex size-20 items-center justify-center rounded-3xl bg-[var(--chip-bg)]">
-          <Sparkles size={40} strokeWidth={1.6} color="var(--accent)" />
+          <ShieldCheck size={40} strokeWidth={1.6} color="var(--accent)" />
         </span>
         <h1 className="text-balance text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">Te entiendo, {nombre}</h1>
         <p className="max-w-[34ch] text-base leading-relaxed text-[var(--text-secondary)]">{RECONOCIMIENTO[claveDe(estado.preocupacion)]}</p>
@@ -340,7 +363,23 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
   const comision = Number(r.comision);
   const fechasOk = compra && viaje && viaje.getTime() >= compra.getTime();
   const listo = r.cliente.trim().length >= 2 && r.destino.trim().length >= 2 && comision > 0 && Boolean(fechasOk);
-  const error = compra && viaje && !fechasOk ? 'La fecha de viaje no puede ser antes de la compra.' : '';
+  const [intento, setIntento] = useState(false);
+  const errFechas = compra && viaje && !fechasOk ? 'El viaje no puede ser antes de la compra.' : '';
+  const eCliente = intento && r.cliente.trim().length < 2 ? 'Escribe el cliente.' : undefined;
+  const eDestino = intento && r.destino.trim().length < 2 ? 'Escribe el destino.' : undefined;
+  const eComision = intento && !(comision > 0) ? 'Escribe tu comisión.' : undefined;
+  const eCompra = intento && !compra ? 'Elige la fecha.' : undefined;
+  const eViaje = errFechas || (intento && !viaje ? 'Elige la fecha.' : undefined);
+  const enviar = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (listo) avanzar();
+    else setIntento(true);
+  };
+  useEffect(() => {
+    if (!r.compra) dispatch({ tipo: 'reserva', reserva: { ...r, compra: hoyISO() } });
+    // solo al montar: la fecha de compra arranca en hoy
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const usarEjemplo = () => {
     const base = new Date();
@@ -349,15 +388,15 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
   };
 
   return (
-    <>
+    <form onSubmit={enviar} noValidate className="flex flex-1 flex-col">
       <Pregunta titulo="Registra tu primera reserva" ayuda="Son unos 30 segundos. Con esto armamos tus avisos.">
         <div className="grid grid-cols-2 gap-3">
-          <Campo etiqueta="Cliente" valor={r.cliente} placeholder="Luis Peña" autoFocus onCambio={(v) => set({ cliente: v })} />
-          <Campo etiqueta="Destino" valor={r.destino} placeholder="Miami" onCambio={(v) => set({ destino: v })} />
+          <Campo etiqueta="Cliente" error={eCliente} valor={r.cliente} placeholder="Luis Peña" autoFocus onCambio={(v) => set({ cliente: v })} />
+          <Campo etiqueta="Destino" error={eDestino} valor={r.destino} placeholder="Miami" onCambio={(v) => set({ destino: v })} />
         </div>
         <Campo etiqueta="Proveedor (opcional)" valor={r.proveedor} placeholder="Royal Caribbean" onCambio={(v) => set({ proveedor: v })} />
         <div className="grid grid-cols-[1fr_auto] items-end gap-3">
-          <Campo etiqueta="Tu comisión" valor={r.comision} inputMode="decimal" tipo="number" placeholder="344" onCambio={(v) => set({ comision: v })} />
+          <Campo etiqueta="Tu comisión" error={eComision} valor={r.comision} inputMode="decimal" tipo="number" placeholder="344" onCambio={(v) => set({ comision: v })} />
           <div role="group" aria-label="Moneda" className="grid h-12 grid-cols-2 rounded-[var(--radius-button)] bg-[color-mix(in_oklab,var(--text-primary)_8%,transparent)] p-1">
             {(['USD', 'MXN'] as const).map((m) => (
               <button
@@ -373,24 +412,17 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Campo etiqueta="Fecha de compra" valor={r.compra} tipo="date" onCambio={(v) => set({ compra: v })} />
-          <Campo etiqueta="Fecha de viaje" valor={r.viaje} tipo="date" min={r.compra || undefined} onCambio={(v) => set({ viaje: v })} />
+          <Campo etiqueta="Fecha de compra" error={eCompra} valor={r.compra} tipo="date" onCambio={(v) => set({ compra: v })} />
+          <Campo etiqueta="Fecha de viaje" error={eViaje} valor={r.viaje} tipo="date" min={r.compra || undefined} onCambio={(v) => set({ viaje: v })} />
         </div>
-        {error && (
-          <p role="alert" className="text-sm font-medium text-[var(--rojo-text)]">
-            {error} Revisa las fechas.
-          </p>
-        )}
         <button type="button" onClick={usarEjemplo} className="self-start py-2 text-sm font-semibold text-[var(--accent)] underline underline-offset-4">
           Usar datos de ejemplo
         </button>
       </Pregunta>
       <div className="sticky bottom-0 -mx-4 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
-        <BotonPrincipal deshabilitado={!listo} onClick={avanzar}>
-          Guardar y armar mis avisos
-        </BotonPrincipal>
+        <BotonPrincipal enviar>Guardar y armar mis avisos</BotonPrincipal>
       </div>
-    </>
+    </form>
   );
 }
 
@@ -412,8 +444,15 @@ function PasoCargando({ estado, avanzar }: PantallaProps) {
     [r.cliente, r.destino, plazos],
   );
   const [activa, setActiva] = useState(reducir ? lineas.length : 0);
+  const [meta, setMeta] = useState(reducir ? 100 : 0);
   const [pct, setPct] = useState(reducir ? 100 : 0);
   const avanzarRef = useRef(avanzar);
+  useEffect(() => {
+    const anim = animate(pct, meta, { duration: reducir ? 0 : 0.6, ease: 'easeOut', onUpdate: (v) => setPct(Math.round(v)) });
+    return () => anim.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meta, reducir]);
+
   useEffect(() => {
     avanzarRef.current = avanzar;
   }, [avanzar]);
@@ -425,7 +464,7 @@ function PasoCargando({ estado, avanzar }: PantallaProps) {
     const ids = tiempos.map((t, i) =>
       window.setTimeout(() => {
         setActiva(i + 1);
-        setPct(metas[i]);
+        setMeta(metas[i]);
       }, reducir ? 0 : t),
     );
     const fin = window.setTimeout(() => avanzarRef.current(), reducir ? 600 : 4300);
@@ -451,7 +490,7 @@ function PasoCargando({ estado, avanzar }: PantallaProps) {
             strokeDasharray={301.6}
             initial={false}
             animate={{ strokeDashoffset: 301.6 * (1 - pct / 100) }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+            transition={{ duration: 0 }}
           />
         </svg>
         <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold tabular-nums [font-family:var(--font-display)]">{pct}%</span>
@@ -487,70 +526,108 @@ const ESTILO_ESTADO: Record<EstadoSemaforo, { clase: string; texto: (dias: numbe
   vencido: { clase: 'bg-[var(--chip-rojo-bg)] text-[var(--rojo-text)]', texto: () => 'Plazo vencido' },
 };
 
-function PasoResultado({ estado }: PantallaProps) {
+const NO_DEPENDE: Record<string, string> = {
+  'Excel o Google Sheets': 'Ya no dependes de tu Excel',
+  'WhatsApp y notas': 'Ya no dependes de tus mensajes',
+  'Solo el portal de mi agencia': 'Ya no dependes de acordarte de revisar el portal',
+  'Libreta o mi memoria': 'Ya no dependes de tu memoria',
+};
+
+const lista = {
+  oculto: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+const fila = {
+  oculto: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const } },
+};
+
+function PasoResultado({ estado, dispatch }: PantallaProps) {
   const r = estado.reserva;
   const c = parseFecha(r.compra);
   const v = parseFecha(r.viaje);
   const plazos = c && v ? calcularPlazos(c, v) : null;
   const clave = claveDe(estado.preocupacion);
   const hoy = new Date();
+  const esArcher = estado.agencia.startsWith('Archer');
 
   useEffect(() => {
-    track('resultado_visto', { preocupacion: clave });
-  }, [clave]);
+    track('resultado_visto', { preocupacion: clave, archer: esArcher });
+  }, [clave, esArcher]);
 
-  if (!plazos) return null;
+  if (!plazos) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
+        <h1 className="text-2xl font-bold [font-family:var(--font-display)]">Falta una fecha para armar tus avisos</h1>
+        <p className="text-[var(--text-secondary)]">Vuelve a tu reserva y revisa las fechas de compra y de viaje.</p>
+        <BotonPrincipal onClick={() => dispatch({ tipo: 'ir', paso: 'reserva', direccion: -1 })}>Revisar mi reserva</BotonPrincipal>
+      </div>
+    );
+  }
 
   const filas: { id: string; titulo: string; detalle: string; fecha: Date; semaforo: boolean; destacada: boolean }[] = [
-    { id: 'alta', titulo: 'Dar de alta en el portal', detalle: '30 días desde la compra', fecha: plazos.alta, semaforo: true, destacada: clave === 'alta' || clave === 'fechas' },
+    { id: 'alta', titulo: 'Dar de alta en el portal', detalle: '30 días desde la compra', fecha: plazos.alta, semaforo: true, destacada: clave === 'alta' || clave === 'fechas' || clave === 'otra' },
     { id: 'salida', titulo: 'Salida de tu cliente', detalle: 'Aviso 2 días antes', fecha: plazos.salidaAviso, semaforo: false, destacada: false },
     { id: 'revision', titulo: 'Solicitar revisión', detalle: 'Desde 60 días tras el viaje', fecha: plazos.revisionDesde, semaforo: false, destacada: clave === 'pago' },
     { id: 'reclamo', titulo: 'Último día para reclamar', detalle: '18 meses desde el viaje', fecha: plazos.reclamo, semaforo: true, destacada: clave === 'reclamo' },
   ];
-  // Lo que más le preocupa va primero.
+  // Lo que más le preocupa va primero y es la tarjeta héroe.
   filas.sort((a, b) => Number(b.destacada) - Number(a.destacada));
+  const frase = NO_DEPENDE[estado.control] ?? 'Ya no dependes de acordarte';
 
   return (
     <div className="flex flex-1 flex-col">
       <p className="text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">Tu primera reserva está lista</p>
-      <h1 className="mt-1 text-balance text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">Ninguna comisión se te va a escapar, {estado.nombre.trim()}</h1>
+      <h1 className="mt-1 text-balance text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">Tu primera reserva ya está vigilada, {estado.nombre.trim()}</h1>
       <p className="mt-2 text-sm text-[var(--text-secondary)]">
-        Registraste a {r.cliente.trim()} en {r.destino.trim()}. Esto es lo que el Semáforo de Comisiones vigila por ti:
+        {frase}: el Semáforo de Comisiones cuenta los plazos de {r.cliente.trim()} en {r.destino.trim()} y te avisa antes de que venzan.
       </p>
-      <ul className="mt-6 flex flex-col gap-3">
-        {filas.map((f) => {
+      <motion.ul variants={lista} initial="oculto" animate="visible" className="mt-6 flex flex-col gap-3">
+        {filas.map((f, i) => {
           const estadoF = estadoSemaforo(f.fecha, hoy);
           const e = ESTILO_ESTADO[estadoF];
+          const heroe = i === 0;
           return (
-            <li
+            <motion.li
               key={f.id}
-              className={`flex items-center justify-between gap-3 rounded-[var(--radius-card)] bg-[var(--surface)] p-4 shadow-[var(--shadow-1)] ${f.destacada ? 'border-2 border-[var(--accent)]' : 'border border-[color-mix(in_oklab,var(--text-tertiary)_25%,transparent)]'}`}
+              variants={fila}
+              className={`flex items-center justify-between gap-3 rounded-[var(--radius-card)] p-4 ${
+                heroe
+                  ? 'bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] text-white shadow-[var(--shadow-2)]'
+                  : 'border border-[color-mix(in_oklab,var(--text-tertiary)_25%,transparent)] bg-[var(--surface)] shadow-[var(--shadow-1)]'
+              }`}
             >
               <div>
                 <p className="font-semibold">{f.titulo}</p>
-                <p className="text-sm text-[var(--text-secondary)]">{f.detalle}</p>
+                <p className={`text-sm ${heroe ? 'opacity-90' : 'text-[var(--text-secondary)]'}`}>{f.detalle}</p>
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-sm font-bold">{formatoFecha(f.fecha, hoy)}</p>
                 {f.semaforo && <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-bold ${e.clase}`}>{e.texto(diasRestantes(f.fecha, hoy))}</span>}
               </div>
-            </li>
+            </motion.li>
           );
         })}
-      </ul>
+      </motion.ul>
+      {!esArcher && (
+        <p className="mt-4 rounded-[var(--radius-card)] border border-[var(--alerta-border)] bg-[var(--alerta-bg)] p-4 text-sm font-medium text-[var(--alerta-text)]">
+          Estos plazos son los de Archer, como referencia. Podrás ajustarlos a los de tu agencia dentro de la app.
+        </p>
+      )}
       <p className="mt-4 rounded-[var(--radius-card)] bg-[var(--chip-bg)] p-4 text-sm font-medium">
         <b>
           {Number(r.comision).toLocaleString('en-US')} {r.moneda}
         </b>{' '}
-        de comisión vigilados desde hoy.
+        de comisión con sus plazos vigilados desde hoy.
       </p>
-      <div className="mt-auto pt-6">
+      <div className="sticky bottom-0 -mx-4 mt-auto bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
         <a
           href="/paywall"
           className="flex h-14 w-full items-center justify-center rounded-[var(--radius-button)] bg-[var(--accent)] px-8 text-base font-semibold text-[var(--on-accent)] shadow-[var(--shadow-2)]"
         >
-          Ver mi plan
+          Activar mis 14 días gratis
         </a>
+        <p className="mt-3 text-center text-xs text-[var(--text-secondary)]">Tarjeta al empezar, sin cobro hoy · avisos por correo y notificación</p>
       </div>
     </div>
   );
@@ -599,13 +676,21 @@ export function OnboardingFlow() {
   const indice = PASOS.indexOf(estado.paso);
   const progreso = Math.max(6, ((indice + 1) / PASOS.length) * 100); // la barra arranca en 6% (progreso otorgado)
 
-  const ir = useCallback(
-    (paso: Paso, direccion: 1 | -1) => {
-      dispatch({ tipo: 'ir', paso, direccion });
-      window.scrollTo({ top: 0 });
-    },
-    [],
-  );
+  const ir = useCallback((paso: Paso, direccion: 1 | -1) => {
+    dispatch({ tipo: 'ir', paso, direccion });
+    if (direccion === 1) window.history.pushState({ p: paso }, '');
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  useEffect(() => {
+    // el botón atrás del navegador o de Android recorre los pasos en vez de sacar a la persona del flujo
+    const alVolver = (e: PopStateEvent) => {
+      const p = (e.state?.p ?? 'nombre') as Paso;
+      if (PASOS.includes(p) && p !== 'cargando') dispatch({ tipo: 'ir', paso: p, direccion: -1 });
+    };
+    window.addEventListener('popstate', alVolver);
+    return () => window.removeEventListener('popstate', alVolver);
+  }, []);
   const avanzar = useCallback(() => {
     const sig = PASOS[indice + 1];
     if (!sig) return;
@@ -623,7 +708,7 @@ export function OnboardingFlow() {
   const mostrarAtras = indice > 0 && estado.paso !== 'cargando';
 
   return (
-    <div className="min-h-dvh bg-[var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
+    <div className="min-h-dvh bg-[radial-gradient(520px_320px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%),var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pb-4 pt-4">
         <header className="flex h-11 items-center gap-2">
           {mostrarAtras ? (
@@ -631,7 +716,7 @@ export function OnboardingFlow() {
               <ChevronLeft size={24} />
             </button>
           ) : (
-            <span className="size-11" aria-hidden="true" />
+            <span className="-ml-2 size-11" aria-hidden="true" />
           )}
           <div className="flex-1">
             <Progreso valor={progreso} />
@@ -650,7 +735,7 @@ export function OnboardingFlow() {
           >
             {estado.paso === 'nombre' && <PasoNombre {...props} />}
             {estado.paso === 'agencia' && (
-              <PasoUnica {...props} titulo="¿Con qué agencia trabajas?" ayuda="Así usamos tus plazos reales." opciones={AGENCIAS.map((texto) => ({ texto, Icon: Building2 }))} valor={estado.agencia} campo="agencia" conOtra />
+              <PasoUnica {...props} titulo="¿Con qué agencia trabajas?" ayuda="Empezamos con los plazos de Archer; luego podrás ajustarlos." opciones={AGENCIAS.map((texto) => ({ texto, Icon: Building2 }))} valor={estado.agencia} campo="agencia" conOtra />
             )}
             {estado.paso === 'control' && (
               <PasoUnica {...props} titulo="¿Cómo llevas hoy tus comisiones?" opciones={CONTROLES} valor={estado.control} campo="control" conOtra />

@@ -30,7 +30,13 @@ export function sesionAnonima(): string {
 
 export function track(evento: Evento, props: Record<string, string | number | boolean> = {}) {
   if (typeof window === 'undefined') return;
-  const cola: unknown[] = JSON.parse(leer('cg_eventos') ?? '[]');
+  let cola: unknown[] = [];
+  try {
+    const previa = JSON.parse(leer('cg_eventos') ?? '[]');
+    if (Array.isArray(previa)) cola = previa;
+  } catch {
+    cola = []; // cola corrupta: se reinicia, nunca rompe el flujo
+  }
   cola.push({ evento, props, sesion: sesionAnonima(), t: Date.now() });
   escribir('cg_eventos', JSON.stringify(cola.slice(-200)));
 }
