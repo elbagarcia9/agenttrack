@@ -1,7 +1,7 @@
 # ESTADO — HostAgent Commission Guard (nombre tentativo)
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: landing con 3 revisiones (31/40, 15/20, copy 17/20, NO LISTA) / Siguiente acción exacta: el usuario elige A) otra ronda, B) anotar pendiente y seguir a onboarding, C) volver atrás.
+⏸️ CHECKPOINT — Última acción completada: 4ª revisión de la landing (29/40, 15/20, copy 17/20, NO LISTA) / Siguiente acción exacta: el usuario elige seguir al onboarding con la landing pendiente, o una última ronda de ajustes menores.
 
 ## Qué es esta app
 Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de alta en el portal dentro de 30 días; alerta de revisión y de reclamo hasta 18 meses después del viaje). Suscripción SaaS.
@@ -47,7 +47,7 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 
 ## Problemas conocidos ⚠️
 - FICHA-MODELO pendiente (aplazada a propósito): aún no hay código; se elige la app modelo y se crea FICHA-MODELO.md justo después de la pregunta de diseño, antes de escribir código.
-- veredicto landing: 3 revisiones independientes (2026-09-29): 28/40 y 14/20 → 31/40 y 14/20 → 31/40, 15/20, copy 17/20. NO LISTA (piso: usabilidad 36, craft 16). Pendientes del revisor: frame del carrusel repetido con el hero, agitación sin visual, movimiento (contador y luces del semáforo), peso de la oferta, FAQ de 7 preguntas, aviso legal dentro del footer, #304A57 sin usar. La landing NO está aprobada; decisión del usuario pendiente.
+- veredicto landing: 4 revisiones independientes (2026-09-29/10-01): 28/40 y 14/20 → 31 y 14 → 31, 15, copy 17 → 29/40, 15/20, copy 17. NO LISTA (piso: usabilidad 36, craft 16). Pendientes del revisor: botón del mock del hero compite con el CTA real, carrusel descentrado en escritorio, texto 13px del cierre a 4.3:1, dorado decorativo en cita/hero, contenido repetido sobre Excel, plan mensual repetido, sin título en el bloque Semáforo. La usabilidad se estanca en 29-31 (la mayoría de criterios en 3, no 4). Decisión del usuario pendiente: seguir a onboarding con la landing anotada como pendiente.
 - Mercado (2026-09-29): usuario en México; hay agentes Archer en LatAm, EE.UU. y España. Decisión del agente: lanzar México + Archer primero; construir listo para ampliar (moneda por reserva, plazos y nombre del portal configurables por agencia, textos sin regionalismos).
 - ⚠️ Claims de integridad (61): "90 días" y "Commissions Hub" salen del resumen del usuario; verificar por agencia Host antes de usarlos en la página de ventas. FICHA-MERCADO pendiente.
 - direcciones-abc: la auditoría automática marca >80% de similitud de DOM entre A/B/C porque comparten chasis, barra de estado, tab bar y hero de landing; en escala de grises las 3 composiciones se ven distintas (panel con héroe, lista con aviso, calendario con cabecera). El usuario ya eligió A; no se rehace.
