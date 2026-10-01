@@ -27,7 +27,7 @@ export function SemaforoVisual() {
               initial={reducir ? false : { opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.4, delay: i * 0.12 }}
+              transition={{ duration: 0.5, delay: i * 0.35 }}
               className={`flex items-start gap-3 rounded-[var(--radius-card)] p-4 ${clase}`}
             >
               <Icon size={24} aria-hidden="true" className="mt-px shrink-0" />

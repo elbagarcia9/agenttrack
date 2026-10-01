@@ -8,12 +8,15 @@
 // (un solo movimiento visual, sin separador). Cero decoración de miedo.
 
 import { motion } from 'motion/react';
+import type { LucideIcon } from 'lucide-react';
 import { SectionShell, useReveal, VIEWPORT_ONCE } from './ui';
 import { MarkedCopy, warnCopy, warnRango } from './MarkedCopy';
 
 export interface AgitacionProps {
   /** 2-4 frases MARCADAS y cortas — el array es el contrato: nada de párrafos. */
   frases: string[];
+  /** Íconos opcionales por frase (misma longitud que frases) — ancla visual para escanear. */
+  iconos?: LucideIcon[];
   /** Mini-card opcional "hoy vs en 6 meses" (55 §3). */
   contraste?: {
     labelHoy: string;
@@ -24,7 +27,7 @@ export interface AgitacionProps {
   id?: string;
 }
 
-export function Agitacion({ frases, contraste, id }: AgitacionProps) {
+export function Agitacion({ frases, iconos, contraste, id }: AgitacionProps) {
   warnRango('Agitación → frases', frases.length, 2, 4);
   frases.forEach((f, i) => warnCopy(`Agitación → frase ${i + 1}`, f, 18));
   const { contenedor, item } = useReveal();
@@ -39,15 +42,36 @@ export function Agitacion({ frases, contraste, id }: AgitacionProps) {
         className="mx-auto max-w-[620px]"
       >
         <div className="flex flex-col gap-4">
-          {frases.map((f, i) => (
-            <motion.p
-              key={i}
-              variants={item}
-              className="text-[17px] leading-[1.6] text-[var(--text-secondary)]"
-            >
-              <MarkedCopy text={f} />
-            </motion.p>
-          ))}
+          {frases.map((f, i) => {
+            const Icono = iconos?.[i];
+            // La primera frase es la escena: va como cita, con más peso que las demás.
+            if (i === 0) {
+              return (
+                <motion.blockquote
+                  key={i}
+                  variants={item}
+                  className="border-l-4 border-[var(--accent-2)] py-1 pl-4 text-[22px] font-semibold leading-snug text-[var(--text-primary)] [font-family:var(--font-display)]"
+                >
+                  <MarkedCopy text={f} />
+                </motion.blockquote>
+              );
+            }
+            return (
+              <motion.div key={i} variants={item} className="flex items-start gap-3">
+                {Icono && (
+                  <span
+                    aria-hidden="true"
+                    className="flex size-11 shrink-0 items-center justify-center rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--accent)_22%,transparent)] bg-[var(--chip-bg)]"
+                  >
+                    <Icono size={22} strokeWidth={1.8} color="var(--accent)" aria-hidden="true" />
+                  </span>
+                )}
+                <p className="pt-2 text-[17px] leading-[1.5] text-[var(--text-secondary)]">
+                  <MarkedCopy text={f} />
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
 
         {contraste && (

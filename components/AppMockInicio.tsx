@@ -1,5 +1,6 @@
 import { TriangleAlert, Wifi, BatteryFull, House, FileText, CalendarDays, Bell } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { Contador } from './Contador';
 
 // Mock realista de la pantalla de Inicio (datos de ejemplo). NO es una captura de la app real:
 // se reemplaza por screenshots reales al cerrar la app interna (pendiente anotado en ESTADO.md).
@@ -45,7 +46,7 @@ export function AppMockInicio() {
         <div className="mt-3 rounded-2xl bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-3 text-white shadow-[var(--shadow-2)]">
           <p className="text-xs font-semibold opacity-90">Comisiones por cobrar</p>
           <p className="text-3xl font-extrabold leading-none tabular-nums [font-family:var(--font-display)]">
-            $1,420 <span className="text-xs font-semibold opacity-80">USD</span>
+            <Contador hasta={1420} /> <span className="text-xs font-semibold opacity-80">USD</span>
           </p>
           <div className="mt-3 grid grid-cols-3 gap-2">
             {CONTEOS.map(([n, l]) => (

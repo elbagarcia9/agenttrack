@@ -22,10 +22,12 @@ export interface FooterLegalProps {
   enlaces: EnlaceLegal[];
   /** Email REAL que alguien lee. */
   soporteEmail: string;
+  /** Aviso legal breve (ej. no afiliación) — va dentro del footer. */
+  aviso?: string;
   anio?: number;
 }
 
-export function FooterLegal({ appName, logo, enlaces, soporteEmail, anio }: FooterLegalProps) {
+export function FooterLegal({ appName, logo, enlaces, soporteEmail, aviso, anio }: FooterLegalProps) {
   const year = anio ?? new Date().getFullYear();
   return (
     <footer className="py-8 md:py-12">
@@ -65,6 +67,7 @@ export function FooterLegal({ appName, logo, enlaces, soporteEmail, anio }: Foot
             {soporteEmail}
           </a>
         </p>
+        {aviso && <p className="mt-3 max-w-[60ch] text-[13px] text-[var(--text-tertiary)]">{aviso}</p>}
       </div>
     </footer>
   );

@@ -3,7 +3,7 @@
 // Landing de ventas — copy MARCADO de docs/copy/landing.md (trazado a FICHA-AVATAR.md).
 // Modelo 2 (02C): el CTA lleva a /onboarding. Nombre de marca provisional en BRAND.
 
-import { CalendarX, CircleHelp, FileSpreadsheet, FileWarning } from 'lucide-react';
+import { CalendarX, CircleHelp, FileSpreadsheet, FileWarning, Clock3, HandCoins } from 'lucide-react';
 import { Hero } from '@/components/landing/Hero';
 import { Problema } from '@/components/landing/Problema';
 import { Agitacion } from '@/components/landing/Agitacion';
@@ -54,6 +54,7 @@ export default function Landing() {
       />
 
       <Agitacion
+        iconos={[Clock3, Clock3, HandCoins, FileWarning]}
         frases={[
           'De noche, en la cama: ¿aquel viaje [b]ya te pagó[/b] la comisión?',
           'Cada venta corre [b]tres relojes[/b]: alta, pago y reclamo.',
@@ -91,7 +92,6 @@ export default function Landing() {
         kicker="VISTAS DE EJEMPLO DE LA APP"
         tituloMarked="Tu negocio, [acento]a un vistazo[/acento]"
         frames={[
-          { src: '/mock/inicio.png', alt: 'Vista de ejemplo: inicio con el total por cobrar', label: 'Tu total por cobrar, hoy' },
           { src: '/mock/nueva-reserva.png', alt: 'Vista de ejemplo: formulario de nueva reserva', label: 'Registra una venta en segundos' },
           { src: '/mock/resultado.png', alt: 'Vista de ejemplo: plazos programados de una reserva', label: 'Tu primera reserva, ya vigilada' },
           { src: '/mock/calendario.png', alt: 'Vista de ejemplo: calendario del mes', label: 'Viajes y cobros en un calendario' },
@@ -137,6 +137,10 @@ export default function Landing() {
         }}
       />
 
+      <p className="bg-[var(--bg)] px-5 pb-10 text-center text-sm text-[var(--text-secondary)]">
+        Tarjeta al empezar, sin cobro hoy. Si cancelas antes de los 14 días, no pagas nada.
+      </p>
+
       <Garantia
         nombre="Prueba de 14 días sin riesgo"
         condicionMarked="Pruébalo 14 días sin cobro. Si no te sirve, [b]cancelas antes[/b] y no pagas nada."
@@ -155,13 +159,9 @@ export default function Landing() {
               'Capturas una vez. El portal de tu agencia sigue siendo tuyo: [b]la app no lo reemplaza[/b], te recuerda usarlo a tiempo.',
           },
           {
-            pregunta: '¿Funciona con mi agencia Host?',
+            pregunta: '¿Funciona con mi agencia y en computadora?',
             respuestaMarked:
-              'Empezamos con [b]Archer México y Latinoamérica[/b]. Otras agencias vendrán después.',
-          },
-          {
-            pregunta: '¿Sirve en computadora o solo en celular?',
-            respuestaMarked: 'Funciona en el navegador de tu celular y de tu computadora, con los mismos datos.',
+              'Empezamos con [b]Archer México y Latinoamérica[/b]; otras agencias vendrán después. Funciona en el navegador de tu celular y de tu computadora.',
           },
           {
             pregunta: '¿Y si no me sirve?',
@@ -194,14 +194,12 @@ export default function Landing() {
         appName={BRAND}
         logo={<Logo tono="neutro" />}
         soporteEmail="soporte@tu-dominio.mx"
+        aviso="No estamos afiliados a Archer ni a ninguna agencia Host. Los nombres se mencionan solo para indicar con qué reglas de plazos funciona la app."
         enlaces={[
           { label: 'Privacidad', href: '/privacidad' },
           { label: 'Términos y Condiciones', href: '/terminos' },
         ]}
       />
-      <p className="mx-auto max-w-5xl px-4 pb-12 text-xs text-[var(--text-tertiary)]">
-        No estamos afiliados a Archer ni a ninguna agencia Host. Los nombres se mencionan solo para indicar con qué reglas de plazos funciona la app.
-      </p>
 
       <StickyCtaMobile labelComercial={CTA_LABEL} href={CTA_HREF} />
     </div>
