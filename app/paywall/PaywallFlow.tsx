@@ -4,7 +4,7 @@
 // Se personaliza con lo que la persona hizo en el onboarding; precios y prueba salen de FICHA-MERCADO.md
 // (provisionales hasta confirmarlos en Hotmart). Timeline de la prueba con fechas exactas (50 → C4).
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MotionConfig, motion } from 'motion/react';
 import Link from 'next/link';
 import { Check, Lock, X } from 'lucide-react';
@@ -27,9 +27,8 @@ const CHECKOUT: Record<Plan, string> = {
 };
 
 const BENEFICIOS = [
-  'Avisos antes de cada plazo: alta, pago y reclamo',
-  'Tu tabla de reservas y tu calendario de cobros',
-  'Funciona en tu celular y en tu computadora',
+  'Aviso antes de que venza el alta (30 días) y el reclamo (18 meses)',
+  'Tu tabla y tu calendario de cobros, en celular y computadora',
 ];
 
 interface Guardado {
@@ -66,19 +65,19 @@ export function PaywallFlow() {
   const [plan, setPlan] = useState<Plan>('anual');
   const [guardado, setGuardado] = useState<Guardado | null>(null);
   const [aviso, setAviso] = useState(true);
-  const [listo, setListo] = useState(false);
+  const [hoy, setHoy] = useState<Date | null>(null);
 
   useEffect(() => {
     // lectura única del almacenamiento local al cargar (no hay servidor todavía)
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setGuardado(leerGuardado());
-    setListo(true);
+    setHoy(new Date());
     track('paywall_visto');
   }, []);
 
-  const hoy = useMemo(() => new Date(), []);
-  const diaAviso = formatoFecha(sumarDias(hoy, DIAS_PRUEBA - 2), hoy);
-  const diaCobro = formatoFecha(sumarDias(hoy, DIAS_PRUEBA), hoy);
+  // Las fechas dependen de "hoy": se calculan en el navegador. Antes de montar se muestran los días de la prueba.
+  const diaAviso = hoy ? formatoFecha(sumarDias(hoy, DIAS_PRUEBA - 2), hoy) : `Día ${DIAS_PRUEBA - 2}`;
+  const diaCobro = hoy ? formatoFecha(sumarDias(hoy, DIAS_PRUEBA), hoy) : `Día ${DIAS_PRUEBA}`;
   const p = PLANES[plan];
 
   const iniciar = () => {
@@ -89,8 +88,6 @@ export function PaywallFlow() {
       /* sin almacenamiento: la preferencia se pedirá de nuevo dentro de la app */
     }
   };
-
-  if (!listo) return <div className="min-h-dvh bg-[var(--bg)]" aria-busy="true" />;
 
   return (
     <MotionConfig reducedMotion="user">
@@ -121,7 +118,7 @@ export function PaywallFlow() {
             </div>
 
             {guardado && (
-              <div className="rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-4 text-white shadow-[var(--shadow-2)]">
+              <div className="rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-3 text-white shadow-[var(--shadow-2)]">
                 <p className="text-xs font-semibold opacity-90">Ya registraste</p>
                 <p className="text-base font-semibold">{guardado.cliente}</p>
                 <p className="mt-2 inline-flex rounded-full bg-[var(--btn-oro-to)] px-3 py-1 text-xs font-bold text-[var(--btn-oro-text)]">
@@ -131,17 +128,17 @@ export function PaywallFlow() {
             )}
 
             <ul className="flex flex-col gap-3">
-              {BENEFICIOS.map((b) => (
-                <li key={b} className="flex items-start gap-3 text-base">
+              {BENEFICIOS.map((b, i) => (
+                <motion.li key={b} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.1 + i * 0.07 }} className="flex items-start gap-3 text-base">
                   <span aria-hidden="true" className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--chip-bg)]">
                     <Check size={12} strokeWidth={3} color="var(--accent)" />
                   </span>
                   {b}
-                </li>
+                </motion.li>
               ))}
             </ul>
 
-            <div role="radiogroup" aria-label="Elige tu plan" className="flex flex-col gap-3">
+            <div role="radiogroup" aria-label="Elige tu plan" className="flex flex-col gap-4">
               {(['anual', 'mensual'] as Plan[]).map((k) => {
                 const sel = plan === k;
                 const d = PLANES[k];
@@ -162,13 +159,16 @@ export function PaywallFlow() {
                     {k === 'anual' && (
                       <span className="absolute -top-3 left-4 rounded-full bg-[var(--accent)] px-3 py-0.5 text-xs font-bold tracking-wide text-[var(--on-accent)]">RECOMENDADO</span>
                     )}
+                    {k === 'anual' && (
+                      <span className="absolute -top-3 right-4 rounded-full bg-[var(--btn-oro-to)] px-3 py-0.5 text-xs font-bold tracking-wide text-[var(--btn-oro-text)]">AHORRAS 4 MESES</span>
+                    )}
                     <div>
                       <p className="font-semibold [font-family:var(--font-display)]">{d.nombre}</p>
                       <p className="text-sm text-[var(--text-secondary)]">
-                        {k === 'anual' ? `Se cobra ${d.cobro} al año · ahorras 4 meses` : 'Cancelas cuando quieras'}
+                        {k === 'anual' ? `Se cobra ${d.cobro} al año` : 'Cancelas cuando quieras'}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="shrink-0 whitespace-nowrap text-right">
                       <p className="text-2xl font-bold tabular-nums [font-family:var(--font-display)]">${d.precioMes}</p>
                       <p className="text-xs text-[var(--text-secondary)]">MXN al mes</p>
                     </div>
@@ -176,6 +176,8 @@ export function PaywallFlow() {
                 );
               })}
             </div>
+
+            <p className="-mt-2 text-center text-sm font-medium text-[var(--text-secondary)]">Una sola comisión que no dejes vencer puede pagar tu año.</p>
 
             <section aria-label="Cómo funciona tu prueba gratis" className="rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--text-tertiary)_25%,transparent)] bg-[var(--surface)] p-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Así funciona tu prueba</h2>
@@ -198,8 +200,10 @@ export function PaywallFlow() {
                 <li className="flex gap-3">
                   <Nodo lleno />
                   <div>
-                    <p className="text-base font-semibold">{diaAviso}: te avisamos</p>
-                    <p className="text-sm text-[var(--text-secondary)]">Un correo antes de cualquier cobro.</p>
+                    <p className="text-base font-semibold">{diaAviso}: {aviso ? 'te avisamos' : 'sin aviso por correo'}</p>
+                    <p className="text-sm text-[var(--text-secondary)]">
+                      {aviso ? 'Un correo antes de cualquier cobro.' : 'Sin correo de aviso: tú decides cuándo cancelar.'}
+                    </p>
                   </div>
                 </li>
                 <li className="flex gap-3">
