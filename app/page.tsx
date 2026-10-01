@@ -118,7 +118,7 @@ export default function Landing() {
             'Semáforo de plazos: alta, pago y reclamo',
             'Tabla de reservas con filtros y orden',
             'Calendario de viajes y de cobros',
-            'Funciona en celular y en computadora',
+            'Importa tu Excel: tu base lista el mismo día',
           ],
         }}
         mensual={{
@@ -130,8 +130,8 @@ export default function Landing() {
           features: [
             'Avisos por correo y notificación antes de cada plazo',
             'Semáforo de plazos: alta, pago y reclamo',
-            'Tabla de reservas con filtros y orden',
-            'Calendario de viajes y de cobros',
+            'Importa tu Excel: tu base lista el mismo día',
+            'Tabla de reservas con filtros y calendario',
             'Cancelas cuando quieras',
           ],
         }}
@@ -154,9 +154,9 @@ export default function Landing() {
               'Excel guarda datos, pero [b]no te avisa[/b]. El Semáforo cuenta los plazos de cada venta y te alerta antes de que venzan.',
           },
           {
-            pregunta: '¿Tengo que capturar todo dos veces?',
+            pregunta: '¿Tengo que pasar mis datos a mano?',
             respuestaMarked:
-              'Capturas una vez. El portal de tu agencia sigue siendo tuyo: [b]la app no lo reemplaza[/b], te recuerda usarlo a tiempo.',
+              'No. [b]Importas tu Excel o CSV[/b], confirmas qué es cada columna y tu base queda lista el mismo día. El portal de tu agencia sigue siendo tuyo.',
           },
           {
             pregunta: '¿Funciona con mi agencia y en computadora?',

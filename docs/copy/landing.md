@@ -44,7 +44,7 @@ Pruébalo 14 días sin cobro. Si no te sirve, [b]cancelas antes[/b] y no pagas n
 
 ## 8 FAQ (objeciones de la ficha en orden de fuerza)
 1 ¿Por qué no sigo con mi Excel gratis? — Excel guarda datos, pero [b]no te avisa[/b]. El Semáforo cuenta los plazos de cada venta y te alerta antes de que venzan.
-2 ¿Tengo que capturar todo dos veces? — Capturas una vez. El portal de tu agencia sigue siendo tuyo: [b]la app no lo reemplaza[/b], te recuerda usarlo a tiempo.
+2 ¿Tengo que pasar mis datos a mano? — No. [b]Importas tu Excel o CSV[/b], confirmas qué es cada columna y tu base queda lista el mismo día. El portal de tu agencia sigue siendo tuyo.
 3 ¿Funciona con mi agencia Host? — Empezamos con [b]Archer México y Latinoamérica[/b]. Otras agencias vendrán después.
 4 ¿Sirve en computadora o solo en celular? — Funciona en el navegador de tu celular y de tu computadora, con los mismos datos.
 5 ¿Y si no me sirve? — Tienes [b]14 días gratis[/b]. Si cancelas antes, no se te cobra nada.

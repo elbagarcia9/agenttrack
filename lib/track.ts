@@ -2,7 +2,7 @@
 // cola local con una sesión anónima. Al conectar los servicios externos, esta cola se envía al backend.
 // Nunca incluye datos personales (nombre, cliente, contacto): solo identificadores de paso y respuestas de segmento.
 
-export type Evento = 'onboarding_iniciado' | 'onboarding_paso_completado' | 'resultado_visto' | 'paywall_visto' | 'checkout_iniciado';
+export type Evento = 'onboarding_iniciado' | 'onboarding_paso_completado' | 'resultado_visto' | 'paywall_visto' | 'checkout_iniciado' | 'acceso_solicitado';
 
 function leer(clave: string): string | null {
   try {

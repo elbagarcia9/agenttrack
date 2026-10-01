@@ -1,7 +1,7 @@
 # ESTADO — HostAgent Commission Guard (nombre tentativo)
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: paywall con 1 revisión (29/40, 11/20, copy 14/20, NO LISTA) y fallas reales corregidas / Siguiente acción exacta: login/auth (paso 4); al final pasada de pulido de landing, onboarding y paywall.
+⏸️ CHECKPOINT — Última acción completada: acceso a la cuenta construido (modo local) y claim de importar Excel en landing/paywall / Siguiente acción exacta: app interna (Inicio, Reservas con importación Excel, Calendario, Alertas) con datos de ejemplo; servicios externos después; pasada de pulido al final.
 
 ## Qué es esta app
 Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de alta en el portal dentro de 30 días; alerta de revisión y de reclamo hasta 18 meses después del viaje). Suscripción SaaS.
@@ -100,3 +100,11 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Fase 2: PDF e imagen (fotos de libretas o estados de cuenta) con lectura por IA (costo por uso, cupo por plan; revisión obligatoria porque puede equivocarse). Evaluar con el gate de unit economics (40) antes de construir.
 - Opcional tras Fase 1: en el onboarding, junto a "registrar una reserva", la opción "Importar mi Excel".
 - Privacidad: datos de clientes de terceros; si se usa IA para sugerir el mapeo, enviar solo los encabezados y 3-5 filas de ejemplo, sin contactos (aviso en la política de privacidad).
+
+- Claim "importa tu Excel / base lista el mismo día" agregado a landing (FAQ + oferta) y paywall (2026-10-01): DEBE ser verdad al lanzar → Fase 1 de importación obligatoria antes de vender; verificarlo en el gate 61. Ideas de diseño con más gráficos e imágenes: las aporta el usuario en la pasada de pulido final.
+
+## Acceso a la cuenta / login (2026-10-01)
+- Decisión técnica (26, Hotmart-first): método primario = enlace mágico + código de 6 dígitos por correo, sin contraseñas; Google solo si NEXT_PUBLIC_AUTH_GOOGLE=1 (evita botón muerto); passkeys después de la primera victoria. Verificación contra nuestra base (el webhook crea al usuario), nunca consultando a Hotmart en vivo. Anti-enumeración (mensaje idéntico exista o no la cuenta), límite 3 solicitudes / 5 min en cliente (el límite real lo aplica el proveedor), reenvío a los 60 s.
+- Construida en app/entrar/ (EntrarForm.tsx) + lib/auth.ts. Estados: escribiendo, enviando, enviado, error de correo, límite, ayuda "compré y no me llega". MODO LOCAL (sin NEXT_PUBLIC_SUPABASE_URL): no envía correos ni valida códigos y la pantalla lo avisa; se conecta en servicios externos sin cambiar la pantalla.
+- Probada con Playwright (todos los estados, sin errores de consola). Captura: docs/revisiones/entrar-375.png. Sin revisor (pantalla secundaria): medición + checklist.
+- Pendiente: correo de soporte real en la ayuda · conectar Supabase Auth, plantilla del correo con enlace + código · rutas protegidas (middleware) y sesión · validar el aviso de privacidad.

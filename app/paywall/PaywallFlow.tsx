@@ -28,6 +28,7 @@ const CHECKOUT: Record<Plan, string> = {
 
 const BENEFICIOS = [
   'Aviso antes de que venza el alta (30 días) y el reclamo (18 meses)',
+  'Importa tu Excel y tu base queda lista el mismo día',
   'Tu tabla y tu calendario de cobros, en celular y computadora',
 ];
 
