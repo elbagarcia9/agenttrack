@@ -1,7 +1,7 @@
 # ESTADO — HostAgent Commission Guard (nombre tentativo)
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: 4ª revisión de la landing (29/40, 15/20, copy 17/20, NO LISTA) / Siguiente acción exacta: el usuario elige seguir al onboarding con la landing pendiente, o una última ronda de ajustes menores.
+⏸️ CHECKPOINT — Última acción completada: onboarding construido y probado; revisión visual en curso / Siguiente acción exacta: aplicar defectos del revisor, luego pantalla de planes (paywall).
 
 ## Qué es esta app
 Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de alta en el portal dentro de 30 días; alerta de revisión y de reclamo hasta 18 meses después del viaje). Suscripción SaaS.
@@ -78,3 +78,9 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Desviaciones menores del kit (justificadas por el revisor 2026-09-29): Hero sin marco doble alrededor del visual · Solucion antes/después con tratamiento invertido · Oferta total anual a 14px · CtaFinal con --accent-on-dark y --on-accent · SemaforoVisual añadido entre Solución y La app por dentro (el kit no muestra el mecanismo visualmente) · carrusel con vistas de ejemplo (public/mock/*.png, mockups de diseño rotulados como ejemplo).
 - H1 cambiado (revisor): "Ninguna comisión se te vence sin que lo sepas" (la app avisa plazos, no cobra por el agente).
 - Ronda 4 de la landing (2026-10-01, OK del usuario al ángulo): Agitación con cita + íconos; carrusel sin pantalla repetida (3 vistas); contador animado en el mock; luces del semáforo en secuencia; FAQ a 6; aviso de no afiliación dentro de FooterLegal; CTA final sobre pizarra #304A57 con --accent-on-dark #7dbdea; nota "tarjeta al empezar, sin cobro hoy" bajo los planes. Revisión 4 en curso.
+
+## Recorrido de inicio / onboarding (2026-10-01)
+- Construido en app/onboarding/ (OnboardingFlow.tsx) + lib/plazos.ts (reglas Archer, verificadas con fechas de ejemplo) + lib/track.ts (cola local de eventos: onboarding_iniciado, onboarding_paso_completado, resultado_visto). Ruta: / → /onboarding → /paywall (stub) → /entrar (stub).
+- Diseño: 8 pasos con barra de progreso: nombre · agencia · cómo lleva hoy sus comisiones · qué le preocupa (ecoan dolores de la ficha) · reconocimiento · PRIMERA ACCIÓN (registrar una reserva real, con "usar datos de ejemplo") · "Armando tus avisos" (≈4.5 s, líneas con sus datos) · resultado con los 4 plazos, lo que más le preocupa primero, semáforo (dorado ≤5 días, rojo vencido). Estado persistente en localStorage; atrás disponible; sin garantía ni cifras inventadas.
+- Prueba end-to-end con Playwright OK (sin errores de consola, recarga conserva datos, validaciones, eventos). Capturas: docs/revisiones/onboarding-375.png y docs/revisiones/onboarding/*.png.
+- Pendiente: veredicto del revisor (docs/revisiones/onboarding-veredicto.md) · pregunta de anclaje de hora de aviso (02B: ¿a qué hora quieres que te avise?) se agrega en la app interna al configurar notificaciones · analítica real al conectar backend.
