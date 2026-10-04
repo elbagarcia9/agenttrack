@@ -64,3 +64,18 @@ export function formatoFecha(d: Date, hoy: Date = new Date()): string {
     d.getFullYear() === hoy.getFullYear() ? { day: 'numeric', month: 'long' } : { day: 'numeric', month: 'long', year: 'numeric' };
   return new Intl.DateTimeFormat('es-MX', opciones).format(d);
 }
+
+// "4 oct" / "4 oct 2027" para tablas
+export function fechaCorta(d: Date, hoy: Date = new Date()): string {
+  const base = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'short' }).format(d).replace('.', '');
+  return d.getFullYear() === hoy.getFullYear() ? base : `${base} ${d.getFullYear()}`;
+}
+
+export function capitalizar(t: string): string {
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+// "domingo, 4 de octubre" para encabezados de pantalla
+export function fechaConDia(d: Date): string {
+  return new Intl.DateTimeFormat('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }).format(d);
+}
