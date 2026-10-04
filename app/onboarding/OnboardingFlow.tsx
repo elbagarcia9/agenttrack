@@ -179,7 +179,7 @@ function BotonPrincipal({ children, onClick, deshabilitado, enviar }: { children
 function Pregunta({ titulo, ayuda, children }: { titulo: string; ayuda?: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col">
-      <h1 className="text-balance text-3xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">{titulo}</h1>
+      <h1 className="text-balance text-4xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">{titulo}</h1>
       {ayuda && <p className="mt-2 text-sm text-[var(--text-secondary)]">{ayuda}</p>}
       <motion.div
         className="mt-6 flex flex-col gap-3"
@@ -270,6 +270,7 @@ function PasoUnica({
   dispatch,
   avanzar,
   conOtra,
+  saltable,
 }: PantallaProps & {
   titulo: string;
   ayuda?: string;
@@ -277,6 +278,7 @@ function PasoUnica({
   valor: string;
   campo: 'agencia' | 'control' | 'preocupacion';
   conOtra?: boolean;
+  saltable?: boolean;
 }) {
   const [bloqueada, setBloqueada] = useState(false);
   const esOtra = valor !== '' && !opciones.some((o) => o.texto === valor);
@@ -320,6 +322,18 @@ function PasoUnica({
               />
             )}
           </>
+        )}
+        {saltable && (
+          <button
+            type="button"
+            onClick={() => {
+              dispatch({ tipo: 'campo', campo, valor: '' });
+              avanzar();
+            }}
+            className="self-start py-3 text-sm font-semibold text-[var(--text-secondary)] underline underline-offset-4"
+          >
+            Saltar este paso
+          </button>
         )}
       </Pregunta>
       {otraAbierta && (
@@ -584,8 +598,19 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
 
   return (
     <div className="flex flex-1 flex-col">
-      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">Tu primera reserva está lista</p>
-      <h1 className="mt-1 text-balance text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">Tu primera reserva ya está vigilada, {estado.nombre.trim()}</h1>
+      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">
+        <motion.span
+          aria-hidden="true"
+          initial={{ scale: 0.4, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 420, damping: 16, delay: 0.15 }}
+          className="flex size-6 items-center justify-center rounded-full bg-[var(--chip-verde-bg)]"
+        >
+          <Check size={14} strokeWidth={3} color="var(--verde-text)" />
+        </motion.span>
+        Tu primera reserva está lista
+      </p>
+      <h1 className="mt-1 text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">Tu primera reserva ya está vigilada, {estado.nombre.trim()}</h1>
       <p className="mt-2 text-sm text-[var(--text-secondary)]">
         {frase}: tu asistente cuenta los plazos de {r.cliente.trim()} en {r.destino.trim()} y te avisa antes de que venzan.
       </p>
@@ -600,7 +625,7 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
               variants={fila}
               className={`flex items-center justify-between gap-3 rounded-[var(--radius-card)] p-4 ${
                 heroe
-                  ? 'bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] text-white shadow-[var(--shadow-2)]'
+                  ? `bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] text-white shadow-[var(--shadow-2)] ${estadoF === 'urgente' ? 'border-b-4 border-[var(--btn-oro-to)]' : ''}`
                   : 'border border-[color-mix(in_oklab,var(--text-tertiary)_25%,transparent)] bg-[var(--surface)] shadow-[var(--shadow-1)]'
               }`}
             >
@@ -727,7 +752,7 @@ export function OnboardingFlow() {
 
   return (
     <MotionConfig reducedMotion="user">
-    <div className="min-h-dvh bg-[radial-gradient(520px_320px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%),var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
+    <div className="min-h-dvh bg-[radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_24%,transparent),transparent_70%),radial-gradient(420px_300px_at_-10%_105%,color-mix(in_oklab,var(--btn-oro-to)_14%,transparent),transparent_70%),var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pb-4 pt-4">
         <header className="flex h-11 items-center gap-2">
           {mostrarAtras ? (
@@ -757,7 +782,7 @@ export function OnboardingFlow() {
               <PasoUnica {...props} titulo="¿Con qué agencia trabajas?" ayuda="Empezamos con los plazos de Archer; luego podrás ajustarlos." opciones={AGENCIAS.map((texto) => ({ texto, Icon: Building2 }))} valor={estado.agencia} campo="agencia" conOtra />
             )}
             {estado.paso === 'control' && (
-              <PasoUnica {...props} titulo="¿Cómo llevas hoy tus comisiones?" opciones={CONTROLES} valor={estado.control} campo="control" conOtra />
+              <PasoUnica {...props} titulo="¿Cómo llevas hoy tus comisiones?" opciones={CONTROLES} valor={estado.control} campo="control" conOtra saltable />
             )}
             {estado.paso === 'preocupacion' && (
               <PasoUnica {...props} titulo="¿Qué te preocupa más?" ayuda="Empezamos por ahí." opciones={PREOCUPACIONES} valor={estado.preocupacion} campo="preocupacion" conOtra />

@@ -5,9 +5,10 @@
 // (provisionales hasta confirmarlos en Hotmart). Timeline de la prueba con fechas exactas (50 → C4).
 
 import { useEffect, useState } from 'react';
-import { MotionConfig, motion } from 'motion/react';
+import { MotionConfig, animate, motion } from 'motion/react';
 import Link from 'next/link';
 import { Check, Lock, X } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 import { formatoFecha, sumarDias } from '@/lib/plazos';
 import { track } from '@/lib/track';
 
@@ -62,10 +63,28 @@ function Nodo({ lleno }: { lleno: boolean }) {
   );
 }
 
+const HORAS = [
+  { id: 'manana', texto: 'Mañana', hora: '8:00' },
+  { id: 'tarde', texto: 'Tarde', hora: '14:00' },
+  { id: 'noche', texto: 'Noche', hora: '20:00' },
+] as const;
+type Hora = (typeof HORAS)[number]['id'];
+
+function Numero({ valor }: { valor: number }) {
+  const [mostrado, setMostrado] = useState(valor);
+  useEffect(() => {
+    const a = animate(mostrado, valor, { duration: 0.3, ease: 'easeOut', onUpdate: (v) => setMostrado(Math.round(v)) });
+    return () => a.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valor]);
+  return <>{mostrado.toLocaleString('en-US')}</>;
+}
+
 export function PaywallFlow() {
   const [plan, setPlan] = useState<Plan>('anual');
   const [guardado, setGuardado] = useState<Guardado | null>(null);
   const [aviso, setAviso] = useState(true);
+  const [hora, setHora] = useState<Hora>('manana');
   const [hoy, setHoy] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -80,11 +99,16 @@ export function PaywallFlow() {
   const diaAviso = hoy ? formatoFecha(sumarDias(hoy, DIAS_PRUEBA - 2), hoy) : `Día ${DIAS_PRUEBA - 2}`;
   const diaCobro = hoy ? formatoFecha(sumarDias(hoy, DIAS_PRUEBA), hoy) : `Día ${DIAS_PRUEBA}`;
   const p = PLANES[plan];
+  const horaTxt = HORAS.find((h) => h.id === hora)?.hora ?? '8:00';
+  const alMoverFlecha = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') setPlan('mensual');
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') setPlan('anual');
+  };
 
   const iniciar = () => {
-    track('checkout_iniciado', { plan, aviso });
+    track('checkout_iniciado', { plan, aviso, hora });
     try {
-      window.localStorage.setItem('cg_preferencias', JSON.stringify({ avisoCobro: aviso, plan }));
+      window.localStorage.setItem('cg_preferencias', JSON.stringify({ avisoCobro: aviso, horaAviso: hora, plan }));
     } catch {
       /* sin almacenamiento: la preferencia se pedirá de nuevo dentro de la app */
     }
@@ -92,10 +116,14 @@ export function PaywallFlow() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="min-h-dvh bg-[radial-gradient(520px_320px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%),var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
+      <div className="min-h-dvh bg-[radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_24%,transparent),transparent_70%),radial-gradient(420px_300px_at_-10%_105%,color-mix(in_oklab,var(--btn-oro-to)_14%,transparent),transparent_70%),var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
         <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pt-2">
-          <header className="flex h-11 items-center">
-            <Link href="/" aria-label="Cerrar" className="-ml-2 flex size-11 items-center justify-center text-[var(--text-secondary)]">
+          <header className="flex h-11 items-center justify-between">
+            <Link href="/" aria-label="Commission Guard, ir a la página principal" className="flex min-h-11 items-center gap-2 text-base font-semibold">
+              <Logo />
+              Commission Guard
+            </Link>
+            <Link href="/onboarding" aria-label="Cerrar y volver a mi plan" className="-mr-2 flex size-11 items-center justify-center text-[var(--text-secondary)]">
               <X size={20} />
             </Link>
           </header>
@@ -119,13 +147,19 @@ export function PaywallFlow() {
             </div>
 
             {guardado && (
-              <div className="rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-3 text-white shadow-[var(--shadow-2)]">
+              <motion.div
+                initial={{ scale: 0.94, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                className="rounded-[var(--radius-card)] border-b-4 border-[var(--btn-oro-to)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-3 text-white shadow-[var(--shadow-2)]"
+              >
                 <p className="text-xs font-semibold opacity-90">Ya registraste</p>
                 <p className="text-base font-semibold">{guardado.cliente}</p>
                 <p className="mt-2 inline-flex rounded-full bg-[var(--btn-oro-to)] px-3 py-1 text-xs font-bold text-[var(--btn-oro-text)]">
                   {Number(guardado.comision).toLocaleString('en-US')} {guardado.moneda} con sus plazos vigilados
                 </p>
-              </div>
+                <p className="mt-2 text-sm opacity-90">Sin plan, esta reserva y sus avisos no se guardan.</p>
+              </motion.div>
             )}
 
             <ul className="flex flex-col gap-3">
@@ -139,7 +173,7 @@ export function PaywallFlow() {
               ))}
             </ul>
 
-            <div role="radiogroup" aria-label="Elige tu plan" className="flex flex-col gap-4">
+            <div role="radiogroup" aria-label="Elige tu plan" onKeyDown={alMoverFlecha} className="flex flex-col gap-4">
               {(['anual', 'mensual'] as Plan[]).map((k) => {
                 const sel = plan === k;
                 const d = PLANES[k];
@@ -151,26 +185,37 @@ export function PaywallFlow() {
                     aria-checked={sel}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setPlan(k)}
-                    className={`relative flex w-full items-center justify-between gap-3 rounded-[var(--radius-card)] p-4 text-left [touch-action:manipulation] ${
-                      sel
-                        ? 'border-2 border-[var(--accent)] bg-[color-mix(in_oklab,var(--accent)_8%,var(--surface))] shadow-[var(--shadow-2)]'
-                        : 'border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)]'
-                    }`}
+                    tabIndex={sel ? 0 : -1}
+                    className="relative flex w-full items-center justify-between gap-3 rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)] p-4 text-left [touch-action:manipulation]"
                   >
-                    {k === 'anual' && (
-                      <span className="absolute -top-3 left-4 rounded-full bg-[var(--accent)] px-3 py-0.5 text-xs font-bold tracking-wide text-[var(--on-accent)]">RECOMENDADO</span>
+                    {sel && (
+                      <motion.span
+                        layoutId="borde-plan"
+                        aria-hidden="true"
+                        transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                        className="pointer-events-none absolute -inset-px rounded-[var(--radius-card)] border-2 border-transparent shadow-[var(--shadow-2)]"
+                        style={{
+                          background:
+                            'linear-gradient(color-mix(in oklab, var(--accent) 8%, var(--surface)), color-mix(in oklab, var(--accent) 8%, var(--surface))) padding-box, linear-gradient(135deg, var(--accent), var(--btn-oro-to)) border-box',
+                        }}
+                      />
                     )}
                     {k === 'anual' && (
-                      <span className="absolute -top-3 right-4 rounded-full bg-[var(--btn-oro-to)] px-3 py-0.5 text-xs font-bold tracking-wide text-[var(--btn-oro-text)]">AHORRAS 4 MESES</span>
+                      <span className="absolute -top-3 left-4 z-20 rounded-full bg-[var(--accent)] px-3 py-0.5 text-xs font-bold tracking-wide text-[var(--on-accent)]">RECOMENDADO</span>
                     )}
-                    <div>
+                    {k === 'anual' && (
+                      <span className="absolute -top-3 right-4 z-20 rounded-full bg-[var(--btn-oro-to)] px-3 py-0.5 text-xs font-bold tracking-wide text-[var(--btn-oro-text)]">AHORRAS 4 MESES</span>
+                    )}
+                    <div className="relative z-10">
                       <p className="font-semibold [font-family:var(--font-display)]">{d.nombre}</p>
                       <p className="text-sm text-[var(--text-secondary)]">
                         {k === 'anual' ? `Se cobra ${d.cobro} al año` : 'Cancelas cuando quieras'}
                       </p>
                     </div>
-                    <div className="shrink-0 whitespace-nowrap text-right">
-                      <p className="text-2xl font-bold tabular-nums [font-family:var(--font-display)]">${d.precioMes}</p>
+                    <div className="relative z-10 shrink-0 whitespace-nowrap text-right">
+                      <p className="text-2xl font-bold tabular-nums [font-family:var(--font-display)]">
+                        $<Numero valor={d.precioMes} />
+                      </p>
                       <p className="text-xs text-[var(--text-secondary)]">MXN al mes</p>
                     </div>
                   </motion.button>
@@ -201,7 +246,9 @@ export function PaywallFlow() {
                 <li className="flex gap-3">
                   <Nodo lleno />
                   <div>
-                    <p className="text-base font-semibold">{diaAviso}: {aviso ? 'te avisamos' : 'sin aviso por correo'}</p>
+                    <p className="text-base font-semibold">
+                      {diaAviso}{aviso ? `, ${horaTxt}` : ''}: {aviso ? 'te avisamos' : 'sin aviso por correo'}
+                    </p>
                     <p className="text-sm text-[var(--text-secondary)]">
                       {aviso ? 'Un correo antes de cualquier cobro.' : 'Sin correo de aviso: tú decides cuándo cancelar.'}
                     </p>
@@ -221,6 +268,27 @@ export function PaywallFlow() {
                 <input type="checkbox" checked={aviso} onChange={(e) => setAviso(e.target.checked)} className="size-5 accent-[var(--accent)]" />
                 Avísame por correo 2 días antes del cobro
               </label>
+              {aviso && (
+                <div role="radiogroup" aria-label="¿A qué hora te avisamos?" className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="text-sm text-[var(--text-secondary)]">¿A qué hora?</span>
+                  {HORAS.map((h) => (
+                    <button
+                      key={h.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={hora === h.id}
+                      onClick={() => setHora(h.id)}
+                      className={`min-h-11 rounded-full px-4 text-sm font-semibold [touch-action:manipulation] ${
+                        hora === h.id
+                          ? 'bg-[var(--accent)] text-[var(--on-accent)]'
+                          : 'border border-[color-mix(in_oklab,var(--text-tertiary)_40%,transparent)] bg-[var(--surface)]'
+                      }`}
+                    >
+                      {h.texto} · {h.hora}
+                    </button>
+                  ))}
+                </div>
+              )}
             </section>
           </main>
 
