@@ -60,7 +60,7 @@ export default function Inicio() {
           Tu asistente empieza a vigilar en cuanto guardes una reserva. Si ya tienes todo en Excel, puedes traerlo en segundos.
         </p>
         <div className="flex w-full flex-col gap-3 sm:flex-row">
-          <Link href="/app/nueva" className="flex h-14 items-center justify-center gap-2 rounded-[var(--radius-button)] bg-gradient-to-b from-[var(--btn-oro-from)] to-[var(--btn-oro-to)] px-6 text-base font-bold text-[var(--btn-oro-text)] shadow-[var(--shadow-2)]">
+          <Link href="/app/nueva" className="flex h-14 items-center justify-center gap-2 rounded-[var(--radius-button)] border border-[var(--alerta-text)]/30 transition-transform active:scale-[0.97] bg-gradient-to-b from-[var(--btn-oro-from)] to-[var(--btn-oro-to)] px-6 text-base font-bold text-[var(--btn-oro-text)] shadow-[var(--shadow-2)]">
             <Plus size={18} aria-hidden="true" />
             Registrar venta nueva
           </Link>
@@ -80,7 +80,7 @@ export default function Inicio() {
       <div className="flex flex-col gap-5">
         <motion.div {...entrada(0)}>
           <p className="text-sm font-semibold text-[var(--text-secondary)]">{fechaConDia(hoy)}</p>
-          <h1 className="text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{nombre ? `Hola, ${nombre}` : 'Hola'}</h1>
+          <h1 className="text-2xl font-bold leading-[1.1] [font-family:var(--font-display)]">{nombre ? `Hola, ${nombre}` : 'Hola'}</h1>
         </motion.div>
 
         {urgente && (
@@ -129,14 +129,14 @@ export default function Inicio() {
         <motion.div {...entrada(3)} className="flex flex-col gap-3 sm:flex-row">
           <Link
             href="/app/nueva"
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-button)] bg-gradient-to-b sm:flex-1 from-[var(--btn-oro-from)] to-[var(--btn-oro-to)] text-base font-bold text-[var(--btn-oro-text)] shadow-[var(--shadow-2)]"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-button)] border border-[var(--alerta-text)]/30 bg-gradient-to-b from-[var(--btn-oro-from)] to-[var(--btn-oro-to)] transition-transform active:scale-[0.97] sm:flex-1 text-base font-bold text-[var(--btn-oro-text)] shadow-[var(--shadow-2)]"
           >
             <Plus size={18} aria-hidden="true" />
             Registrar venta nueva
           </Link>
           <Link
             href="/app/importar"
-            className="flex h-14 items-center justify-center gap-2 rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_45%,transparent)] bg-[var(--surface)] px-5 text-base font-semibold"
+            className="flex h-14 items-center justify-center gap-2 rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_45%,transparent)] bg-[var(--surface)] px-5 text-base font-semibold transition-transform active:scale-[0.97]"
           >
             <FileUp size={18} aria-hidden="true" />
             Importar Excel
@@ -153,12 +153,14 @@ export default function Inicio() {
             </div>
             <ul className="flex flex-col gap-2">
               {siguientes.map((a) => (
-                <li key={a.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] bg-[var(--surface)] p-3 shadow-[var(--shadow-1)]">
-                  <div className="min-w-0">
-                    <p className="truncate font-semibold">{a.titulo}</p>
-                    <p className="text-sm text-[var(--text-secondary)]">{formatoFecha(a.fecha, hoy)}</p>
-                  </div>
-                  <InsigniaSeveridad alerta={a} hoy={hoy} />
+                <li key={a.id}>
+                  <Link href="/app/alertas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] bg-[var(--surface)] p-3 shadow-[var(--shadow-1)] transition-transform active:scale-[0.99]">
+                    <div className="min-w-0">
+                      <p className="font-semibold">{a.titulo}</p>
+                      <p className="text-sm text-[var(--text-secondary)]">{formatoFecha(a.fecha, hoy)}</p>
+                    </div>
+                    <InsigniaSeveridad alerta={a} hoy={hoy} />
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -174,17 +176,19 @@ export default function Inicio() {
           </div>
           <ul className="flex flex-col gap-2">
             {recientes.map((r) => (
-              <li key={r.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] bg-[var(--surface)] p-3 shadow-[var(--shadow-1)]">
-                <div className="min-w-0">
-                  <p className="truncate font-semibold">
-                    {r.cliente} · {r.destino}
-                  </p>
-                  <p className="text-sm text-[var(--text-secondary)]">Sale el {formatoFecha(new Date(r.fechaViaje + 'T00:00:00'), hoy)}</p>
-                </div>
-                <div className="flex shrink-0 flex-col items-end gap-1">
-                  <span className="text-sm font-extrabold tabular-nums [font-family:var(--font-display)]">{formatoDinero(r.comision, r.moneda)}</span>
-                  <InsigniaEstatus estatus={r.estatus} />
-                </div>
+              <li key={r.id}>
+                <Link href="/app/reservas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] bg-[var(--surface)] p-3 shadow-[var(--shadow-1)] transition-transform active:scale-[0.99]">
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">
+                      {r.cliente} · {r.destino}
+                    </p>
+                    <p className="text-sm text-[var(--text-secondary)]">Sale el {formatoFecha(new Date(r.fechaViaje + 'T00:00:00'), hoy)}</p>
+                  </div>
+                  <div className="flex shrink-0 flex-col items-end gap-1">
+                    <span className="text-sm font-extrabold tabular-nums [font-family:var(--font-display)]">{formatoDinero(r.comision, r.moneda)}</span>
+                    <InsigniaEstatus estatus={r.estatus} />
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>

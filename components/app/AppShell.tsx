@@ -4,6 +4,7 @@
 // 4 secciones (Inicio, Reservas, Calendario, Alertas) con un protagonista cada una; el acceso a "Registrar venta nueva"
 // está siempre a un toque. Cuando hay cuentas reales, aquí se protegerá la ruta (middleware).
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Bell, CalendarDays, FileText, House, Plus, type LucideIcon } from 'lucide-react';
@@ -23,6 +24,7 @@ function activo(path: string, href: string) {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
+  const [confirmando, setConfirmando] = useState(false);
   const { reservas, esDemo, empezarLimpio, listo } = useReservas();
   const hoy = new Date();
   const urgentes = listo
@@ -39,7 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </Link>
         <Link
           href="/app/nueva"
-          className="mb-3 flex h-12 items-center justify-center gap-2 rounded-[var(--radius-button)] bg-gradient-to-b from-[var(--btn-oro-from)] to-[var(--btn-oro-to)] text-sm font-bold text-[var(--btn-oro-text)] shadow-[var(--shadow-1)]"
+          className="mb-3 flex h-12 items-center justify-center gap-2 rounded-[var(--radius-button)] border border-[var(--alerta-text)]/30 bg-gradient-to-b from-[var(--btn-oro-from)] to-[var(--btn-oro-to)] text-sm font-bold text-[var(--btn-oro-text)] shadow-[var(--shadow-1)] transition-transform active:scale-[0.97]"
         >
           <Plus size={18} aria-hidden="true" />
           Registrar venta nueva
@@ -68,10 +70,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-dvh flex-col pb-20 md:pb-0">
         {esDemo && (
           <div className="flex flex-wrap items-center justify-between gap-2 bg-[var(--alerta-bg)] px-4 py-2 text-sm font-medium text-[var(--alerta-text)]">
-            <span>Estás viendo datos de ejemplo.</span>
-            <button type="button" onClick={empezarLimpio} className="min-h-11 font-bold underline underline-offset-4">
-              Empezar con mis datos
-            </button>
+            {confirmando ? (
+              <>
+                <span>¿Quitar los datos de ejemplo? Tus reservas se conservan.</span>
+                <span className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      empezarLimpio();
+                      setConfirmando(false);
+                    }}
+                    className="min-h-11 rounded-[var(--radius-button)] bg-[var(--alerta-text)] px-4 font-bold text-white"
+                  >
+                    Sí, quitarlos
+                  </button>
+                  <button type="button" onClick={() => setConfirmando(false)} className="min-h-11 px-3 font-bold underline underline-offset-4">
+                    Cancelar
+                  </button>
+                </span>
+              </>
+            ) : (
+              <>
+                <span>Estás viendo datos de ejemplo.</span>
+                <button type="button" onClick={() => setConfirmando(true)} className="min-h-11 font-bold underline underline-offset-4">
+                  Empezar con mis datos
+                </button>
+              </>
+            )}
           </div>
         )}
         <header className="flex h-14 items-center justify-between px-4 md:hidden">

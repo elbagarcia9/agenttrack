@@ -88,7 +88,7 @@ export function alertasDe(r: Reserva, hoy: Date = new Date()): Alerta[] {
         id: `${r.id}-pago_cliente`,
         reservaId: r.id,
         tipo: 'pago_cliente',
-        titulo: `Pago pendiente de ${r.cliente}`,
+        titulo: `Pago del cliente · ${r.cliente}`,
         detalle: `Debe completar ${r.pagoPendienteMonto.toLocaleString('en-US')} ${r.moneda} para la reserva.`,
         fecha: f,
         severidad: severidadPlazo(f, hoy),
@@ -295,7 +295,7 @@ export function useReservas() {
   return {
     listo: s.reservas !== null,
     reservas: s.reservas ?? [],
-    esDemo: s.demo,
+    esDemo: (s.reservas ?? []).some((r) => r.id.startsWith('demo-')),
     agregar(r: Omit<Reserva, 'id' | 'creada'>) {
       const nueva: Reserva = { ...r, id: `r-${Date.now().toString(36)}`, creada: Date.now() };
       estado = { ...estado, reservas: [nueva, ...(estado.reservas ?? [])] };
@@ -309,7 +309,8 @@ export function useReservas() {
       emitir();
     },
     empezarLimpio() {
-      estado = { reservas: [], demo: false };
+      // quita solo los datos de ejemplo: las reservas que registró o importó la persona se conservan
+      estado = { reservas: (estado.reservas ?? []).filter((r) => !r.id.startsWith('demo-')), demo: false };
       guardar();
       emitir();
     },
