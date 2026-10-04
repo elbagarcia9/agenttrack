@@ -1,29 +1,23 @@
-# VEREDICTO revisor-visual — onboarding (recorrido de inicio) — 2a revisión
-Fecha: 2026-10-01 12:00
+# VEREDICTO revisor-visual — onboarding
+Fecha: 2026-10-04 12:00
 Screenshot: docs/revisiones/onboarding-375.png
 Usabilidad: 29/40
 Craft: 13/20
-Copy (si vende): 14/20
+Copy (si vende): 15/20
 Fidelidad (si hubo referencia): N-A
 Veredicto: NO LISTA
+Top defectos:
+1. [Resultado, tarjeta 2 "Salida de tu cliente"] Muestra 22 de octubre, pero el cliente viaja el 24 (dato capturado en la reserva). El título dice "salida" y la fecha es la del aviso (viaje - 2 días); la usuaria ve un dato que no coincide con el suyo. Fix: titular "Aviso de salida de tu cliente" con detalle "Tu cliente sale el 24 de octubre", o mostrar 24 con "Te aviso el 22".
+2. [Resultado, titular y subtítulo; paso reserva] La promesa es "te avisa antes de que venzan", pero en ningún paso se pide ni se nombra el canal de aviso (WhatsApp, correo, notificación). La promesa única no se puede comprobar. "Usar datos de ejemplo" también termina en "Tu primera reserva ya está vigilada" con un cliente inventado. Fix: añadir una línea o chip de canal en el resultado ("Te aviso por WhatsApp o correo, tú eliges") y, si se usan datos de ejemplo, un resultado que diga "Así se verá con tu primera reserva real".
+3. [Fondo de todas las pantallas] Se ve como fill plano #EAEAEA. Los dos radiales (azul y dorado) no se perciben en el screenshot; los inputs, la lista de la pantalla de carga y los bloques no usan el nivel hundido (--surface-2). Profundidad = 2 niveles apenas. Fix: subir el radial azul a 36-40% y su tamaño, usar --surface-2 para los wells (toggle de moneda, lista de carga) y un hairline degradé en la tarjeta héroe.
+4. [Resultado, arriba y abajo] Sobrecarga. El eyebrow "Tu primera reserva está lista" repite el titular de 3 líneas a 36px. Ese titular empuja las tarjetas, y la tarjeta "Último día para reclamar" queda cortada por la barra pegada. La comisión en juego (el dato de dinero del avatar) queda bajo el pliegue. Fix: titular de 2 líneas a 30-32px ("Laura, tu reserva ya está vigilada"), quitar el eyebrow o fusionarlo con el check, y llevar la comisión a la tarjeta héroe o justo bajo el titular.
+5. [Pasos 1-6 y titulares] Identidad: salvo el borde dorado de la tarjeta héroe, que además solo aparece si faltan 5 días o menos (con compra = hoy nunca sale), todo es lista de tarjetas blancas con chip azul, intercambiable con cualquier SaaS sobrio. Además tracking-tight en Sora 36px hace que las "ll" de "llamas" y "llevas" se peguen. Fix: llevar el motivo azul+franja dorada a un elemento fijo (por ejemplo, cabecera de la barra de progreso o la tarjeta de Reconocimiento) y usar tracking normal o -0.01em en el display.
 
-Detalle usabilidad: h1:3 h2:3 h3:3 h4:3 h5:3 h6:3 h7:3 h8:3 h9:3 h10:2
-Detalle craft: jerarquía:3 profundidad:2 identidad:2 movimiento:3 encaje:3
-Detalle copy: idea:3 especificidad:3 emoción:3 oferta:2 acción:3
-
-Gate de carga cognitiva: pasa (1 decisión por pantalla, listas de 3-5 ítems, 1 acción primaria, 6 campos en la reserva con 1 opcional). Sin sobrecarga crítica.
-
-Verificación en código
-- h3 (control y libertad): hay botón volver visible en pasos 2-8 y el estado persiste en localStorage. Fallas: el botón "volver" de la interfaz (atras) llama a ir(..., -1) sin history.back(), mientras que cada avance hace pushState; el historial se desincroniza y el atrás del navegador necesita 2 pulsaciones tras usar el botón propio. No hay salida/reinicio del flujo desde el paso 1 (sin logo ni cerrar).
-- h7 (flexibilidad): Enter envía el formulario, fecha de compra por defecto hoy, "Usar datos de ejemplo", autoFocus, auto-avance en opciones. Sin saltar paso opcional ni atajos de teclado para opciones.
-- Movimiento (baseline): stagger de opciones y resultado OK; transición entre pasos (AnimatePresence) OK; anillo y contador 0-100% en la carga OK; whileTap 0.97 en BotonPrincipal y 0.98 en opciones OK. Fallas: el CTA del resultado es un <a> sin whileTap ni :active (no se ve responder); no hay celebración en el hito "primera reserva vigilada"; reduced-motion solo se respeta en la transición de pasos y la carga (stagger con y:8/12, whileTap y animate-pulse siguen corriendo).
-- CTA héroe vivo: falla 2 de 4. Estado tap ausente en el CTA del resultado; el botón Continuar queda disabled al 60% de opacidad sin hint cuando se abre "Otra cosa" y el texto tiene menos de 2 caracteres. Contraste (#EAEAEA sobre #226697 ≈ 5:1) y altura 56px OK.
-
-Fidelidad a FICHA-ARTE: acento #226697, dorado solo en chip de 5 días, Sora + Inter Tight, radios 14/11: coinciden. Desvíos: --surface = #F6F8FA (la ficha dice #FFFFFF); display de los pasos 30px (la ficha define 38); el dispositivo firma "franja dorada pegada a la tarjeta héroe" aparece solo como chip dorado dentro de la tarjeta, no como franja.
-
-Top defectos
-1. [Pantalla "Cargando", cabecera vs anillo] Dos porcentajes distintos a la vez (barra superior "88%" y anillo central "52%"): se contradicen y rompen la sensación de precisión → ocultar el % de la cabecera en este paso (o igualarlo al del anillo).
-2. [Pasos 1-5, fondo y composición] Pantallas casi planas: fondo #EAEAEA sin tinte visible (el radial no se percibe), un bloque arriba y 300-400px de vacío antes del CTA; identidad intercambiable con cualquier cuestionario azul/gris (solo la tarjeta héroe del resultado tiene dispositivo propio) → subir el radial/tinte a un nivel visible, dar a cada paso un detalle firma (mini-vista previa del semáforo o franja dorada en el progreso) y usar --surface #FFF según ficha.
-3. [Resultado, CTA "Activar mis 14 días gratis" + microcopy] El CTA es un <a> sin estado de tap y no hay celebración del hito; la línea "Tarjeta al empezar, sin cobro hoy" no dice qué pasa al día 15 ni cuánto cuesta (eje oferta copy = 2) → añadir whileTap/:active al enlace, una micro-celebración sobria (check animado en la tarjeta héroe) y "Después $X/mes, cancelas cuando quieras" en la línea de condiciones.
-4. [Paso "Otra cosa" (agencia/control/preocupación), botón Continuar] Se abre un botón disabled al 60% sin explicación y rompe el patrón de auto-avance de las otras opciones → dejar el botón habilitado y mostrar "Escribe tu respuesta para continuar" al tocar, o avanzar con Enter.
-5. [Reserva con errores (6a), fila Tu comisión + USD/MXN] Con error, el selector USD/MXN queda ~20px más abajo que el campo (items-end alinea con el mensaje de error); además el chip del escudo usa rounded-3xl y el interruptor interno rounded-lg frente al radio 11/14 de la ficha; "Usar datos de ejemplo" mide ~36px de alto → alinear con items-start y h-12 fijo en el interruptor, unificar radios con tokens, py-3 en el enlace; y sincronizar el historial (history.back() en el botón volver).
+Notas de verificación en código:
+- h3 Control y libertad: hay Volver sincronizado con el historial (history.back o fallback), "Saltar este paso" solo en el paso de control, persistencia en localStorage, el flujo restaura el estado al recargar. Falta: no hay Volver ni cancelar durante "cargando" (4.3 s sin salida); al recargar en un paso restaurado, el botón atrás del navegador salta al paso 1 (el historial no se reconstruye). Nota 3.
+- h7 Flexibilidad: defaults buenos (fecha de compra = hoy, datos de ejemplo, Enter envía formularios, autoFocus, auto-avance en opciones). No hay atajos de teclado ni edición rápida desde el resultado. Nota 3.
+- CTA héroe vivo: contraste ~5.1:1, whileTap 0.97, 56px de alto, ancho completo y nunca disabled por defecto (valida al enviar con errores por campo). Cumple los 4.
+- Movimiento (código): stagger de entrada, anillo y conteo en la carga, barra de progreso animada, tap, transición entre pasos, spring de check y reduced-motion global (MotionConfig + useReducedMotion) verificados. Faltan conteo de números héroe en el resultado y una celebración más allá de un check de 24px.
+- Gate de carga cognitiva: 0-1 fallas (reserva con 6 campos en el límite; resultado con 4 tarjetas + 2 bloques). Sin sobrecarga crítica.
+- Fidelidad a FICHA-ARTE: paleta, radios 14/11, Sora + Inter Tight y --surface #FFFFFF coinciden. Escala de ficha display 38/body 14/label 11: los titulares usan 36px y el label 12px (desvío menor).
+- Copy: sin garantía nombrada ni prueba social (decisión del usuario). El único respaldo es "sin cobro hoy, cancelas cuando quieras". La traza del copy a FICHA-AVATAR es buena (dolores 1, 2, 4, 7 y objeción 4). Falta el léxico del avatar ("de a gratis", "que no se te escape ninguna comisión") y "desde $99 MXN" no dice qué incluye.

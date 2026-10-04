@@ -571,6 +571,7 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
   const clave = claveDe(estado.preocupacion);
   const hoy = new Date();
   const esArcher = estado.agencia.startsWith('Archer');
+  const esEjemplo = r.cliente.trim() === 'Cliente de ejemplo';
 
   useEffect(() => {
     track('resultado_visto', { preocupacion: clave, archer: esArcher });
@@ -588,7 +589,7 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
 
   const filas: { id: string; titulo: string; detalle: string; fecha: Date; semaforo: boolean; destacada: boolean }[] = [
     { id: 'alta', titulo: 'Dar de alta en el portal', detalle: '30 días desde la compra', fecha: plazos.alta, semaforo: true, destacada: clave === 'alta' || clave === 'fechas' || clave === 'otra' },
-    { id: 'salida', titulo: 'Salida de tu cliente', detalle: 'Aviso 2 días antes', fecha: plazos.salidaAviso, semaforo: false, destacada: false },
+    { id: 'salida', titulo: 'Tu cliente sale', detalle: `Te aviso el ${formatoFecha(plazos.salidaAviso, hoy)}, 2 días antes`, fecha: v as Date, semaforo: false, destacada: false },
     { id: 'revision', titulo: 'Solicitar revisión', detalle: 'Desde 60 días tras el viaje', fecha: plazos.revisionDesde, semaforo: false, destacada: clave === 'pago' },
     { id: 'reclamo', titulo: 'Último día para reclamar', detalle: '18 meses desde el viaje', fecha: plazos.reclamo, semaforo: true, destacada: clave === 'reclamo' },
   ];
@@ -610,7 +611,7 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
         </motion.span>
         Tu primera reserva está lista
       </p>
-      <h1 className="mt-1 text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">Tu primera reserva ya está vigilada, {estado.nombre.trim()}</h1>
+      <h1 className="mt-1 text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{esEjemplo ? `Así se verá tu asistente con tu primera reserva real, ${estado.nombre.trim()}` : `Tu primera reserva ya está vigilada, ${estado.nombre.trim()}`}</h1>
       <p className="mt-2 text-sm text-[var(--text-secondary)]">
         {frase}: tu asistente cuenta los plazos de {r.cliente.trim()} en {r.destino.trim()} y te avisa antes de que venzan.
       </p>

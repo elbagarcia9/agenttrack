@@ -86,6 +86,7 @@ export function PaywallFlow() {
   const [aviso, setAviso] = useState(true);
   const [hora, setHora] = useState<Hora>('manana');
   const [hoy, setHoy] = useState<Date | null>(null);
+  const hidratado = hoy !== null;
 
   useEffect(() => {
     // lectura única del almacenamiento local al cargar (no hay servidor todavía)
@@ -146,6 +147,7 @@ export function PaywallFlow() {
               </p>
             </div>
 
+            {!hidratado && <div aria-hidden="true" className="h-[132px] animate-pulse rounded-[var(--radius-card)] bg-[var(--surface-2)] motion-reduce:animate-none" />}
             {guardado && (
               <motion.div
                 initial={{ scale: 0.94, opacity: 0 }}
@@ -216,7 +218,7 @@ export function PaywallFlow() {
                       <p className="text-2xl font-bold tabular-nums [font-family:var(--font-display)]">
                         $<Numero valor={d.precioMes} />
                       </p>
-                      <p className="text-xs text-[var(--text-secondary)]">MXN al mes</p>
+                      <p className="text-sm text-[var(--text-secondary)]">MXN al mes</p>
                     </div>
                   </motion.button>
                 );
@@ -308,7 +310,7 @@ export function PaywallFlow() {
               <Link href="/" className="flex min-h-11 items-center px-2 text-sm font-medium text-[var(--text-secondary)] underline underline-offset-4">
                 Ahora no
               </Link>
-              <span className="flex items-center gap-1 text-xs text-[var(--text-secondary)]">
+              <span className="flex items-center gap-1 text-sm text-[var(--text-secondary)]">
                 <Lock size={14} aria-hidden="true" /> Pago procesado por Hotmart
               </span>
             </div>
