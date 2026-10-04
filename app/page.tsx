@@ -3,7 +3,7 @@
 // Landing de ventas — copy MARCADO de docs/copy/landing.md (trazado a FICHA-AVATAR.md).
 // Modelo 2 (02C): el CTA lleva a /onboarding. Nombre de marca provisional en BRAND.
 
-import { CalendarX, CircleHelp, FileSpreadsheet, FileWarning, Clock3, HandCoins } from 'lucide-react';
+import { CalendarX, CircleHelp, FileSpreadsheet, FileWarning, HandCoins, Repeat } from 'lucide-react';
 import { Hero } from '@/components/landing/Hero';
 import { Problema } from '@/components/landing/Problema';
 import { Agitacion } from '@/components/landing/Agitacion';
@@ -17,7 +17,8 @@ import { FooterLegal } from '@/components/landing/FooterLegal';
 import { StickyCtaMobile } from '@/components/landing/ui';
 import { AppMockInicio } from '@/components/AppMockInicio';
 import { Logo } from '@/components/Logo';
-import { SemaforoVisual } from '@/components/SemaforoVisual';
+import { AvisosAsistente } from '@/components/AvisosAsistente';
+import { ImportarExcel } from '@/components/ImportarExcel';
 
 const BRAND = 'Commission Guard'; // provisional — el nombre final lo elige el usuario
 const CTA_HREF = '/onboarding';
@@ -31,7 +32,7 @@ export default function Landing() {
         logo={<Logo />}
         loginHref="/entrar"
         h1Marked="[acento]Ninguna comisión[/acento] se te vence sin que lo sepas"
-        subtitleMarked="El Semáforo de Comisiones te avisa antes de que venza [b]cada plazo[/b]"
+        subtitleMarked="Tu asistente vigila cada comisión y te avisa antes de que venza [b]cada plazo[/b]"
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
         socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Tarjeta al empezar, sin cobro hoy.</span>}
@@ -46,51 +47,51 @@ export default function Landing() {
       <Problema
         titulo="¿Te suena?"
         preguntas={[
-          { icon: CircleHelp, textoMarked: '¿No sabes si la comisión de aquel viaje [b]ya cayó[/b]?' },
+          { icon: CircleHelp, textoMarked: '¿No recuerdas si esa comisión que te deben [b]ya es tiempo de reclamarla[/b]?' },
           { icon: FileWarning, textoMarked: '¿Se te pasó [b]dar de alta[/b] una venta en el portal?' },
-          { icon: FileSpreadsheet, textoMarked: '¿Tu Excel es un caos que en el celular no se lee?' },
+          { icon: FileSpreadsheet, textoMarked: '¿Tu Excel es un caos y es [b]difícil revisarlo en el celular[/b]?' },
           { icon: CalendarX, textoMarked: '¿Tus fechas de viaje y de cobro están [b]revueltas[/b]?' },
+          { icon: Repeat, textoMarked: '¿Tu sistema es improvisado y debes [b]revisarlo a diario[/b] para no olvidar?' },
         ]}
       />
 
       <Agitacion
-        iconos={[Clock3, Clock3, HandCoins, FileWarning]}
+        iconos={[HandCoins, FileWarning]}
         frases={[
-          'De noche, en la cama: ¿aquel viaje [b]ya te pagó[/b] la comisión?',
-          'Cada venta corre [b]tres relojes[/b]: alta, pago y reclamo.',
           'Trabajar el viaje entero para terminar [b]trabajando de a gratis[/b].',
           'Si dejas vencer el plazo de reclamo, [acento]ya no puedes pedirla[/acento].',
         ]}
-        contraste={{
-          labelHoy: 'Hoy',
-          hoy: 'Excel, WhatsApp y portal: tres lugares y ningún aviso a tiempo.',
-          labelFuturo: 'Si nada cambia',
-          futuro: 'El mismo desorden, con más meses de comisiones sin revisar.',
+        escena={{
+          citaMarked: 'Nadie se va a parar a prender la compu…',
+          cierreMarked: `Puedes estar tranquila: [b]${BRAND} te avisará con anticipación[/b].`,
         }}
       />
 
       <Solucion
-        tituloMarked="[acento]Un semáforo[/acento] para cada comisión"
-        mecanismo="el Semáforo de Comisiones"
-        bigIdeaMarked="No es descuido: cada plazo vive en un lugar distinto. El Semáforo los junta y [b]te avisa antes de que venzan[/b]."
+        kicker="¿CÓMO FUNCIONA?"
+        tituloMarked="[acento]Tu asistente[/acento] vigilando cada comisión"
+        mecanismo="tu asistente de comisiones"
+        bigIdeaMarked="Cada venta que registras tiene su asistente: [b]te avisa antes de que venza cada plazo[/b]."
         pasos={[
-          { titulo: 'Registra la venta', detalle: 'Los datos clave, en segundos.' },
-          { titulo: 'El Semáforo cuenta', detalle: 'Alta, pago y reclamo, con su fecha.' },
-          { titulo: 'Actúas a tiempo', detalle: 'Dorado a 5 días; rojo si venció.' },
+          { titulo: 'Registra la venta', detalle: 'Todos los datos necesarios, en segundos.' },
+          { titulo: 'El asistente ya tiene la información', detalle: 'Las fechas importantes ya tienen su alerta.' },
+          { titulo: 'Actúas a tiempo', detalle: 'Aviso anticipado en dorado para tomar acción.' },
         ]}
         antesDespues={{
           labelAntes: 'Antes',
           antes: 'Excel pasivo y fechas en tu cabeza.',
-          labelDespues: 'Después',
-          despues: 'Cada venta con su estatus y su aviso a tiempo.',
+          labelDespues: `Con ${BRAND}`,
+          despues: 'Tu asistente vigila cada venta y te avisa a tiempo.',
         }}
       />
 
-      <SemaforoVisual />
+      <AvisosAsistente />
+
+      <ImportarExcel />
 
       <AppPorDentro
         kicker="VISTAS DE EJEMPLO DE LA APP"
-        tituloMarked="Tu negocio, [acento]a un vistazo[/acento]"
+        tituloMarked="Dale un vistazo a [acento]tu próximo asistente[/acento]"
         frames={[
           { src: '/mock/nueva-reserva.png', alt: 'Vista de ejemplo: formulario de nueva reserva', label: 'Registra una venta en segundos' },
           { src: '/mock/resultado.png', alt: 'Vista de ejemplo: plazos programados de una reserva', label: 'Tu primera reserva, ya vigilada' },
@@ -115,7 +116,7 @@ export default function Landing() {
           ctaHref: '/onboarding?plan=anual',
           features: [
             'Avisos por correo y notificación antes de cada plazo',
-            'Semáforo de plazos: alta, pago y reclamo',
+            'Asistente que vigila alta, pago y reclamo',
             'Tabla de reservas con filtros y orden',
             'Calendario de viajes y de cobros',
             'Importa tu Excel: tu base lista el mismo día',
@@ -129,7 +130,7 @@ export default function Landing() {
           ctaHref: '/onboarding?plan=mensual',
           features: [
             'Avisos por correo y notificación antes de cada plazo',
-            'Semáforo de plazos: alta, pago y reclamo',
+            'Asistente que vigila alta, pago y reclamo',
             'Importa tu Excel: tu base lista el mismo día',
             'Tabla de reservas con filtros y calendario',
             'Cancelas cuando quieras',
@@ -151,7 +152,7 @@ export default function Landing() {
           {
             pregunta: '¿Por qué no sigo con mi Excel gratis?',
             respuestaMarked:
-              'Excel guarda datos, pero [b]no te avisa[/b]. El Semáforo cuenta los plazos de cada venta y te alerta antes de que venzan.',
+              'Excel guarda datos, pero [b]no te avisa[/b]. Tu asistente cuenta los plazos de cada venta y te alerta antes de que venzan.',
           },
           {
             pregunta: '¿Tengo que pasar mis datos a mano?',
@@ -183,7 +184,7 @@ export default function Landing() {
 
       <CtaFinal
         h2Marked="Duerme sabiendo que [acento]nada se vence[/acento]"
-        futurePacingMarked="Mañana registras tu primera venta y el Semáforo empieza a vigilar cada plazo por ti."
+        futurePacingMarked="Mañana registras tu primera venta y tu asistente empieza a vigilar cada plazo por ti."
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
         recap="14 días gratis · tarjeta al empezar, sin cobro hoy · cancela cuando quieras"

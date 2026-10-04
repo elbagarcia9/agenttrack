@@ -105,7 +105,7 @@ export function PaywallFlow() {
               <h1 className="text-balance text-3xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">
                 {guardado ? (
                   <>
-                    {guardado.nombre}, tu Semáforo está <span className="text-[var(--accent)]">listo para vigilar</span>
+                    {guardado.nombre}, tu asistente está <span className="text-[var(--accent)]">listo para vigilar</span>
                   </>
                 ) : (
                   <>

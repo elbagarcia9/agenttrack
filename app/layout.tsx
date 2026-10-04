@@ -8,7 +8,7 @@ const interTight = Inter_Tight({ subsets: ['latin'], variable: '--font-inter-tig
 export const metadata: Metadata = {
   title: 'Commission Guard — Ninguna comisión se te vence sin que lo sepas',
   description:
-    'Para agentes de viajes de agencias Host: el Semáforo de Comisiones te avisa antes de que venza cada plazo de alta, pago y reclamo. Prueba 14 días gratis.',
+    'Para agentes de viajes de agencias Host: tu asistente vigila cada comisión y te avisa antes de que venza cada plazo de alta, pago y reclamo. Prueba 14 días gratis.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

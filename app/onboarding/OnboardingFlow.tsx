@@ -86,7 +86,7 @@ const PREOCUPACIONES: { texto: string; Icon: LucideIcon; clave: 'alta' | 'pago' 
 ];
 const RECONOCIMIENTO: Record<string, string> = {
   alta: 'Dar de alta se olvida porque vive en otro portal, no en tu agenda. No es descuido tuyo: lo vamos a recordar nosotros.',
-  pago: 'No saberlo es normal: el pago llega semanas después del viaje y nadie te avisa. Aquí lo verás de un vistazo.',
+  pago: 'Es normal olvidarlo: el pago llega semanas después del viaje. Tu asistente te recordará cuándo preguntar por él.',
   reclamo: 'El plazo de reclamo es largo, y por eso se olvida. Lo vamos a contar por ti y te avisaremos a tiempo.',
   otra: 'Gracias por contármelo. Vamos a vigilar cada plazo por ti para que no dependa de tu memoria.',
   fechas: 'Mezclar viajes y cobros es lo más común con Excel. Aquí cada uno tiene su propio calendario.',
@@ -587,7 +587,7 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
       <p className="text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">Tu primera reserva está lista</p>
       <h1 className="mt-1 text-balance text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">Tu primera reserva ya está vigilada, {estado.nombre.trim()}</h1>
       <p className="mt-2 text-sm text-[var(--text-secondary)]">
-        {frase}: el Semáforo de Comisiones cuenta los plazos de {r.cliente.trim()} en {r.destino.trim()} y te avisa antes de que venzan.
+        {frase}: tu asistente cuenta los plazos de {r.cliente.trim()} en {r.destino.trim()} y te avisa antes de que venzan.
       </p>
       <motion.ul variants={lista} initial="oculto" animate="visible" className="mt-6 flex flex-col gap-3">
         {filas.map((f, i) => {

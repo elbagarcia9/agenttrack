@@ -1,4 +1,4 @@
-// Marca provisional: escudo con semáforo. Se reemplaza al elegir el nombre final.
+// Marca provisional: escudo con tres luces. Se reemplaza al elegir el nombre final.
 export function Logo({ tono = 'accent' }: { tono?: 'accent' | 'neutro' }) {
   const fondo = tono === 'accent' ? 'var(--accent)' : 'var(--text-tertiary)';
   return (
