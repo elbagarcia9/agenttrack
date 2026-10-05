@@ -10,7 +10,7 @@ import { parseFecha, sumarDias, formatoFecha } from '@/lib/plazos';
 import { TIPOS, useReservas, type Estatus, type Moneda, type Tipo } from '@/lib/reservas';
 
 const entradaClase =
-  'mt-1 h-12 w-full rounded-[var(--radius-button)] border bg-[var(--surface)] px-3 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]';
+  'mt-1 h-12 w-full rounded-[var(--radius-button)] border campo-suave px-3 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]';
 const borde = 'border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)]';
 const bordeError = 'border-2 border-[var(--rojo-text)]';
 
@@ -127,7 +127,7 @@ export default function NuevaReserva() {
           </Campo>
           <div role="group" aria-label="Moneda" className="mt-5 grid h-12 grid-cols-2 rounded-[var(--radius-button)] bg-[color-mix(in_oklab,var(--text-primary)_8%,transparent)] p-1">
             {(['USD', 'MXN'] as const).map((m) => (
-              <button key={m} type="button" aria-pressed={moneda === m} onClick={() => setMoneda(m)} className={`rounded-[var(--radius-button)] px-3 text-sm font-semibold ${moneda === m ? 'bg-[var(--surface)] shadow-[var(--shadow-1)]' : 'text-[var(--text-secondary)]'}`}>
+              <button key={m} type="button" aria-pressed={moneda === m} onClick={() => setMoneda(m)} className={`rounded-[var(--radius-button)] px-3 text-sm font-semibold ${moneda === m ? 'tarjeta-suave' : 'text-[var(--text-secondary)]'}`}>
                 {m}
               </button>
             ))}

@@ -44,7 +44,7 @@ export default function Alertas() {
       </div>
 
       {listo && alertas.length === 0 && (
-        <div className="rounded-[var(--radius-card)] bg-[var(--surface)] p-6 shadow-[var(--shadow-1)]">
+        <div className="rounded-[var(--radius-card)] tarjeta-suave p-6">
           <h2 className="text-xl font-bold [font-family:var(--font-display)]">Todo en orden</h2>
           <p className="mt-1 text-[var(--text-secondary)]">No hay avisos por ahora. Tu asistente te avisará antes de cada plazo.</p>
         </div>
@@ -65,7 +65,7 @@ export default function Alertas() {
               {items.map((a) => {
                 const ac = accion(a);
                 return (
-                  <li key={a.id} className={`rounded-[var(--radius-card)] border-l-4 bg-[var(--surface)] p-4 shadow-[var(--shadow-1)] ${g.borde}`}>
+                  <li key={a.id} className={`rounded-[var(--radius-card)] border-l-4 tarjeta-suave p-4 ${g.borde}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="font-bold">{a.titulo}</p>

@@ -84,7 +84,7 @@ export default function Calendario() {
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{titulo}</h1>
         <div className="flex items-center gap-1">
-          <button type="button" aria-label="Mes anterior" onClick={() => setMes(new Date(mes.getFullYear(), mes.getMonth() - 1, 1))} className="flex size-11 items-center justify-center rounded-[var(--radius-button)] bg-[var(--surface)] shadow-[var(--shadow-1)]">
+          <button type="button" aria-label="Mes anterior" onClick={() => setMes(new Date(mes.getFullYear(), mes.getMonth() - 1, 1))} className="flex size-11 items-center justify-center rounded-[var(--radius-button)] tarjeta-suave">
             <ChevronLeft size={20} />
           </button>
           <button
@@ -93,18 +93,18 @@ export default function Calendario() {
               setMes(new Date(hoy.getFullYear(), hoy.getMonth(), 1));
               setSel(hoy);
             }}
-            className="min-h-11 rounded-[var(--radius-button)] bg-[var(--surface)] px-3 text-sm font-semibold shadow-[var(--shadow-1)]"
+            className="min-h-11 rounded-[var(--radius-button)] tarjeta-suave px-3 text-sm font-semibold"
           >
             Hoy
           </button>
-          <button type="button" aria-label="Mes siguiente" onClick={() => setMes(new Date(mes.getFullYear(), mes.getMonth() + 1, 1))} className="flex size-11 items-center justify-center rounded-[var(--radius-button)] bg-[var(--surface)] shadow-[var(--shadow-1)]">
+          <button type="button" aria-label="Mes siguiente" onClick={() => setMes(new Date(mes.getFullYear(), mes.getMonth() + 1, 1))} className="flex size-11 items-center justify-center rounded-[var(--radius-button)] tarjeta-suave">
             <ChevronRight size={20} />
           </button>
         </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-        <section aria-label="Calendario del mes" className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--surface)] shadow-[var(--shadow-1)]">
+        <section aria-label="Calendario del mes" className="overflow-hidden rounded-[var(--radius-card)] tarjeta-suave">
           <div className="grid grid-cols-7 bg-[var(--surface-2)] text-center text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
             {DIAS.map((d) => (
               <div key={d} className="py-2">
@@ -149,7 +149,7 @@ export default function Calendario() {
           </div>
         </section>
 
-        <aside aria-label="Lista del día" className="rounded-[var(--radius-card)] bg-[var(--surface)] p-4 shadow-[var(--shadow-1)]">
+        <aside aria-label="Lista del día" className="rounded-[var(--radius-card)] tarjeta-suave p-4">
           <h2 className="text-lg font-bold [font-family:var(--font-display)]">{capitalizar(new Intl.DateTimeFormat('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }).format(sel))}</h2>
           <p className="text-sm text-[var(--text-secondary)]">{listo ? (delDia.length === 0 ? 'Nada este día.' : `${delDia.length} ${delDia.length === 1 ? 'elemento' : 'elementos'}`) : 'Cargando…'}</p>
           <ul className="mt-3 flex flex-col gap-2">

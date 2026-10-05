@@ -154,7 +154,7 @@ export default function Inicio() {
             <ul className="flex flex-col gap-2">
               {siguientes.map((a) => (
                 <li key={a.id}>
-                  <Link href="/app/alertas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] bg-[var(--surface)] p-3 shadow-[var(--shadow-1)] transition-transform active:scale-[0.99]">
+                  <Link href="/app/alertas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] tarjeta-suave p-3 transition-transform active:scale-[0.99]">
                     <div className="min-w-0">
                       <p className="font-semibold">{a.titulo}</p>
                       <p className="text-sm text-[var(--text-secondary)]">{formatoFecha(a.fecha, hoy)}</p>
@@ -177,7 +177,7 @@ export default function Inicio() {
           <ul className="flex flex-col gap-2">
             {recientes.map((r) => (
               <li key={r.id}>
-                <Link href="/app/reservas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] bg-[var(--surface)] p-3 shadow-[var(--shadow-1)] transition-transform active:scale-[0.99]">
+                <Link href="/app/reservas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] tarjeta-suave p-3 transition-transform active:scale-[0.99]">
                   <div className="min-w-0">
                     <p className="truncate font-semibold">
                       {r.cliente} · {r.destino}

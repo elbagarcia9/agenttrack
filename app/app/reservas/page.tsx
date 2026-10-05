@@ -13,7 +13,7 @@ type Orden = 'az' | 'creacion' | 'viaje';
 type CampoFecha = 'fechaViaje' | 'fechaCompra';
 
 const campoClase =
-  'min-h-11 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)] px-3 text-sm outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]';
+  'min-h-11 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] campo-suave px-3 text-sm outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]';
 
 function fechaCorta(iso: string, hoy: Date): string {
   const d = parseFecha(iso);
@@ -89,7 +89,7 @@ export default function Reservas() {
         </div>
       </div>
 
-      <section aria-label="Filtros" className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-[var(--surface)] p-3 shadow-[var(--shadow-1)]">
+      <section aria-label="Filtros" className="flex flex-col gap-3 rounded-[var(--radius-card)] tarjeta-suave p-3">
         <div className="flex gap-2">
           <label className="relative flex-1">
             <span className="sr-only">Buscar cliente o destino</span>
@@ -155,7 +155,7 @@ export default function Reservas() {
       </section>
 
       {listo && filas.length === 0 && (
-        <div className="flex flex-col items-start gap-3 rounded-[var(--radius-card)] bg-[var(--surface)] p-6 shadow-[var(--shadow-1)]">
+        <div className="flex flex-col items-start gap-3 rounded-[var(--radius-card)] tarjeta-suave p-6">
           <h2 className="text-xl font-bold [font-family:var(--font-display)]">{reservas.length === 0 ? 'Aún no tienes reservas' : 'Ninguna reserva coincide'}</h2>
           <p className="text-[var(--text-secondary)]">
             {reservas.length === 0 ? 'Registra tu primera venta o importa tu Excel.' : 'Prueba quitando algún filtro.'}
@@ -170,7 +170,7 @@ export default function Reservas() {
 
       {/* Tabla (computadora) */}
       {filas.length > 0 && (
-        <div className="hidden overflow-x-auto rounded-[var(--radius-card)] bg-[var(--surface)] shadow-[var(--shadow-1)] md:block">
+        <div className="hidden overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave md:block">
           <table className="w-full min-w-6xl border-collapse text-sm">
             <thead>
               <tr className="bg-[var(--surface-2)] text-left text-xs uppercase tracking-wide text-[var(--text-secondary)]">
@@ -215,7 +215,7 @@ export default function Reservas() {
       {filas.length > 0 && (
         <ul className="flex flex-col gap-3 md:hidden">
           {filas.map((r) => (
-            <li key={r.id} className={`rounded-[var(--radius-card)] bg-[var(--surface)] p-4 shadow-[var(--shadow-1)] ${tono(r)}`}>
+            <li key={r.id} className={`rounded-[var(--radius-card)] tarjeta-suave p-4 ${tono(r)}`}>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate text-base font-bold">{r.cliente}</p>

@@ -67,7 +67,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
       </aside>
 
-      <div className="flex min-h-dvh flex-col pb-20 md:pb-0">
+      <div className="flex min-h-dvh flex-col pb-32 md:pb-0">
         {esDemo && (
           <div className="flex flex-wrap items-center justify-between gap-2 bg-[var(--alerta-bg)] px-4 py-2 text-sm font-medium text-[var(--alerta-text)]">
             {confirmando ? (
@@ -109,7 +109,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {!enNueva && (
-        <nav aria-label="Secciones" className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-black/10 bg-[var(--surface)] px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 md:hidden">
+        <nav
+          aria-label="Secciones"
+          className="capsula-menu fixed inset-x-4 bottom-[max(16px,env(safe-area-inset-bottom))] z-30 mx-auto flex max-w-md justify-between rounded-full p-2 md:hidden"
+        >
           {ITEMS.map(({ href, texto, Icon }) => {
             const on = activo(path, href);
             return (
@@ -117,14 +120,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 key={href}
                 href={href}
                 aria-current={on ? 'page' : undefined}
-                className={`relative flex min-h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-[var(--radius-button)] px-3 text-xs font-semibold ${on ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}`}
+                className={`relative flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-full px-1 text-xs font-semibold transition-colors duration-200 ${on ? 'bg-[var(--surface-2)] text-[var(--accent)]' : 'text-[var(--text-secondary)]'}`}
               >
-                <span className={`flex h-7 w-12 items-center justify-center rounded-full ${on ? 'bg-[var(--surface-2)]' : ''}`}>
-                  <Icon size={20} aria-hidden="true" />
+                <span
+                  className={`flex size-7 items-center justify-center rounded-full transition-colors duration-200 ${on ? 'bg-[var(--accent)] text-[var(--on-accent)] shadow-[0_6px_12px_-6px_rgb(34_102_151_/_0.7)]' : ''}`}
+                >
+                  <Icon size={on ? 16 : 22} aria-hidden="true" />
                 </span>
                 {texto}
                 {href === '/app/alertas' && urgentes > 0 && (
-                  <span className="absolute right-2 top-0 rounded-full bg-[var(--btn-oro-to)] px-1.5 text-xs font-bold text-[var(--btn-oro-text)]">{urgentes}</span>
+                  <span className="absolute right-3 top-1 rounded-full bg-[var(--btn-oro-to)] px-1.5 text-xs font-bold text-[var(--btn-oro-text)]">{urgentes}</span>
                 )}
               </Link>
             );

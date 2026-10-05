@@ -12,7 +12,7 @@ import { formatoDinero, useReservas, type Moneda } from '@/lib/reservas';
 type Paso = 'archivo' | 'columnas' | 'revisar' | 'listo';
 
 const selectClase =
-  'min-h-11 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)] px-3 text-sm outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]';
+  'min-h-11 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] campo-suave px-3 text-sm outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]';
 const CLAVE_MAPEO = 'cg_mapeo_importacion';
 
 function firma(enc: Fila): string {
@@ -199,7 +199,7 @@ export default function Importar() {
               const col = mapeo[c.id];
               const ejemplos = col === undefined ? [] : filas.slice(encIdx + 1, encIdx + 4).map((f) => celdaTexto(f[col])).filter(Boolean);
               return (
-                <div key={c.id} className="rounded-[var(--radius-card)] bg-[var(--surface)] p-3 shadow-[var(--shadow-1)]">
+                <div key={c.id} className="rounded-[var(--radius-card)] tarjeta-suave p-3">
                   <label className="block">
                     <span className="flex items-center justify-between text-sm font-bold">
                       {c.etiqueta}
@@ -281,7 +281,7 @@ export default function Importar() {
             </label>
           )}
 
-          <div className="overflow-x-auto rounded-[var(--radius-card)] bg-[var(--surface)] shadow-[var(--shadow-1)]">
+          <div className="overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave">
             <table className="w-full min-w-3xl border-collapse text-sm">
               <thead>
                 <tr className="bg-[var(--surface-2)] text-left text-xs uppercase tracking-wide text-[var(--text-secondary)]">
@@ -328,7 +328,7 @@ export default function Importar() {
       )}
 
       {paso === 'listo' && (
-        <section className="flex flex-col items-start gap-4 rounded-[var(--radius-card)] bg-[var(--surface)] p-6 shadow-[var(--shadow-1)]">
+        <section className="flex flex-col items-start gap-4 rounded-[var(--radius-card)] tarjeta-suave p-6">
           <span aria-hidden="true" className="flex size-14 items-center justify-center rounded-full bg-[var(--chip-verde-bg)]">
             <Check size={28} color="var(--verde-text)" />
           </span>
