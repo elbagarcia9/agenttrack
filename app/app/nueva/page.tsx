@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
+import { ExitoAnimado } from '@/components/app/ExitoAnimado';
 import { parseFecha, sumarDias, formatoFecha } from '@/lib/plazos';
 import { TIPOS, useReservas, type Estatus, type Moneda, type Tipo } from '@/lib/reservas';
 
@@ -35,7 +36,8 @@ function Campo({ etiqueta, error, children }: { etiqueta: string; error?: string
 
 export default function NuevaReserva() {
   const router = useRouter();
-  const { agregar } = useReservas();
+  const { agregar, reservas } = useReservas();
+  const [exito, setExito] = useState(false);
   const [cliente, setCliente] = useState('');
   const [contacto, setContacto] = useState('');
   const [destino, setDestino] = useState('');
@@ -69,6 +71,8 @@ export default function NuevaReserva() {
     e.preventDefault();
     setIntento(true);
     if (!valido) return;
+    // la celebración es solo para la PRIMERA venta que la persona registra (las de ejemplo no cuentan)
+    const esPrimera = !reservas.some((r) => !r.id.startsWith('demo-'));
     agregar({
       cliente: cliente.trim(),
       contacto: contacto.trim(),
@@ -85,10 +89,29 @@ export default function NuevaReserva() {
       comentarios: comentarios.trim(),
       estatus,
     });
-    router.push('/app/reservas');
+    if (esPrimera) setExito(true);
+    else router.push('/app/reservas');
   };
 
   const limiteAlta = fCompra ? formatoFecha(sumarDias(fCompra, 30)) : null;
+
+  if (exito) {
+    return (
+      <div role="status" aria-live="polite" className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[var(--bg)] bg-[image:radial-gradient(520px_360px_at_50%_30%,color-mix(in_oklab,var(--accent)_18%,transparent),transparent_70%)] px-6 text-center">
+        <ExitoAnimado clase="size-56" />
+        <h1 className="text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">¡Tu primera venta quedó registrada!</h1>
+        <p className="max-w-[40ch] text-base text-[var(--text-secondary)]">Tu asistente ya vigila sus plazos y te avisará antes de que venzan.</p>
+        <div className="mt-2 flex w-full max-w-xs flex-col gap-3">
+          <button type="button" autoFocus onClick={() => router.push('/app/reservas')} className="flex h-14 items-center justify-center rounded-[var(--radius-button)] bg-[var(--accent)] px-8 text-base font-semibold text-[var(--on-accent)] shadow-[var(--shadow-2)] transition-transform active:scale-[0.97]">
+            Ver mis reservas
+          </button>
+          <button type="button" onClick={() => router.push('/app')} className="min-h-12 text-sm font-semibold text-[var(--text-secondary)] underline underline-offset-4">
+            Ir al inicio
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={guardar} noValidate className="flex flex-col gap-5 pb-24 md:pb-0">

@@ -33,7 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const enNueva = path.startsWith('/app/nueva') || path.startsWith('/app/importar');
 
   return (
-    <div className="min-h-dvh bg-[radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%),var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)] md:grid md:grid-cols-[240px_1fr]">
+    <div className="min-h-dvh bg-[var(--bg)] bg-[image:radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%)] text-[var(--text-primary)] [font-family:var(--font-body)] md:grid md:grid-cols-[240px_1fr]">
       <aside className="hidden border-r border-black/10 bg-[var(--surface)] p-4 md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:gap-1">
         <Link href="/app" className="flex min-h-11 items-center gap-2 px-2 pb-4 text-base font-semibold text-[var(--accent)]">
           <Logo />

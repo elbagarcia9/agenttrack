@@ -6,6 +6,7 @@
 import { useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Check, ChevronLeft, FileUp, Loader2, TriangleAlert } from 'lucide-react';
+import { ExitoAnimado } from '@/components/app/ExitoAnimado';
 import { CAMPOS, convertirFilas, indiceEncabezado, parseCsv, sugerirMapeo, type Campo, type Fila, type Mapeo } from '@/lib/importar';
 import { formatoDinero, useReservas, type Moneda } from '@/lib/reservas';
 
@@ -329,9 +330,7 @@ export default function Importar() {
 
       {paso === 'listo' && (
         <section className="flex flex-col items-start gap-4 rounded-[var(--radius-card)] tarjeta-suave p-6">
-          <span aria-hidden="true" className="flex size-14 items-center justify-center rounded-full bg-[var(--chip-verde-bg)]">
-            <Check size={28} color="var(--verde-text)" />
-          </span>
+          <ExitoAnimado clase="size-44" />
           <h2 className="text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">Importaste {resultado.importadas} reservas</h2>
           <p className="max-w-[52ch] text-[var(--text-secondary)]">
             Tu asistente ya calculó los plazos de cada una.

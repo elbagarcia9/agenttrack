@@ -117,7 +117,7 @@ export function PaywallFlow() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="min-h-dvh bg-[radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_24%,transparent),transparent_70%),radial-gradient(420px_300px_at_-10%_105%,color-mix(in_oklab,var(--btn-oro-to)_14%,transparent),transparent_70%),var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
+      <div className="min-h-dvh bg-[var(--bg)] bg-[image:radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_24%,transparent),transparent_70%),radial-gradient(420px_300px_at_-10%_105%,color-mix(in_oklab,var(--btn-oro-to)_14%,transparent),transparent_70%)] text-[var(--text-primary)] [font-family:var(--font-body)]">
         <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pt-2">
           <header className="flex h-11 items-center justify-between">
             <Link href="/" aria-label="Commission Guard, ir a la página principal" className="flex min-h-11 items-center gap-2 text-base font-semibold">
