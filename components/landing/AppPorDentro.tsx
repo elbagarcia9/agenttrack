@@ -50,25 +50,43 @@ export function AppPorDentro({
   const frameRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activo, setActivo] = useState(0);
 
-  // Dots sincronizados con el frame más visible — obligatorios SIEMPRE (19 §5)
+  // Pantalla central = la más cercana al centro de la pista. Manda sobre los puntos (19 §5) y sobre
+  // el tamaño: la central crece y las demás se achican según su distancia.
+  const [escalas, setEscalas] = useState<number[]>(() => frames.map((_, i) => (i === 0 ? 1.06 : 0.86)));
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            const idx = frameRefs.current.indexOf(e.target as HTMLDivElement);
-            if (idx >= 0) setActivo(idx);
-          }
+    let raf = 0;
+    const medir = (): void => {
+      raf = 0;
+      const rect = scroller.getBoundingClientRect();
+      const centro = rect.left + rect.width / 2;
+      let mejor = 0;
+      let mejorD = Infinity;
+      const nuevas = frameRefs.current.map((f, i) => {
+        if (!f) return 0.86;
+        const r = f.getBoundingClientRect();
+        const d = Math.abs(r.left + r.width / 2 - centro);
+        if (d < mejorD) {
+          mejorD = d;
+          mejor = i;
         }
-      },
-      { root: scroller, threshold: 0.6 }
-    );
-    for (const f of frameRefs.current) {
-      if (f) io.observe(f);
-    }
-    return () => io.disconnect();
+        return 1.06 - 0.2 * Math.min(d / 270, 1);
+      });
+      setActivo(mejor);
+      setEscalas(nuevas);
+    };
+    const pedir = (): void => {
+      if (!raf) raf = requestAnimationFrame(medir);
+    };
+    medir();
+    scroller.addEventListener('scroll', pedir, { passive: true });
+    window.addEventListener('resize', pedir);
+    return () => {
+      scroller.removeEventListener('scroll', pedir);
+      window.removeEventListener('resize', pedir);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, [frames.length]);
 
   const irA = (i: number): void => {
@@ -139,7 +157,7 @@ export function AppPorDentro({
             onPointerMove={alMover}
             onPointerUp={alSoltar}
             onPointerCancel={alSoltar}
-            className={`flex gap-5 overflow-x-auto px-[max(20px,calc(50%-125px))] pb-2 [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [&::-webkit-scrollbar]:hidden ${
+            className={`flex gap-5 overflow-x-auto px-[max(20px,calc(50%-125px))] py-8 [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [&::-webkit-scrollbar]:hidden ${
               arrastrando ? 'cursor-grabbing select-none' : 'cursor-grab snap-x snap-mandatory'
             }`}
           >
@@ -150,7 +168,10 @@ export function AppPorDentro({
                     frameRefs.current[i] = el;
                   }}
                   className="relative aspect-[9/19.5] w-[250px] overflow-hidden rounded-[30px] border-[5px] shadow-[var(--shadow-2)]"
-                  style={{ borderColor: 'color-mix(in oklab, var(--text-primary) 90%, var(--accent))' }}
+                  style={{
+                    transform: `scale(${reduce ? 1 : (escalas[i] ?? 0.86)})`,
+                    borderColor: 'color-mix(in oklab, var(--text-primary) 90%, var(--accent))',
+                  }}
                 >
                   {f.src ? (
                     /* Si el proyecto usa next/image, cambiar por <Image> — <img> mantiene el kit portable */
@@ -173,7 +194,7 @@ export function AppPorDentro({
                     </div>
                   )}
                 </div>
-                <p className="mt-3 text-center text-[13px] font-medium text-[var(--text-secondary)]">
+                <p className="mt-6 text-center text-[13px] font-medium text-[var(--text-secondary)]">
                   {f.label}
                 </p>
               </div>
