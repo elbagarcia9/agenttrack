@@ -79,6 +79,48 @@ export function AppPorDentro({
     });
   };
 
+  // Arrastre con mouse (el dedo ya desliza con el scroll nativo)
+  const arrastre = useRef({ activo: false, x: 0, scroll: 0, movido: false });
+  const [arrastrando, setArrastrando] = useState(false);
+
+  const alPresionar = (e: React.PointerEvent<HTMLDivElement>): void => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+    arrastre.current = { activo: true, x: e.clientX, scroll: el.scrollLeft, movido: false };
+    setArrastrando(true);
+    el.setPointerCapture(e.pointerId);
+  };
+  const alMover = (e: React.PointerEvent<HTMLDivElement>): void => {
+    const a = arrastre.current;
+    const el = scrollerRef.current;
+    if (!a.activo || !el) return;
+    const dx = e.clientX - a.x;
+    if (Math.abs(dx) > 3) a.movido = true;
+    el.scrollLeft = a.scroll - dx;
+  };
+  const alSoltar = (e: React.PointerEvent<HTMLDivElement>): void => {
+    const el = scrollerRef.current;
+    if (!arrastre.current.activo || !el) return;
+    arrastre.current.activo = false;
+    setArrastrando(false);
+    if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
+    // Termina en el frame más cercano al centro
+    const centro = el.getBoundingClientRect().left + el.clientWidth / 2;
+    let mejor = 0;
+    let dist = Infinity;
+    frameRefs.current.forEach((f, i) => {
+      if (!f) return;
+      const r = f.getBoundingClientRect();
+      const d = Math.abs(r.left + r.width / 2 - centro);
+      if (d < dist) {
+        dist = d;
+        mejor = i;
+      }
+    });
+    irA(mejor);
+  };
+
   return (
     <SectionShell id={id} elevacion="elevada" ariaLabel="La app por dentro">
       <motion.div variants={contenedor} initial="hidden" whileInView="visible" viewport={VIEWPORT_ONCE}>
@@ -93,7 +135,13 @@ export function AppPorDentro({
         <motion.div variants={item} className="mt-10">
           <div
             ref={scrollerRef}
-            className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-[max(20px,calc(50%-125px))] pb-2 [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [&::-webkit-scrollbar]:hidden"
+            onPointerDown={alPresionar}
+            onPointerMove={alMover}
+            onPointerUp={alSoltar}
+            onPointerCancel={alSoltar}
+            className={`flex gap-5 overflow-x-auto px-[max(20px,calc(50%-125px))] pb-2 [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [&::-webkit-scrollbar]:hidden ${
+              arrastrando ? 'cursor-grabbing select-none' : 'cursor-grab snap-x snap-mandatory'
+            }`}
           >
             {frames.map((f, i) => (
               <div key={i} className="shrink-0 snap-center">
@@ -112,6 +160,7 @@ export function AppPorDentro({
                       width={250}
                       height={542}
                       loading="lazy"
+                      draggable={false}
                       className="h-full w-full object-cover"
                     />
                   ) : (
