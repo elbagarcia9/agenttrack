@@ -1,4 +1,4 @@
-# ESTADO — HostAgent Commission Guard (nombre tentativo)
+# ESTADO — AgentTrack
 Última actualización: 2026-09-29 | Sesión actual: 1
 
 ⏸️ CHECKPOINT — Última acción completada: app interna (Inicio, Reservas, Calendario, Alertas, Nueva, Importar Excel) construida y probada con datos de ejemplo / Siguiente acción exacta: veredicto de Inicio; luego servicios externos (cuentas, base de datos, correos, Hotmart, dominio) guiados paso a paso; pulido final con las imágenes del usuario.
@@ -144,3 +144,9 @@ Asistente móvil ligero para agentes de viajes independientes afiliados a agenci
 - Preflight local hecho: .gitignore cubre .env*, node_modules, .vercel; sin secretos en el código (las coincidencias de "service_role" son texto de documentación del SO).
 - ⚠️ A confirmar antes de pagar/publicar: el plan gratis de Vercel (Hobby) es para uso NO comercial; vender una app exige plan Pro (≈ $20 USD/mes) o elegir otro alojamiento. Decidir antes del paso 2.
 - Pendientes del usuario: crear cuenta de GitHub y repositorio privado vacío (paso 1).
+
+## Cambio de nombre (usuario, 2026-10-06)
+- La app se llama AgentTrack (antes "HostAgent Commission Guard" / "Commission Guard", nombres provisionales). Cambiado en landing, cuestionario, planes, acceso, app interna, metadatos, copy (docs/copy/landing.md), las 4 fichas y package.json. El historial de este archivo conserva el nombre anterior donde describe decisiones pasadas.
+- El logo lo enviará el usuario en el pulido final (existe un archivo logo-Agent-track.ai en la carpeta del proyecto, sin integrar). Hasta entonces se mantiene el escudo provisional.
+- Repositorio de GitHub: usar el nombre agenttrack.
+- Pendiente: nombre del dominio (agenttrack.* — verificar disponibilidad y que no choque con marcas existentes antes de comprar).

@@ -20,7 +20,7 @@ import { Logo } from '@/components/Logo';
 import { AvisosAsistente } from '@/components/AvisosAsistente';
 import { ImportarExcel } from '@/components/ImportarExcel';
 
-const BRAND = 'Commission Guard'; // provisional — el nombre final lo elige el usuario
+const BRAND = 'AgentTrack';
 const CTA_HREF = '/onboarding';
 const CTA_LABEL = 'Empezar mis 14 días gratis';
 

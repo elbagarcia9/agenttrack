@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { AppShell } from '@/components/app/AppShell';
 
 export const metadata: Metadata = {
-  title: 'Mi asistente — Commission Guard',
+  title: 'Mi asistente — AgentTrack',
   robots: { index: false },
 };
 

@@ -37,7 +37,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="hidden border-r border-black/10 bg-[var(--surface)] p-4 md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:gap-1">
         <Link href="/app" className="flex min-h-11 items-center gap-2 px-2 pb-4 text-base font-semibold text-[var(--accent)]">
           <Logo />
-          Commission Guard
+          AgentTrack
         </Link>
         <Link
           href="/app/nueva"
@@ -102,7 +102,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="flex h-14 items-center justify-between px-4 md:hidden">
           <Link href="/app" className="flex min-h-11 items-center gap-2 text-base font-semibold text-[var(--accent)]">
             <Logo />
-            Commission Guard
+            AgentTrack
           </Link>
         </header>
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-6 pt-2 md:px-8 md:pt-8">{children}</main>

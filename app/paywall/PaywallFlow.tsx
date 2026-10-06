@@ -120,9 +120,9 @@ export function PaywallFlow() {
       <div className="min-h-dvh bg-[var(--bg)] bg-[image:radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_24%,transparent),transparent_70%),radial-gradient(420px_300px_at_-10%_105%,color-mix(in_oklab,var(--btn-oro-to)_14%,transparent),transparent_70%)] text-[var(--text-primary)] [font-family:var(--font-body)]">
         <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pt-2">
           <header className="flex h-11 items-center justify-between">
-            <Link href="/" aria-label="Commission Guard, ir a la página principal" className="flex min-h-11 items-center gap-2 text-base font-semibold">
+            <Link href="/" aria-label="AgentTrack, ir a la página principal" className="flex min-h-11 items-center gap-2 text-base font-semibold">
               <Logo />
-              Commission Guard
+              AgentTrack
             </Link>
             <Link href="/onboarding" aria-label="Cerrar y volver a mi plan" className="-mr-2 flex size-11 items-center justify-center text-[var(--text-secondary)]">
               <X size={20} />

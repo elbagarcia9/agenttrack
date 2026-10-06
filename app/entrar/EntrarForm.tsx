@@ -95,7 +95,7 @@ export function EntrarForm({ plan }: { plan: string | null }) {
           <motion.div {...entrada(0)}>
             <Link href="/" className="flex h-11 items-center gap-2 text-base font-semibold">
               <Logo />
-              Commission Guard
+              AgentTrack
             </Link>
           </motion.div>
 

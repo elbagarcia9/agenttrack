@@ -1,4 +1,4 @@
-# FICHA DE DIRECCIÓN DE ARTE — HostAgent Commission Guard (nombre tentativo)
+# FICHA DE DIRECCIÓN DE ARTE — AgentTrack
 
 ## Referencia del usuario (CONTRATO)
 - ¿Hay referencia?: SÍ, PARCIAL → paleta (contrato) + capturas de TravelJoy (sobrio, nav lateral, pestañas, tarjetas blancas) + set de íconos de línea con chip azul suave

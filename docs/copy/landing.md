@@ -1,6 +1,6 @@
 # COPY MARCADO — Landing (trazado a FICHA-AVATAR.md · 2026-09-29)
 Marcas: [acento]…[/acento] palabra que vende · [b]…[/b] palabra importante.
-Marca provisional: "Commission Guard" (nombre final pendiente del usuario).
+Marca provisional: "AgentTrack" (nombre final pendiente del usuario).
 Big Idea: "Las agentes no pierden comisiones por descuido: cada plazo vive en un lugar distinto (Excel, portal, calendario) y nadie los junta. El Semáforo de Comisiones los junta y avisa antes de que venzan."
 Mecanismo bautizado: el Semáforo de Comisiones (verde en plazo · dorado a 5 días o menos · rojo vencido).
 Reglas de negocio usadas (usuario, Archer MX/LatAm, 2026-09-29): alta 30 días · pago 60-90 días · reclamo 18 meses.
@@ -65,8 +65,8 @@ Privacidad · Términos · aviso: "No estamos afiliados a Archer ni a ninguna ag
 - Promesa real (usuario): recordar subir las comisiones (alta en el Hub), hacer los pagos y reclamar a tiempo. La app NO sabe si una comisión ya se pagó: nunca prometer eso.
 - Hero subtítulo: Tu asistente vigila cada comisión y te avisa antes de que venza [b]cada plazo[/b]
 - Problema (5): ¿No recuerdas si esa comisión que te deben [b]ya es tiempo de reclamarla[/b]? · ¿Se te pasó [b]dar de alta[/b] una venta en el portal? · ¿Tu Excel es un caos y es [b]difícil revisarlo en el celular[/b]? · ¿Tus fechas de viaje y de cobro están [b]revueltas[/b]? · ¿Tu sistema es improvisado y debes [b]revisarlo a diario[/b] para no olvidar?
-- Agitación: trabajando de a gratis · plazo de reclamo → escena: "Nadie se va a parar a prender la compu…" + [imagen pendiente del usuario: la mujer acostada que se acuerda de pendientes] + "Puedes estar tranquila: Commission Guard te avisará con anticipación."
-- Solución: kicker ¿CÓMO FUNCIONA? · título "Tu asistente vigilando cada comisión" · pasos: 1 Registra la venta (Todos los datos necesarios, en segundos) · 2 El asistente ya tiene la información (Las fechas importantes ya tienen su alerta) · 3 Actúas a tiempo (Aviso anticipado en dorado para tomar acción) · Antes / Con Commission Guard.
+- Agitación: trabajando de a gratis · plazo de reclamo → escena: "Nadie se va a parar a prender la compu…" + [imagen pendiente del usuario: la mujer acostada que se acuerda de pendientes] + "Puedes estar tranquila: AgentTrack te avisará con anticipación."
+- Solución: kicker ¿CÓMO FUNCIONA? · título "Tu asistente vigilando cada comisión" · pasos: 1 Registra la venta (Todos los datos necesarios, en segundos) · 2 El asistente ya tiene la información (Las fechas importantes ya tienen su alerta) · 3 Actúas a tiempo (Aviso anticipado en dorado para tomar acción) · Antes / Con AgentTrack.
 - Avisos por venta: dar de alta en el Hub · a los 60 días, preguntar por tu pago (y reclamar a tiempo) · cuando tu cliente inicia su viaje · cuando hay un pago pendiente de tu cliente (fecha y cantidad).
 - Banda de importación (después de los avisos): "Importa todos los datos de tu Excel en segundos. Transforma tu administración en un sistema portable y con alertas." con la imagen Excel→celular (public/img/excel-a-app.jpg).
 - Vistas de ejemplo: "Dale un vistazo a tu próximo asistente".

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { EntrarForm } from './EntrarForm';
 
 export const metadata: Metadata = {
-  title: 'Entrar — Commission Guard',
+  title: 'Entrar — AgentTrack',
   robots: { index: false },
 };
 

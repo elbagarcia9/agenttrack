@@ -1,4 +1,4 @@
-# FICHA DE MERCADO — HostAgent Commission Guard (nombre tentativo)
+# FICHA DE MERCADO — AgentTrack
 
 ## Alcance
 - Nicho: herramienta móvil de control y alertas de comisiones para agentes de viajes independientes afiliados a agencias Host (Archer/Evolution primero)
