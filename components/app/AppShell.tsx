@@ -31,7 +31,7 @@ function activo(path: string, href: string) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const [confirmando, setConfirmando] = useState(false);
-  const { reservas, esDemo, empezarLimpio, listo } = useReservas();
+  const { reservas, esDemo, empezarLimpio, listo, error, descartarError } = useReservas();
   const hoy = new Date();
   const urgentes = listo
     ? reservas.flatMap((r) => alertasDe(r, hoy)).filter((a) => a.severidad === 'vencido' || a.severidad === 'urgente').length
@@ -84,6 +84,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="flex min-h-dvh flex-col pb-32 md:pb-0">
+        {error && (
+          <div role="alert" className="flex flex-wrap items-center justify-between gap-2 bg-[var(--chip-rojo-bg)] px-4 py-2 text-sm font-medium text-[var(--rojo-text)]">
+            <span>{error}</span>
+            <button type="button" onClick={descartarError} className="min-h-11 px-3 font-bold underline underline-offset-4">
+              Entendido
+            </button>
+          </div>
+        )}
         {esDemo && (
           <div className="flex flex-wrap items-center justify-between gap-2 bg-[var(--alerta-bg)] px-4 py-2 text-sm font-medium text-[var(--alerta-text)]">
             {confirmando ? (
