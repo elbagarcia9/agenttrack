@@ -21,10 +21,12 @@ const entrada = (i: number) => ({
   transition: { duration: 0.35, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-export function EntrarForm({ plan }: { plan: string | null }) {
+export function EntrarForm({ plan, enlaceFallido = false }: { plan: string | null; enlaceFallido?: boolean }) {
   const [fase, setFase] = useState<Fase>('escribiendo');
   const [correo, setCorreo] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(
+    enlaceFallido ? 'Ese enlace ya no sirve (vence en pocos minutos o se abrió en otro navegador). Pide uno nuevo o usa el código de 6 dígitos.' : '',
+  );
   const [intento, setIntento] = useState(false);
   const [espera, setEspera] = useState(0);
   const [codigo, setCodigo] = useState('');
@@ -76,14 +78,17 @@ export function EntrarForm({ plan }: { plan: string | null }) {
     setErrorCodigo('');
     setVerificando(true);
     const r = await verificarCodigo(correo, codigo);
-    setVerificando(false);
-    if (!r.ok) {
-      setErrorCodigo(
-        r.motivo === 'no_disponible'
-          ? 'Aún no podemos validar códigos: falta conectar el servicio de cuentas.'
-          : 'El código no es válido o ya venció. Pide uno nuevo.',
-      );
+    if (r.ok) {
+      // Navegación completa: el servidor lee la sesión recién creada para abrir /app
+      window.location.assign('/app');
+      return;
     }
+    setVerificando(false);
+    setErrorCodigo(
+      r.motivo === 'no_disponible'
+        ? 'Aún no podemos validar códigos: falta conectar el servicio de cuentas.'
+        : 'El código no es válido o ya venció. Pide uno nuevo.',
+    );
   };
 
   const errCorreo = intento && !correoValido(correo) ? 'Escribe un correo válido, como nombre@correo.com.' : undefined;

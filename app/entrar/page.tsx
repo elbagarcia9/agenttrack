@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default async function Entrar({ searchParams }: { searchParams: Promise<{ plan?: string }> }) {
-  const { plan } = await searchParams;
+export default async function Entrar({ searchParams }: { searchParams: Promise<{ plan?: string; error?: string }> }) {
+  const { plan, error } = await searchParams;
   const valido = plan === 'anual' || plan === 'mensual' ? plan : null;
-  return <EntrarForm plan={valido} />;
+  return <EntrarForm plan={valido} enlaceFallido={error === 'enlace'} />;
 }

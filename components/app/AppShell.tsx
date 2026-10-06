@@ -2,13 +2,14 @@
 
 // Estructura de la app interna: barra lateral en computadora, barra de pestañas abajo en celular.
 // 4 secciones (Inicio, Reservas, Calendario, Alertas) con un protagonista cada una; el acceso a "Registrar venta nueva"
-// está siempre a un toque. Cuando hay cuentas reales, aquí se protegerá la ruta (middleware).
+// está siempre a un toque. La ruta la protege proxy.ts (sin sesión manda a /entrar); aquí vive el botón de salir.
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bell, CalendarDays, FileText, House, Plus, type LucideIcon } from 'lucide-react';
+import { Bell, CalendarDays, FileText, House, LogOut, Plus, type LucideIcon } from 'lucide-react';
 import { Logo } from '@/components/Logo';
+import { AUTH_LOCAL, cerrarSesion } from '@/lib/auth';
 import { alertasDe, useReservas } from '@/lib/reservas';
 
 const ITEMS: { href: string; texto: string; Icon: LucideIcon }[] = [
@@ -17,6 +18,11 @@ const ITEMS: { href: string; texto: string; Icon: LucideIcon }[] = [
   { href: '/app/calendario', texto: 'Calendario', Icon: CalendarDays },
   { href: '/app/alertas', texto: 'Alertas', Icon: Bell },
 ];
+
+async function salir() {
+  await cerrarSesion();
+  window.location.assign('/entrar');
+}
 
 function activo(path: string, href: string) {
   return href === '/app' ? path === '/app' : path.startsWith(href);
@@ -65,6 +71,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
+        {!AUTH_LOCAL && (
+          <button
+            type="button"
+            onClick={salir}
+            className="mt-auto flex min-h-11 items-center gap-3 rounded-[var(--radius-button)] px-3 text-sm font-semibold text-[var(--text-secondary)]"
+          >
+            <LogOut size={18} aria-hidden="true" />
+            Salir
+          </button>
+        )}
       </aside>
 
       <div className="flex min-h-dvh flex-col pb-32 md:pb-0">
@@ -104,6 +120,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Logo />
             AgentTrack
           </Link>
+          {!AUTH_LOCAL && (
+            <button type="button" onClick={salir} aria-label="Salir de mi cuenta" className="flex min-h-11 items-center gap-2 px-2 text-sm font-semibold text-[var(--text-secondary)]">
+              <LogOut size={18} aria-hidden="true" />
+              Salir
+            </button>
+          )}
         </header>
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-6 pt-2 md:px-8 md:pt-8">{children}</main>
       </div>
