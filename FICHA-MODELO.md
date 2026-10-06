@@ -1,4 +1,4 @@
-# FICHA-MODELO — el plano de la app que ya gana — HostAgent AgentTrack
+# FICHA-MODELO — el plano de la app que ya gana — AgentTrack
 (cosa juzgada una vez APROBADA; hoy BORRADOR)
 
 - Estado: BORRADOR (falta 2ª señal de revenue independiente; ver §2)
