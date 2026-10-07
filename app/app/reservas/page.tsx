@@ -4,7 +4,8 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { FileUp, Plus, Search } from 'lucide-react';
+import { FileUp, Pencil, Plus, Search } from 'lucide-react';
+import { useArrastreHorizontal } from '@/components/app/useArrastreHorizontal';
 import { SelectorEstatus } from '@/components/app/Insignias';
 import { fechaCorta as fechaCortaDe, parseFecha } from '@/lib/plazos';
 import { alertasDe, formatoDinero, useReservas, type Reserva } from '@/lib/reservas';
@@ -22,6 +23,7 @@ function fechaCorta(iso: string, hoy: Date): string {
 
 export default function Reservas() {
   const { reservas, listo, actualizar } = useReservas();
+  const arrastre = useArrastreHorizontal<HTMLDivElement>();
   const hoy = useMemo(() => new Date(), []);
   const [busca, setBusca] = useState('');
   const [proveedor, setProveedor] = useState('');
@@ -170,10 +172,17 @@ export default function Reservas() {
 
       {/* Tabla (computadora) */}
       {filas.length > 0 && (
-        <div className="hidden overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave md:block">
+        <div
+          ref={arrastre.ref}
+          {...arrastre.props}
+          className={`hidden overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave md:block ${arrastre.arrastrando ? 'cursor-grabbing' : 'cursor-grab'}`}
+        >
           <table className="w-full min-w-6xl border-collapse text-sm">
             <thead>
               <tr className="bg-[var(--surface-2)] text-left text-xs uppercase tracking-wide text-[var(--text-secondary)]">
+                <th scope="col" className="w-12 whitespace-nowrap px-3 py-3 text-center font-semibold">
+                  Editar
+                </th>
                 {['Cliente', 'Contacto', 'Destino', 'Tipo', 'Proveedor', 'Precio venta', 'Comisión', 'Compra', 'Viaje', 'Pago pendiente', 'Comentarios', 'Estatus'].map((h, i) => (
                   <th key={h} scope="col" className={`whitespace-nowrap px-3 py-3 font-semibold ${i === 5 || i === 6 ? 'text-right' : ''}`}>
                     {h}
@@ -184,6 +193,16 @@ export default function Reservas() {
             <tbody>
               {filas.map((r) => (
                 <tr key={r.id} className={`border-t border-black/5 ${tono(r)}`}>
+                  <td className="px-3 py-1 text-center">
+                    <Link
+                      href={`/app/nueva?editar=${r.id}`}
+                      aria-label={`Editar la reserva de ${r.cliente}`}
+                      title="Editar esta reserva"
+                      className="inline-flex size-11 items-center justify-center rounded-full bg-[var(--chip-azul-bg)] text-[var(--accent)] transition-transform active:scale-95"
+                    >
+                      <Pencil size={18} aria-hidden="true" />
+                    </Link>
+                  </td>
                   <th scope="row" className="whitespace-nowrap px-3 py-2 text-left font-bold">
                     {r.cliente}
                   </th>
@@ -241,7 +260,15 @@ export default function Reservas() {
                 ) : null}
               </dl>
               {r.comentarios && <p className="mt-2 text-sm text-[var(--text-secondary)]">{r.comentarios}</p>}
-              <div className="mt-3 flex justify-end">
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <Link
+                  href={`/app/nueva?editar=${r.id}`}
+                  aria-label={`Editar la reserva de ${r.cliente}`}
+                  className="flex min-h-11 items-center gap-2 rounded-[var(--radius-button)] bg-[var(--chip-azul-bg)] px-4 text-sm font-semibold text-[var(--accent)]"
+                >
+                  <Pencil size={16} aria-hidden="true" />
+                  Editar
+                </Link>
                 <SelectorEstatus valor={r.estatus} etiqueta={`Estatus de ${r.cliente}`} onCambio={(e) => actualizar(r.id, { estatus: e })} />
               </div>
             </li>

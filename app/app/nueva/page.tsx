@@ -1,10 +1,11 @@
 'use client';
 
 // NUEVA RESERVA — protagonista: guardar una venta en segundos. Los 10 campos pedidos + pago pendiente (fecha y cantidad).
+// La misma pantalla sirve para EDITAR: /app/nueva?editar=<id> carga la reserva y guarda los cambios.
 
-import { useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { ExitoAnimado } from '@/components/app/ExitoAnimado';
 import { parseFecha, sumarDias, formatoFecha } from '@/lib/plazos';
@@ -35,8 +36,19 @@ function Campo({ etiqueta, error, children }: { etiqueta: string; error?: string
 }
 
 export default function NuevaReserva() {
+  return (
+    <Suspense fallback={null}>
+      <Formulario />
+    </Suspense>
+  );
+}
+
+function Formulario() {
   const router = useRouter();
-  const { agregar, reservas } = useReservas();
+  const editarId = useSearchParams().get('editar');
+  const { agregar, actualizar, reservas, listo } = useReservas();
+  const enEdicion = reservas.find((r) => r.id === editarId);
+  const precargada = useRef(false);
   const [exito, setExito] = useState(false);
   const [cliente, setCliente] = useState('');
   const [contacto, setContacto] = useState('');
@@ -53,6 +65,26 @@ export default function NuevaReserva() {
   const [comentarios, setComentarios] = useState('');
   const [estatus, setEstatus] = useState<Estatus>('pendiente_alta');
   const [intento, setIntento] = useState(false);
+
+  // Edición: cuando la reserva ya cargó, se llenan los campos una sola vez
+  useEffect(() => {
+    if (!enEdicion || precargada.current) return;
+    precargada.current = true;
+    setCliente(enEdicion.cliente);
+    setContacto(enEdicion.contacto);
+    setDestino(enEdicion.destino);
+    setTipo(enEdicion.tipo);
+    setProveedor(enEdicion.proveedor);
+    setPrecio(enEdicion.precioVenta ? String(enEdicion.precioVenta) : '');
+    setComision(String(enEdicion.comision));
+    setMoneda(enEdicion.moneda);
+    setCompra(enEdicion.fechaCompra);
+    setViaje(enEdicion.fechaViaje);
+    setPagoFecha(enEdicion.pagoPendienteFecha ?? '');
+    setPagoMonto(enEdicion.pagoPendienteMonto ? String(enEdicion.pagoPendienteMonto) : '');
+    setComentarios(enEdicion.comentarios);
+    setEstatus(enEdicion.estatus);
+  }, [enEdicion]);
 
   const fCompra = parseFecha(compra);
   const fViaje = parseFecha(viaje);
@@ -71,6 +103,27 @@ export default function NuevaReserva() {
     e.preventDefault();
     setIntento(true);
     if (!valido) return;
+    if (editarId) {
+      if (!enEdicion) return;
+      actualizar(editarId, {
+        cliente: cliente.trim(),
+        contacto: contacto.trim(),
+        destino: destino.trim(),
+        tipo,
+        proveedor: proveedor.trim(),
+        precioVenta: Number(precio) || 0,
+        comision: Number(comision),
+        moneda,
+        fechaCompra: compra,
+        fechaViaje: viaje,
+        pagoPendienteFecha: pagoFecha || undefined,
+        pagoPendienteMonto: pagoFecha ? Number(pagoMonto) : undefined,
+        comentarios: comentarios.trim(),
+        estatus,
+      });
+      router.push('/app/reservas');
+      return;
+    }
     // la celebración es solo para la PRIMERA venta que la persona registra (las de ejemplo no cuentan)
     const esPrimera = !reservas.some((r) => !r.id.startsWith('demo-'));
     agregar({
@@ -94,6 +147,18 @@ export default function NuevaReserva() {
   };
 
   const limiteAlta = fCompra ? formatoFecha(sumarDias(fCompra, 30)) : null;
+
+  if (editarId && listo && !enEdicion) {
+    return (
+      <div className="flex flex-col items-start gap-3 rounded-[var(--radius-card)] tarjeta-suave p-6">
+        <h1 className="text-xl font-bold [font-family:var(--font-display)]">No encontramos esa reserva</h1>
+        <p className="text-[var(--text-secondary)]">Puede que ya no exista. Vuelve a tu lista y elígela de nuevo.</p>
+        <Link href="/app/reservas" className="flex min-h-11 items-center rounded-[var(--radius-button)] bg-[var(--accent)] px-5 text-sm font-semibold text-[var(--on-accent)]">
+          Ir a mis reservas
+        </Link>
+      </div>
+    );
+  }
 
   if (exito) {
     return (
@@ -120,8 +185,8 @@ export default function NuevaReserva() {
           <ChevronLeft size={18} aria-hidden="true" />
           Reservas
         </Link>
-        <h1 className="text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">Nueva reserva</h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">Tu asistente programa los avisos en cuanto la guardes.</p>
+        <h1 className="text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{editarId ? 'Editar reserva' : 'Nueva reserva'}</h1>
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">{editarId ? 'Corrige lo que necesites; tus avisos se ajustan solos.' : 'Tu asistente programa los avisos en cuanto la guardes.'}</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -184,7 +249,7 @@ export default function NuevaReserva() {
         <textarea value={comentarios} onChange={(e) => setComentarios(e.target.value)} rows={3} placeholder="Regalo de bienvenida, documentos firmados…" className={`${entradaClase} h-auto py-3 ${borde}`} />
       </Campo>
 
-      <Campo etiqueta="Estatus inicial">
+      <Campo etiqueta={editarId ? 'Estatus' : 'Estatus inicial'}>
         <select value={estatus} onChange={(e) => setEstatus(e.target.value as Estatus)} className={`${entradaClase} ${borde}`}>
           <option value="pendiente_alta">Pendiente de alta</option>
           <option value="pendiente_pago">Pendiente de pago (ya dada de alta)</option>
@@ -196,7 +261,7 @@ export default function NuevaReserva() {
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-black/10 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-3 md:static md:border-0 md:bg-transparent md:p-0">
         <button type="submit" className="flex h-14 w-full items-center justify-center rounded-[var(--radius-button)] bg-gradient-to-b from-[var(--btn-oro-from)] to-[var(--btn-oro-to)] text-base font-bold text-[var(--btn-oro-text)] shadow-[var(--shadow-2)] md:max-w-xs">
-          Guardar reserva
+          {editarId ? 'Guardar cambios' : 'Guardar reserva'}
         </button>
       </div>
     </form>
