@@ -3,6 +3,8 @@
 // Landing de ventas — copy MARCADO de docs/copy/landing.md (trazado a FICHA-AVATAR.md).
 // Modelo 2 (02C): el CTA lleva a /onboarding. Nombre de marca provisional en BRAND.
 
+import { useEffect } from 'react';
+import { track } from '@/lib/track';
 import { CalendarX, CircleHelp, FileSpreadsheet, FileWarning, HandCoins, Repeat } from 'lucide-react';
 import { Hero } from '@/components/landing/Hero';
 import { Problema } from '@/components/landing/Problema';
@@ -25,6 +27,9 @@ const CTA_HREF = '/onboarding';
 const CTA_LABEL = 'Empezar mis 14 días gratis';
 
 export default function Landing() {
+  useEffect(() => {
+    track('landing_vista');
+  }, []);
   return (
     <div className="min-h-dvh bg-[var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
       <Hero

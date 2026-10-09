@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { ExitoAnimado } from '@/components/app/ExitoAnimado';
+import { track } from '@/lib/track';
 import { parseFecha, sumarDias, formatoFecha } from '@/lib/plazos';
 import { TIPOS, useReservas, type Estatus, type Moneda, type Tipo } from '@/lib/reservas';
 
@@ -142,6 +143,7 @@ function Formulario() {
       comentarios: comentarios.trim(),
       estatus,
     });
+    track('reserva_creada', { tipo, primera: esPrimera });
     if (esPrimera) setExito(true);
     else router.push('/app/reservas');
   };

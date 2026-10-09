@@ -70,6 +70,16 @@ export async function verificarCodigo(correo: string, codigo: string): Promise<R
   return error ? { ok: false, motivo: 'invalido' } : { ok: true };
 }
 
+// Marca la última actividad de la persona (el panel del dueño la usa para saber quién sigue activo)
+export async function registrarActividad(): Promise<void> {
+  if (AUTH_LOCAL) return;
+  try {
+    await supabaseNavegador().rpc('registrar_actividad');
+  } catch {
+    /* medir nunca rompe nada */
+  }
+}
+
 export async function cerrarSesion(): Promise<void> {
   if (AUTH_LOCAL) return;
   await supabaseNavegador().auth.signOut();

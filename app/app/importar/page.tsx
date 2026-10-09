@@ -9,6 +9,7 @@ import { Check, ChevronLeft, FileUp, Loader2, TriangleAlert } from 'lucide-react
 import { ExitoAnimado } from '@/components/app/ExitoAnimado';
 import { CAMPOS, convertirFilas, indiceEncabezado, parseCsv, sugerirMapeo, type Campo, type Fila, type Mapeo } from '@/lib/importar';
 import { formatoDinero, useReservas, type Moneda } from '@/lib/reservas';
+import { track } from '@/lib/track';
 
 type Paso = 'archivo' | 'columnas' | 'revisar' | 'listo';
 
@@ -122,6 +123,7 @@ export default function Importar() {
     } catch {
       /* sin almacenamiento */
     }
+    if (n > 0) track('reserva_importada', { cantidad: n });
     setResultado({ importadas: n, omitidas: convertidas.length - n });
     setPaso('listo');
   };

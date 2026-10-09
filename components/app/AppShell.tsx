@@ -4,12 +4,13 @@
 // 4 secciones (Inicio, Reservas, Calendario, Alertas) con un protagonista cada una; el acceso a "Registrar venta nueva"
 // está siempre a un toque. La ruta la protege proxy.ts (sin sesión manda a /entrar); aquí vive el botón de salir.
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Bell, CalendarDays, FileText, House, LogOut, Plus, type LucideIcon } from 'lucide-react';
 import { Logo } from '@/components/Logo';
-import { AUTH_LOCAL, cerrarSesion } from '@/lib/auth';
+import { AUTH_LOCAL, cerrarSesion, registrarActividad } from '@/lib/auth';
+import { trackSesionDiaria } from '@/lib/track';
 import { alertasDe, useReservas } from '@/lib/reservas';
 
 const ITEMS: { href: string; texto: string; Icon: LucideIcon }[] = [
@@ -30,6 +31,10 @@ function activo(path: string, href: string) {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
+  useEffect(() => {
+    trackSesionDiaria();
+    void registrarActividad();
+  }, []);
   const [confirmando, setConfirmando] = useState(false);
   const { reservas, esDemo, empezarLimpio, listo, error, descartarError } = useReservas();
   const hoy = new Date();
