@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { AvisosBanner, Encabezado, Insignia, Kpi, SelectorMes, SinDatos, Tarjeta } from '@/components/admin/ui';
+import { AvisosBanner, Encabezado, Heroe, Kpi, SelectorMes, SinDatos, Tarjeta } from '@/components/admin/ui';
+import { CifraDinero, CifraEntera, CifraPorcentaje } from '@/components/admin/Cifras';
 import { BarrasMensuales } from '@/components/admin/Graficos';
 import { calcularAvisos, calcularCanales, calcularGanancia } from '@/lib/admin/derivados';
 import { cargarActividadReservas, cargarCostos, cargarNegocio, cargarSalud, cargarTasaImpuestos, cargarUso, cargarUsuariosResumen, cargarVentas } from '@/lib/admin/datos';
-import { dinero, etiquetaMesCorta, mesDeParametro, pct, porcentaje, rangoDeMes } from '@/lib/admin/formato';
+import { dinero, etiquetaMesCorta, mesDeParametro, pesosCortos, porcentaje, rangoDeMes, serie12 } from '@/lib/admin/formato';
 
 export default async function Resumen({ searchParams }: { searchParams: Promise<{ mes?: string }> }) {
   const mes = mesDeParametro((await searchParams).mes);
@@ -29,9 +30,9 @@ export default async function Resumen({ searchParams }: { searchParams: Promise<
 
   const suscriptores = (ventas.membresias.active ?? 0) + (ventas.membresias.past_due ?? 0);
   const activacion = porcentaje(reservas.usuarios_con_reservas, usuarios.total);
-  const churn = ventas.bajas.activos_inicio > 0 ? porcentaje(ventas.bajas.voluntarias + ventas.bajas.involuntarias + ventas.bajas.otras, ventas.bajas.activos_inicio) : null;
-
-  // Evolución de ingresos: una moneda por gráfica, nunca mezcladas
+  const b = ventas.bajas;
+  const bajas = b.voluntarias + b.involuntarias + b.otras;
+  const churn = b.activos_inicio > 0 ? porcentaje(bajas, b.activos_inicio) : null;
   const monedas = [...new Set(ventas.serie.map((s) => s.moneda))];
 
   return (
@@ -48,70 +49,69 @@ export default async function Resumen({ searchParams }: { searchParams: Promise<
         </Tarjeta>
       ) : (
         ganancias.map((g) => (
-          <section
-            key={g.moneda}
-            className="rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-6 text-[var(--on-accent)] shadow-[var(--shadow-2)] md:p-8"
-            aria-label={`Ganancia de ${rango.etiqueta} en ${g.moneda}`}
-          >
-            <p className="text-sm font-semibold opacity-90">Este mes ({g.moneda})</p>
-            <p className="mt-2 text-balance text-2xl font-bold leading-snug [font-family:var(--font-display)] md:text-3xl">
-              Facturaste {dinero(g.ingresosBrutos, g.moneda)} y te {g.ganancia >= 0 ? 'quedaron' : 'faltaron'} <span className="text-[var(--accent-on-dark)]">{dinero(Math.abs(g.ganancia), g.moneda)}</span> {g.ganancia >= 0 ? 'limpios' : 'para cubrir tus costos'}
-              {g.margenPct !== null && g.ganancia >= 0 ? ` (${pct(g.margenPct)})` : ''}.
+          <Heroe key={g.moneda} franja={g.faltantes.length > 0 ? `Estimación · falta: ${g.faltantes.join(', ')}` : undefined}>
+            <p className="text-sm font-semibold opacity-90">
+              {rango.etiqueta} · {g.moneda}
             </p>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold">{g.estado === 'completa' ? 'Con todos tus costos anotados' : 'Estimación'}</span>
-              {g.faltantes.length > 0 && <span className="text-sm opacity-90">Falta: {g.faltantes.join(' · ')}</span>}
-              <Link href="/admin/ganancia" className="ml-auto flex min-h-11 items-center gap-1 text-sm font-semibold underline underline-offset-4">
-                Ver el detalle <ArrowRight size={16} aria-hidden="true" />
-              </Link>
-            </div>
-          </section>
+            <p className="mt-2 text-balance text-2xl font-bold leading-snug [font-family:var(--font-display)] md:text-3xl">
+              Facturaste <CifraDinero centavos={g.ingresosBrutos} moneda={g.moneda} /> y te {g.ganancia >= 0 ? 'quedaron' : 'faltaron'}{' '}
+              <span className="text-[var(--accent-on-dark)]">
+                <CifraDinero centavos={Math.abs(g.ganancia)} moneda={g.moneda} />
+              </span>{' '}
+              {g.ganancia >= 0 ? 'limpios' : 'para cubrir tus costos'}
+              {g.margenPct !== null && g.ganancia >= 0 && (
+                <>
+                  {' '}
+                  (<CifraPorcentaje valor={g.margenPct} />)
+                </>
+              )}
+              .
+            </p>
+            <Link href="/admin/ganancia" className="panel-tap mt-4 flex min-h-11 w-fit items-center gap-1 text-sm font-semibold underline underline-offset-4">
+              Ver cómo se calcula <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </Heroe>
         ))
       )}
 
-      <section aria-label="Números clave" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Números clave" className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         <Kpi
-          etiqueta="Ingreso mensual recurrente"
-          valor={ventas.mrr.length ? ventas.mrr.map((m) => dinero(m.mrr, m.moneda)).join(' · ') : null}
-          detalle={ventas.mrr.length ? `${suscriptores} suscripción${suscriptores === 1 ? '' : 'es'} activa${suscriptores === 1 ? '' : 's'}${ventas.mrr_sin_ciclo ? ` · ${ventas.mrr_sin_ciclo} sin ciclo conocido` : ''}` : 'Aparece con la primera suscripción activa.'}
+          etiqueta="Entra cada mes"
+          valor={ventas.mrr.length ? ventas.mrr.map((m) => <CifraDinero key={m.moneda} centavos={m.mrr} moneda={m.moneda} />) : null}
+          detalle={ventas.mrr.length ? `${suscriptores} ${suscriptores === 1 ? 'suscripción activa' : 'suscripciones activas'}${ventas.mrr_sin_ciclo ? ` · ${ventas.mrr_sin_ciclo} sin ciclo conocido` : ''}` : 'Aparece con la primera suscripción activa.'}
         />
-        <Kpi etiqueta="Personas con cuenta" valor={String(usuarios.total)} detalle={`${usuarios.activos_30d} entraron en 30 días · ${usuarios.nuevos_7d} nuevas esta semana`} />
+        <Kpi etiqueta="Personas con cuenta" valor={<CifraEntera valor={usuarios.total} />} detalle={`${usuarios.activos_30d} entraron en 30 días · ${usuarios.nuevos_7d} nuevas esta semana`} />
         <Kpi
-          etiqueta="Activación"
-          valor={activacion === null ? null : pct(activacion)}
-          detalle={activacion === null ? 'Aún no hay cuentas.' : `${reservas.usuarios_con_reservas} de ${usuarios.total} ya registraron una venta`}
+          etiqueta="Ya registraron una venta"
+          valor={activacion === null ? null : <CifraPorcentaje valor={activacion} />}
+          detalle={activacion === null ? 'Aún no hay cuentas.' : `${reservas.usuarios_con_reservas} de ${usuarios.total} personas ya usan la app`}
           tono={activacion !== null && activacion >= 50 ? 'bien' : 'neutro'}
         />
         <Kpi
           etiqueta="Bajas del mes"
-          valor={churn === null ? null : pct(churn, 1)}
-          detalle={churn === null ? 'Aún no hay suscriptores del mes anterior para comparar.' : `${ventas.bajas.voluntarias} por decisión propia · ${ventas.bajas.involuntarias} por pago fallido`}
+          valor={churn === null ? null : <CifraPorcentaje valor={churn} decimales={1} />}
+          detalle={churn === null ? 'Aún no hay suscriptores del mes anterior para comparar.' : `${bajas} de ${b.activos_inicio} se ${bajas === 1 ? 'fue' : 'fueron'}: ${b.voluntarias} por decisión propia, ${b.involuntarias} por pago fallido`}
           tono={churn !== null && churn > 10 ? 'mal' : 'neutro'}
         />
       </section>
 
-      <Tarjeta titulo="Ingresos de los últimos 12 meses" subtitulo="Lo que cobraste cada mes, antes de comisiones y costos.">
-        {monedas.length === 0 ? (
+      {monedas.length === 0 ? (
+        <Tarjeta titulo="Ingresos de los últimos 12 meses" subtitulo="Lo que cobraste cada mes, antes de comisiones y costos.">
           <SinDatos queFalta="Aparecerá con la primera venta que avise Hotmart." />
-        ) : (
-          <div className="flex flex-col gap-6">
-            {monedas.map((moneda) => {
-              const filas = ventas.serie.filter((s) => s.moneda === moneda);
-              return (
-                <div key={moneda}>
-                  <div className="mb-1 flex items-center gap-2">
-                    <Insignia tono="azul">{moneda}</Insignia>
-                  </div>
-                  <BarrasMensuales
-                    datos={filas.map((f) => ({ mes: f.mes, etiqueta: etiquetaMesCorta(f.mes), valor: f.ingresos / 100, texto: dinero(f.ingresos, moneda).replace(` ${moneda}`, '') }))}
-                    resumen={`Ingresos mensuales en ${moneda}: ${filas.map((f) => `${f.mes} ${dinero(f.ingresos, moneda)}`).join(', ')}`}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </Tarjeta>
+        </Tarjeta>
+      ) : (
+        monedas.map((moneda) => {
+          const filas = serie12(ventas.serie.filter((s) => s.moneda === moneda), (mes) => ({ mes, moneda, ingresos: 0, reembolsos: 0 }));
+          return (
+            <Tarjeta key={moneda} titulo={`Ingresos de los últimos 12 meses (${moneda})`} subtitulo="Lo que cobraste cada mes, antes de comisiones y costos.">
+              <BarrasMensuales
+                datos={filas.map((f) => ({ mes: f.mes, etiqueta: etiquetaMesCorta(f.mes), valor: f.ingresos / 100, texto: pesosCortos(f.ingresos) }))}
+                resumen={`Ingresos mensuales en ${moneda}: ${filas.map((f) => `${f.mes} ${dinero(f.ingresos, moneda)}`).join(', ')}`}
+              />
+            </Tarjeta>
+          );
+        })
+      )}
     </>
   );
 }

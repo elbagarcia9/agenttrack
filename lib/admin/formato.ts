@@ -4,10 +4,10 @@
 export const SIN_DATOS = 'Sin datos';
 const OFFSET = '-06:00';
 
+// Siempre con 2 decimales: así todas las cifras del panel se leen igual y se comparan de un vistazo.
 export function dinero(centavos: number, moneda: string): string {
   const v = centavos / 100;
-  const decimales = Number.isInteger(v) ? 0 : 2;
-  return `${v < 0 ? '−' : ''}$${Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: decimales, maximumFractionDigits: 2 })} ${moneda}`;
+  return `${v < 0 ? '−' : ''}$${Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${moneda}`;
 }
 
 export function porcentaje(parte: number, total: number): number | null {
@@ -122,3 +122,29 @@ export const ETIQUETA_MEMBRESIA: Record<string, string> = {
   manual: 'Acceso manual',
   sin_membresia: 'Sin membresía',
 };
+
+// "2026-10-01" → "1 oct"; un periodo → "1 oct – 9 oct"
+export function fechaDia(iso: string): string {
+  return new Date(`${iso}T12:00:00-06:00`).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', timeZone: 'America/Mexico_City' }).replace('.', '');
+}
+export function periodo(desde: string, hasta: string): string {
+  return desde === hasta ? fechaDia(desde) : `${fechaDia(desde)} – ${fechaDia(hasta)}`;
+}
+
+// $5,360 → "$5.4k" (etiquetas cortas para gráficas); el valor completo va en el tooltip
+export function pesosCortos(centavos: number): string {
+  const v = Math.round(centavos / 100);
+  return v >= 1000 ? `$${(v / 1000).toLocaleString('es-MX', { maximumFractionDigits: 1 })}k` : `$${v}`;
+}
+
+// Siempre 12 meses terminando en el mes actual, con 0 donde no hubo ventas (así el título "12 meses" es verdad)
+export function serie12<T extends { mes: string }>(filas: T[], vacio: (mes: string) => T): T[] {
+  const [a, m] = mesActual().split('-').map(Number);
+  const salida: T[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(Date.UTC(a, m - 1 - i, 1));
+    const mes = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+    salida.push(filas.find((f) => f.mes === mes) ?? vacio(mes));
+  }
+  return salida;
+}

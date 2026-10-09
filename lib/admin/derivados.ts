@@ -1,6 +1,7 @@
 // Cálculos del panel a partir de los datos reales. Nada se inventa: si falta un dato, el resultado lo dice
 // ("estimacion" + lista de lo que falta) o queda en null ("Sin datos").
 
+import { nombreCanal } from './etiquetas';
 import { dinero, porcentaje } from './formato';
 import type { CanalNegocio, Costo, Negocio, Salud, Uso, Ventas } from './tipos';
 
@@ -17,7 +18,7 @@ export interface Ganancia {
   impuestos: number | null;
   infra: number | null;
   email: number | null;
-  otros: number;
+  otros: number | null;
   ganancia: number;
   margenPct: number | null;
   faltantes: string[];
@@ -41,7 +42,7 @@ export function calcularGanancia(ventas: Ventas, costosDelMes: Costo[], tasaImpu
     const impuestos = tasaImpuestosPct === null ? null : Math.round((Math.max(ingresosNetos, 0) * tasaImpuestosPct) / 100);
     const infra = hay('infra') ? suma('infra') : null;
     const email = hay('email') ? suma('email') : null;
-    const otros = suma('dominio') + suma('otro');
+    const otros = hay('dominio') || hay('otro') ? suma('dominio') + suma('otro') : null;
 
     const faltantes: string[] = [];
     if (impuestos === null) faltantes.push('tu tasa de impuestos');
@@ -51,7 +52,7 @@ export function calcularGanancia(ventas: Ventas, costosDelMes: Costo[], tasaImpu
       faltantes.push(`${v.ventas_sin_comision_hotmart} venta${v.ventas_sin_comision_hotmart === 1 ? '' : 's'} donde Hotmart no mandó su comisión`);
     }
 
-    const ganancia = ingresosNetos - hotmart - afiliados - (impuestos ?? 0) - (infra ?? 0) - (email ?? 0) - otros;
+    const ganancia = ingresosNetos - hotmart - afiliados - (impuestos ?? 0) - (infra ?? 0) - (email ?? 0) - (otros ?? 0);
     salida.push({
       moneda,
       estado: faltantes.length ? 'estimacion' : 'completa',
@@ -81,6 +82,8 @@ export interface CanalCalculado extends CanalNegocio {
   recuperaMeses: number | null;
   ganancia: number;
   notaLtv: string | null;
+  veredicto: 'invertir' | 'ajustar' | 'pausar' | 'sin_datos' | 'sin_gasto';
+  frase: string;
 }
 
 export function churnMensual(ventas: Ventas): number | null {
@@ -100,15 +103,30 @@ export function calcularCanales(negocio: Negocio, ventas: Ventas): CanalCalculad
       const recuperaMeses = cac !== null && c.ingreso_mensual_cliente ? cac / c.ingreso_mensual_cliente : null;
       const notaLtv =
         churn === null ? 'Aún no hay bajas este mes: no se puede estimar cuánto dura un cliente.' : c.ingreso_mensual_cliente === null ? 'Sin compras nuevas con ciclo conocido.' : null;
-      return {
-        ...c,
-        cac,
-        ltv,
-        ratio,
-        recuperaMeses,
-        ganancia: c.ingresos - c.comision_hotmart - c.comision_afiliados - c.gasto,
-        notaLtv,
-      };
+      const ganancia = c.ingresos - c.comision_hotmart - c.comision_afiliados - c.gasto;
+      const nombre = nombreCanal(c.canal);
+      let veredicto: CanalCalculado['veredicto'];
+      let frase: string;
+      if (c.gasto <= 0) {
+        veredicto = 'sin_gasto';
+        frase = ganancia >= 0 ? 'Sin gasto anotado: lo que dejó este mes sale de ventas, sin descontar inversión.' : 'Sin gasto anotado no hay costo por cliente que medir.';
+      } else if (ratio === null) {
+        veredicto = 'sin_datos';
+        frase = `Aún no hay datos para decidir sobre ${nombre}: faltan bajas que midan cuánto dura un cliente.${ganancia < 0 ? ` Este mes va en pérdida (${dinero(ganancia, c.moneda)}).` : ''}`;
+      } else if (ganancia < 0 && ratio < 1) {
+        veredicto = 'pausar';
+        frase = `Pausa o cambia el anuncio de ${nombre}: por cada $1 que gastas recuperas $${ratio.toFixed(2)} en toda la vida del cliente.`;
+      } else if (ganancia < 0) {
+        veredicto = 'ajustar';
+        frase = `${nombre} va en pérdida este mes (${dinero(ganancia, c.moneda)}), pero cada cliente recupera la inversión en ${recuperaMeses !== null ? recuperaMeses.toFixed(1) : '—'} meses: ${ratio >= 3 ? 'tiene buen futuro' : 'baja el costo por cliente'}.`;
+      } else if (ratio >= 3) {
+        veredicto = 'invertir';
+        frase = `${nombre} funciona: por cada $1 que gastas recuperas $${ratio.toFixed(2)}. Podrías invertir más.`;
+      } else {
+        veredicto = 'ajustar';
+        frase = `${nombre} gana, pero por debajo del 3 a 1 sano ($${ratio.toFixed(2)} por cada $1): busca bajar el costo por cliente.`;
+      }
+      return { ...c, cac, ltv, ratio, recuperaMeses, ganancia, notaLtv, veredicto, frase };
     })
     .sort((a, b) => b.ganancia - a.ganancia);
 }
@@ -119,7 +137,6 @@ export type NivelAviso = 'critico' | 'atencion' | 'info';
 export interface Aviso {
   id: string;
   nivel: NivelAviso;
-  emoji: string;
   titulo: string; // qué pasó
   porQue: string; // por qué importa
   queHacer: string; // qué hacer
@@ -142,7 +159,6 @@ export function calcularAvisos({ ventas, ganancias, salud, uso, canales }: Entra
     avisos.push({
       id: 'pagos-sin-acceso',
       nivel: 'critico',
-      emoji: '🔑',
       titulo: `${n} ${n === 1 ? 'persona pagó' : 'personas pagaron'} y no ${n === 1 ? 'tiene' : 'tienen'} cuenta en la app`,
       porQue: 'Pagaron y no pueden entrar: es la queja más común y la que termina en reembolso.',
       queHacer: 'Agrégalas con su correo en Usuarios y mándales el acceso.',
@@ -155,7 +171,6 @@ export function calcularAvisos({ ventas, ganancias, salud, uso, canales }: Entra
     avisos.push({
       id: 'webhook-falla',
       nivel: 'critico',
-      emoji: '🔌',
       titulo: `Hotmart avisó ${wh.error} ${wh.error === 1 ? 'vez' : 'veces'} y no pudimos registrarlo`,
       porQue: 'Los pagos podrían no estar dando acceso (o dándolo gratis) y tus números quedarían incompletos.',
       queHacer: 'Revisa la conexión con Hotmart en Salud y reenvía el aviso desde su panel.',
@@ -166,7 +181,6 @@ export function calcularAvisos({ ventas, ganancias, salud, uso, canales }: Entra
     avisos.push({
       id: 'webhook-intrusos',
       nivel: 'atencion',
-      emoji: '🛡️',
       titulo: `${wh.unauthorized} intentos de aviso falsos en la última semana`,
       porQue: 'Alguien está probando el punto de entrada de pagos. Se rechazaron, pero conviene estar al tanto.',
       queHacer: 'Verifica que tu clave de Hotmart (hottok) no se haya compartido; si dudas, cámbiala.',
@@ -179,7 +193,6 @@ export function calcularAvisos({ ventas, ganancias, salud, uso, canales }: Entra
       avisos.push({
         id: `margen-${g.moneda}`,
         nivel: 'critico',
-        emoji: '🧮',
         titulo: `Este mes pierdes dinero en ${g.moneda}: ${dinero(g.ganancia, g.moneda)}`,
         porQue: 'Si cada venta deja menos de lo que cuesta, vender más empeora la pérdida.',
         queHacer: 'Revisa costos y precio en Ganancia antes de gastar más en conseguir clientes.',
@@ -194,7 +207,6 @@ export function calcularAvisos({ ventas, ganancias, salud, uso, canales }: Entra
     avisos.push({
       id: 'churn-involuntario',
       nivel: 'atencion',
-      emoji: '📉',
       titulo: `${b.involuntarias} de ${bajas} bajas fueron por pago fallido`,
       porQue: 'Estás perdiendo clientes que sí querían pagar; es lo más barato de recuperar.',
       queHacer: 'Activa los recordatorios de pago fallido y ajusta el correo de recuperación.',
@@ -207,8 +219,7 @@ export function calcularAvisos({ ventas, ganancias, salud, uso, canales }: Entra
       avisos.push({
         id: `canal-${c.canal}-${c.moneda}`,
         nivel: 'atencion',
-        emoji: '⚖️',
-        titulo: `El canal "${c.canal}" te cuesta más de lo que deja este mes`,
+        titulo: `${nombreCanal(c.canal)} te cuesta más de lo que deja este mes`,
         porQue: `Gastaste ${dinero(c.gasto, c.moneda)} y sus clientes dejaron ${dinero(c.ingresos - c.comision_hotmart - c.comision_afiliados, c.moneda)} netos de comisiones.`,
         queHacer: 'Pausa el gasto en ese canal o cambia el anuncio antes de seguir invirtiendo.',
         href: '/admin/negocio',
@@ -217,8 +228,7 @@ export function calcularAvisos({ ventas, ganancias, salud, uso, canales }: Entra
       avisos.push({
         id: `canal-ratio-${c.canal}-${c.moneda}`,
         nivel: 'atencion',
-        emoji: '⚖️',
-        titulo: `El canal "${c.canal}" trae clientes que cuestan más de lo que dejan`,
+        titulo: `${nombreCanal(c.canal)} trae clientes que cuestan más de lo que dejan`,
         porQue: `Por cada $1 que gastas en conseguirlos, recuperas $${c.ratio.toFixed(2)} en toda su vida como clientes.`,
         queHacer: 'Pausa el gasto ahí y compara con tus otros canales.',
         href: '/admin/negocio',
@@ -231,7 +241,6 @@ export function calcularAvisos({ ventas, ganancias, salud, uso, canales }: Entra
     avisos.push({
       id: 'errores-alza',
       nivel: 'atencion',
-      emoji: '🐞',
       titulo: `${peor.usuarios} ${peor.usuarios === 1 ? 'persona chocó' : 'personas chocaron'} con el mismo error`,
       porQue: 'Un error repetido suele significar que algo se rompió para mucha gente.',
       queHacer: 'Revisa el error más común en Salud y avísame para corregirlo.',
@@ -243,7 +252,6 @@ export function calcularAvisos({ ventas, ganancias, salud, uso, canales }: Entra
     avisos.push({
       id: 'pagadores-fantasma',
       nivel: 'info',
-      emoji: '👻',
       titulo: `${uso.pagadores_fantasma} ${uso.pagadores_fantasma === 1 ? 'suscriptor paga' : 'suscriptores pagan'} pero no ${uso.pagadores_fantasma === 1 ? 'entra' : 'entran'} hace 14 días o más`,
       porQue: 'Son los que más probablemente cancelen en su próxima renovación.',
       queHacer: 'Escríbeles un recordatorio con el beneficio que están dejando pasar.',

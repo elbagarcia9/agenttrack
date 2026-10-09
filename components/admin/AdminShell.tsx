@@ -3,6 +3,7 @@
 // Estructura del panel del dueño: barra lateral en computadora, pestañas deslizables arriba en celular.
 // La protección real vive en el servidor (exigirAdmin + RLS); esto solo es la estructura visual.
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Activity, CircleDollarSign, HeartPulse, LayoutDashboard, LogOut, Receipt, Target, Users, Wallet, type LucideIcon } from 'lucide-react';
@@ -29,6 +30,10 @@ async function salir() {
 
 export function AdminShell({ children, correo }: { children: React.ReactNode; correo: string }) {
   const path = usePathname();
+  // En el celular la pestaña activa se centra sola para que nunca quede cortada o escondida
+  useEffect(() => {
+    document.querySelector('[data-pestana-activa="true"]')?.scrollIntoView({ inline: 'center', block: 'nearest' });
+  }, [path]);
   return (
     <div className="min-h-dvh bg-[var(--bg)] bg-[image:radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%)] text-[var(--text-primary)] [font-family:var(--font-body)] lg:grid lg:grid-cols-[15rem_1fr]">
       <aside className="hidden border-r border-black/10 bg-[var(--surface)] p-4 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:gap-1">
@@ -79,7 +84,7 @@ export function AdminShell({ children, correo }: { children: React.ReactNode; co
               <LogOut size={20} aria-hidden="true" />
             </button>
           </div>
-          <nav aria-label="Secciones del panel" className="flex gap-1 overflow-x-auto px-3 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <nav aria-label="Secciones del panel" className="flex snap-x gap-1 overflow-x-auto px-4 pb-2 pr-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,black_85%,transparent)]">
             {ITEMS.map(({ href, texto, Icon }) => {
               const on = activo(path, href);
               return (
@@ -87,7 +92,8 @@ export function AdminShell({ children, correo }: { children: React.ReactNode; co
                   key={href}
                   href={href}
                   aria-current={on ? 'page' : undefined}
-                  className={`flex min-h-11 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold ${on ? 'bg-[var(--accent)] text-[var(--on-accent)]' : 'bg-[var(--surface-2)] text-[var(--text-secondary)]'}`}
+                  data-pestana-activa={on ? 'true' : undefined}
+                  className={`panel-tap flex min-h-11 shrink-0 snap-start items-center gap-2 rounded-full px-4 text-sm font-semibold ${on ? 'bg-[var(--accent)] text-[var(--on-accent)]' : 'bg-[var(--surface-2)] text-[var(--text-secondary)]'}`}
                 >
                   <Icon size={16} aria-hidden="true" />
                   {texto}
@@ -96,7 +102,7 @@ export function AdminShell({ children, correo }: { children: React.ReactNode; co
             })}
           </nav>
         </header>
-        <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 md:px-8 md:py-8">{children}</main>
+        <main className="panel-entrada mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 md:px-8 md:py-8">{children}</main>
       </div>
     </div>
   );

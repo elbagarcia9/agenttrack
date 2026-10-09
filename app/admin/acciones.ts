@@ -179,3 +179,11 @@ export async function resolverError(fd: FormData): Promise<void> {
   await sb.from('error_log').update({ resuelto: true }).eq('mensaje', mensaje);
   revalidatePath('/admin', 'layout');
 }
+
+export async function reabrirError(fd: FormData): Promise<void> {
+  const { sb } = await exigirAdmin();
+  const mensaje = texto(fd, 'mensaje').slice(0, 500);
+  if (!mensaje) return;
+  await sb.from('error_log').update({ resuelto: false }).eq('mensaje', mensaje);
+  revalidatePath('/admin', 'layout');
+}

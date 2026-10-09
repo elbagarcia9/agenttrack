@@ -1,2 +1,43 @@
 @import "tailwindcss";
 @import "../components/landing/tokens.css";
+
+/* ───── Panel del dueño: movimiento sobrio (entrada escalonada, barras que crecen, respuesta al toque) ───── */
+@keyframes panel-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes panel-barra {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel-entrada > * {
+    animation: panel-entrada 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .panel-entrada > *:nth-child(2) { animation-delay: 60ms; }
+  .panel-entrada > *:nth-child(3) { animation-delay: 120ms; }
+  .panel-entrada > *:nth-child(4) { animation-delay: 180ms; }
+  .panel-entrada > *:nth-child(5) { animation-delay: 240ms; }
+  .panel-entrada > *:nth-child(6) { animation-delay: 300ms; }
+  .panel-entrada > *:nth-child(n + 7) { animation-delay: 360ms; }
+  .panel-barra {
+    transform-origin: left;
+    animation: panel-barra 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  }
+  .panel-tap {
+    transition: transform 120ms ease-out;
+  }
+  .panel-tap:active {
+    transform: scale(0.97);
+  }
+}
