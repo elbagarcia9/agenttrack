@@ -5,10 +5,11 @@
 
 import { useEffect } from 'react';
 import { track } from '@/lib/track';
-import { CalendarX, CircleHelp, FileSpreadsheet, FileWarning, HandCoins, Repeat } from 'lucide-react';
+import { CalendarX, CircleHelp, FileSpreadsheet, FileWarning, Repeat } from 'lucide-react';
 import { Hero } from '@/components/landing/Hero';
 import { Problema } from '@/components/landing/Problema';
-import { Agitacion } from '@/components/landing/Agitacion';
+import { BandaPuente } from '@/components/landing/BandaPuente';
+import { EscenaFondo } from '@/components/landing/EscenaFondo';
 import { Solucion } from '@/components/landing/Solucion';
 import { AppPorDentro } from '@/components/landing/AppPorDentro';
 import { Oferta } from '@/components/landing/Oferta';
@@ -57,7 +58,14 @@ export default function Landing() {
         }
       />
 
+      <BandaPuente
+        preguntaMarked="¿Trabajar el viaje entero de a gratis?"
+        respuestaMarked="Con AgentTrack eso no te vuelve a pasar"
+        fondoAbajo="var(--accent)"
+      />
+
       <Problema
+        fondo="azul"
         titulo="¿Te suena?"
         preguntas={[
           { icon: CircleHelp, textoMarked: '¿No recuerdas si esa comisión que te deben [b]ya es tiempo de reclamarla[/b]?' },
@@ -68,16 +76,10 @@ export default function Landing() {
         ]}
       />
 
-      <Agitacion
-        iconos={[HandCoins, FileWarning]}
-        frases={[
-          'Trabajar el viaje entero para terminar [b]trabajando de a gratis[/b].',
-          'Si dejas vencer el plazo de reclamo, [acento]ya no puedes pedirla[/acento].',
-        ]}
-        escena={{
-          citaMarked: 'Nadie se va a parar a prender la compu…',
-          cierreMarked: `Puedes estar tranquila: [b]${BRAND} te avisará con anticipación[/b].`,
-        }}
+      <EscenaFondo
+        src="/img/escena-desvelo.jpg"
+        citaMarked="Nadie se va a parar a prender la compu…"
+        cierreMarked={`Puedes estar tranquila: [b]${BRAND} te avisará con anticipación[/b].`}
       />
 
       <Solucion

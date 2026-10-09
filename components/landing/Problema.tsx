@@ -24,15 +24,23 @@ export interface ProblemaProps {
   /** 3-5 preguntas, cada una trazada a un dolor de FICHA-AVATAR.md. */
   preguntas: PreguntaProblema[];
   id?: string;
+  /** 'azul' = sección sobre el azul de marca (título blanco). */
+  fondo?: 'claro' | 'azul';
 }
 
-export function Problema({ titulo, preguntas, id }: ProblemaProps) {
+export function Problema({ titulo, preguntas, id, fondo = 'claro' }: ProblemaProps) {
   warnRango('Problema → preguntas', preguntas.length, 3, 5);
   preguntas.forEach((p, i) => warnCopy(`Problema → pregunta ${i + 1}`, p.textoMarked, 12));
   const { contenedor, item } = useReveal();
 
   return (
-    <SectionShell id={id} elevacion="elevada" flush="bottom" ariaLabel="El problema">
+    <SectionShell
+      id={id}
+      elevacion={fondo === 'azul' ? 'base' : 'elevada'}
+      flush={fondo === 'azul' ? 'none' : 'bottom'}
+      ariaLabel="El problema"
+      className={fondo === 'azul' ? 'bg-[var(--accent)]' : ''}
+    >
       <motion.div
         variants={contenedor}
         initial="hidden"
@@ -43,7 +51,7 @@ export function Problema({ titulo, preguntas, id }: ProblemaProps) {
         {titulo && (
           <motion.h2
             variants={item}
-            className="mb-8 text-balance text-[30px] font-bold leading-[1.15] text-[var(--text-primary)] [font-family:var(--font-display)] md:text-[40px]"
+            className={`mb-8 text-balance text-[30px] font-bold leading-[1.15] [font-family:var(--font-display)] md:text-[40px] ${fondo === 'azul' ? 'text-white' : 'text-[var(--text-primary)]'}`}
           >
             {titulo}
           </motion.h2>
