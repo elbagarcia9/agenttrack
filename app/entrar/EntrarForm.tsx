@@ -21,11 +21,15 @@ const entrada = (i: number) => ({
   transition: { duration: 0.35, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-export function EntrarForm({ plan, enlaceFallido = false }: { plan: string | null; enlaceFallido?: boolean }) {
+export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?: 'enlace' | 'desactivada' | null }) {
   const [fase, setFase] = useState<Fase>('escribiendo');
   const [correo, setCorreo] = useState('');
   const [error, setError] = useState(
-    enlaceFallido ? 'Ese enlace ya no sirve (vence en pocos minutos o se abrió en otro navegador). Pide uno nuevo o usa el código de 6 dígitos.' : '',
+    aviso === 'enlace'
+      ? 'Ese enlace ya no sirve (vence en pocos minutos o se abrió en otro navegador). Pide uno nuevo o usa el código de 6 dígitos.'
+      : aviso === 'desactivada'
+        ? 'Tu cuenta está desactivada. Escríbenos para revisarla.'
+        : '',
   );
   const [intento, setIntento] = useState(false);
   const [espera, setEspera] = useState(0);

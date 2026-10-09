@@ -23,7 +23,21 @@ export async function proxy(request: NextRequest) {
 
   // getUser() valida el token con el servidor de Supabase (getSession() solo lee la cookie y no basta)
   const { data } = await supabase.auth.getUser();
-  if (!data.user && request.nextUrl.pathname.startsWith('/app')) {
+  const enApp = request.nextUrl.pathname.startsWith('/app');
+  // Cuenta desactivada desde el panel del dueño: se cierra su sesión y no entra a la app
+  if (data.user && enApp) {
+    const { data: perfil } = await supabase.from('perfiles').select('estado').eq('id', data.user.id).maybeSingle();
+    if (perfil?.estado === 'desactivado') {
+      await supabase.auth.signOut();
+      const destino = request.nextUrl.clone();
+      destino.pathname = '/entrar';
+      destino.search = '?error=desactivada';
+      const salida = NextResponse.redirect(destino);
+      respuesta.cookies.getAll().forEach(({ name, value }) => salida.cookies.set(name, value));
+      return salida;
+    }
+  }
+  if (!data.user && enApp) {
     const destino = request.nextUrl.clone();
     destino.pathname = '/entrar';
     destino.search = '';
