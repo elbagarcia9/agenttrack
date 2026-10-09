@@ -29,10 +29,10 @@ export function BandaPuente({ preguntaMarked, respuestaMarked, fondoArriba = 'va
         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         className="mx-auto max-w-5xl rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--surface)_70%,transparent)] bg-[var(--surface-2)] px-6 py-6 text-center shadow-[var(--shadow-2)] md:px-10 md:py-8"
       >
-        <p className="text-balance text-3xl font-bold leading-tight text-[var(--accent)] [font-family:var(--font-display)] md:text-5xl">
+        <p className="text-balance text-[30px] font-bold leading-[1.15] text-[var(--accent)] [font-family:var(--font-display)] md:text-[40px]">
           <MarkedCopy text={preguntaMarked} />
         </p>
-        <p className="mt-2 text-balance text-lg font-semibold leading-snug text-[var(--text-primary)] md:text-2xl">
+        <p className="mt-2 text-balance text-[17px] font-semibold leading-snug text-[var(--text-primary)] md:text-xl">
           <MarkedCopy text={respuestaMarked} />
         </p>
       </motion.div>

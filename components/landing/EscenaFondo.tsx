@@ -36,10 +36,10 @@ export function EscenaFondo({ src, alt = '', citaMarked, cierreMarked, enfoque =
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="mx-auto w-full max-w-[1140px] px-5 pt-14 md:pt-20"
       >
-        <blockquote className="max-w-xl text-balance text-4xl font-bold leading-tight text-white [font-family:var(--font-display)] md:text-6xl">
+        <blockquote className="max-w-xl text-balance text-[30px] font-bold leading-[1.15] text-white [font-family:var(--font-display)] md:text-[40px]">
           <MarkedCopy text={citaMarked} />
         </blockquote>
-        <p className="mt-4 max-w-md text-xl leading-snug text-white/95 md:text-2xl">
+        <p className="mt-4 max-w-md text-[17px] leading-snug text-white/95 md:text-[18px]">
           <MarkedCopy text={cierreMarked} />
         </p>
       </motion.div>

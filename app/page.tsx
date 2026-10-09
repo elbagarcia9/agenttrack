@@ -8,6 +8,7 @@ import { track } from '@/lib/track';
 import { CalendarX, CircleHelp, FileSpreadsheet, FileWarning, Repeat } from 'lucide-react';
 import { Hero } from '@/components/landing/Hero';
 import { Problema } from '@/components/landing/Problema';
+import { AntesDespues } from '@/components/landing/AntesDespues';
 import { BandaPuente } from '@/components/landing/BandaPuente';
 import { EscenaFondo } from '@/components/landing/EscenaFondo';
 import { Solucion } from '@/components/landing/Solucion';
@@ -92,13 +93,9 @@ export default function Landing() {
           { titulo: 'El asistente ya tiene la información', detalle: 'Las fechas importantes ya tienen su alerta.' },
           { titulo: 'Actúas a tiempo', detalle: 'Aviso anticipado en dorado para tomar acción.' },
         ]}
-        antesDespues={{
-          labelAntes: 'Antes',
-          antes: 'Excel pasivo y fechas en tu cabeza.',
-          labelDespues: `Con ${BRAND}`,
-          despues: 'Tu asistente vigila cada venta y te avisa a tiempo.',
-        }}
       />
+
+      <AntesDespues labelAntes="Antes" labelDespues={`Con ${BRAND}`} />
 
       <AvisosAsistente />
 

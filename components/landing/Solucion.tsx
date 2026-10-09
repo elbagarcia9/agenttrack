@@ -82,17 +82,22 @@ export function Solucion({
           <MarkedCopy text={bigIdeaMarked} />
         </motion.p>
 
-        {/* 3 pasos: filas apiladas en mobile, 3 columnas en desktop */}
-        <ol className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* 3 pasos como esquema: número → línea que los une → recuadro. Tres columnas en computadora, apilados en celular */}
+        <ol className="relative mt-10 grid grid-cols-1 gap-8 md:grid-cols-3">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute top-[22px] left-[calc((100%-4rem)/6)] right-[calc((100%-4rem)/6)] hidden h-px bg-[color-mix(in_oklab,var(--accent)_45%,transparent)] md:block"
+          />
           {pasos.map((p, i) => (
-            <motion.li key={i} variants={item} className="flex items-start gap-4 md:flex-col">
+            <motion.li key={i} variants={item} className="relative flex flex-col items-center">
               <span
                 aria-hidden="true"
-                className="flex size-11 shrink-0 items-center justify-center rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--accent)_22%,transparent)] bg-[var(--chip-bg)] text-[17px] font-bold tabular-nums text-[var(--accent)]"
+                className="relative flex size-11 shrink-0 items-center justify-center rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--accent)_30%,transparent)] bg-[var(--chip-azul-bg)] text-[17px] font-bold tabular-nums text-[var(--accent)]"
               >
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <div className="pt-1 md:pt-0">
+              <span aria-hidden="true" className="h-4 w-px bg-[color-mix(in_oklab,var(--accent)_45%,transparent)]" />
+              <div className="tarjeta-suave flex w-full flex-1 flex-col items-center justify-center rounded-[var(--radius-card)] px-5 py-4 text-center">
                 <h3 className="text-[16px] font-semibold text-[var(--text-primary)]">{p.titulo}</h3>
                 <p className="mt-1 text-[15px] leading-snug text-[var(--text-secondary)]">{p.detalle}</p>
               </div>
