@@ -17,7 +17,7 @@ import { Faq } from '@/components/landing/Faq';
 import { CtaFinal } from '@/components/landing/CtaFinal';
 import { FooterLegal } from '@/components/landing/FooterLegal';
 import { StickyCtaMobile } from '@/components/landing/ui';
-import { AppMockInicio } from '@/components/AppMockInicio';
+import Image from 'next/image';
 import { Logo } from '@/components/Logo';
 import { AvisosAsistente } from '@/components/AvisosAsistente';
 import { ImportarExcel } from '@/components/ImportarExcel';
@@ -43,7 +43,15 @@ export default function Landing() {
         socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Tarjeta al empezar, sin cobro hoy.</span>}
         visual={
           <div>
-            <AppMockInicio />
+            <Image
+              src="/img/hero-agente.webp"
+              alt="Una agente de viajes sonriendo con su computadora, junto a la pantalla de inicio de AgentTrack en un celular"
+              width={926}
+              height={713}
+              priority
+              sizes="(min-width: 768px) 720px, 100vw"
+              className="h-auto w-full"
+            />
             <p className="mt-3 text-center text-xs text-[var(--text-tertiary)]">Vista de ejemplo con datos ficticios</p>
           </div>
         }
