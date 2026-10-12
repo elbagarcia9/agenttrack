@@ -1,11 +1,10 @@
 import Image from 'next/image';
-import { ChevronsRight, CircleCheckBig, ShieldCheck, Upload } from 'lucide-react';
+import { CircleCheckBig, ShieldCheck, Upload } from 'lucide-react';
 
 // Banda de importación: responde el miedo nº 1 antes de animarse ("¿tengo que pasar todo a mano?").
 // Fase 1 (Excel y CSV) es obligatoria antes de vender: ver ESTADO.md.
 // Orden en celular: texto → imagen (Excel → celular) → pasos. En computadora: texto y pasos a la izquierda, imagen a la derecha.
-// PENDIENTE (ESTADO.md): el logo de Excel y el celular en círculo salen de recortes de la imagen anterior (478 px, poca
-// resolución); reemplazar por las piezas originales de la usuaria (PNG con fondo transparente) cuando las entregue.
+// Imágenes de la usuaria (PNG con fondo transparente): excel-a-app.png (composición), flechas-pasos.png, logo-excel.png.
 
 function IconoColumnas() {
   return (
@@ -23,8 +22,8 @@ const PASOS = [
     titulo: 'Sube tu Excel o CSV',
     detalle: null,
     icono: (
-      <span aria-hidden="true" className="flex items-center gap-1.5">
-        <Image src="/img/excel-logo-temporal.png" alt="" width={40} height={43} className="h-10 w-auto" />
+      <span aria-hidden="true" className="flex items-center gap-1">
+        <Image src="/img/logo-excel.png" alt="" width={800} height={800} className="size-12" />
         <span className="flex size-9 items-center justify-center rounded-[var(--radius-button)] bg-[var(--chip-azul-bg)]">
           <Upload size={20} strokeWidth={1.8} color="var(--slate)" />
         </span>
@@ -39,18 +38,6 @@ const PASOS = [
     icono: <ShieldCheck aria-hidden="true" size={36} strokeWidth={1.6} color="var(--slate)" />,
   },
 ] as const;
-
-// Dos flechas grandes de contorno (la idea es "de aquí, a allá")
-function FlechasGrandes({ className = '' }: { className?: string }) {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 132 130" fill="none" className={className}>
-      <g className="stroke-[var(--text-tertiary)] opacity-70" strokeWidth="5" strokeLinejoin="round">
-        <path d="M6 6H38L76 65L38 124H6L44 65Z" />
-        <path d="M56 6H88L126 65L88 124H56L94 65Z" />
-      </g>
-    </svg>
-  );
-}
 
 export function ImportarExcel() {
   return (
@@ -68,14 +55,15 @@ export function ImportarExcel() {
         </div>
 
         {/* 2 · Imagen: de Excel al celular. En celular va ANTES de los pasos */}
-        <div
-          role="img"
-          aria-label="De una hoja de Excel a tu asistente en el celular"
-          className="flex items-center justify-center md:col-start-2 md:row-span-2 md:row-start-1"
-        >
-          <Image src="/img/excel-logo-temporal.png" alt="" width={140} height={152} className="h-auto w-20 md:w-[110px]" />
-          <FlechasGrandes className="mx-3 h-auto w-20 md:mx-5 md:w-28" />
-          <Image src="/img/celular-circulo-temporal.png" alt="" width={202} height={240} className="h-auto w-36 md:w-[190px]" />
+        <div className="flex items-center justify-center md:col-start-2 md:row-span-2 md:row-start-1">
+          <Image
+            src="/img/excel-a-app.png"
+            alt="De una hoja de Excel a tu asistente en el celular"
+            width={472}
+            height={233}
+            sizes="(min-width: 768px) 472px, 90vw"
+            className="h-auto w-full max-w-[472px]"
+          />
         </div>
 
         {/* 3 · Pasos como botones unidos por flechas (en celular, uno bajo otro) */}
@@ -89,7 +77,9 @@ export function ImportarExcel() {
                   {p.detalle && <span className="block text-[var(--text-secondary)]">{p.detalle}</span>}
                 </span>
               </div>
-              {i < PASOS.length - 1 && <ChevronsRight aria-hidden="true" size={26} strokeWidth={2.2} color="var(--accent)" className="shrink-0 rotate-90 md:rotate-0" />}
+              {i < PASOS.length - 1 && (
+                <Image src="/img/flechas-pasos.png" alt="" aria-hidden="true" width={42} height={36} className="h-auto w-7 shrink-0 rotate-90 md:rotate-0" />
+              )}
             </li>
           ))}
         </ol>
