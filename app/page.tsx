@@ -200,7 +200,7 @@ export default function Landing() {
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
         recap="14 días gratis · tarjeta al empezar, sin cobro hoy · cancela cuando quieras"
-        psMarked="PS: Cada venta que registres hoy tiene sus plazos vigilados desde el primer día. Empieza con 14 días gratis y decide después."
+        psMarked="Cada venta que registres hoy tiene sus plazos vigilados desde el primer día. Empieza con 14 días gratis y decide después."
       />
 
       <FooterLegal

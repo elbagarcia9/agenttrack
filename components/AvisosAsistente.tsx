@@ -14,9 +14,11 @@ const AVISOS = [
 export function AvisosAsistente() {
   const reducir = useReducedMotion();
   return (
-    <section aria-label="Los avisos de tu asistente" className="bg-[var(--bg)] pb-12">
+    <section aria-label="Los avisos de tu asistente" className="bg-[var(--bg)] pb-12 pt-16 md:pt-24">
       <div className="mx-auto w-full max-w-[1140px] px-5">
-        <h3 className="text-[22px] font-bold leading-tight [font-family:var(--font-display)]">Cada venta te da aviso de:</h3>
+        <h2 className="text-balance text-[28px] font-bold leading-[1.15] [font-family:var(--font-display)] md:text-[34px]">
+          Cada venta te da <span className="text-[var(--accent)]">aviso de:</span>
+        </h2>
         <ul className="mt-5 grid gap-3 md:grid-cols-2">
           {AVISOS.map(({ Icon, titulo, detalle }, i) => (
             <motion.li

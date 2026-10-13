@@ -50,7 +50,10 @@ export function ImportarExcel() {
             Importa todos los datos de tu Excel <span className="text-[var(--accent)]">en segundos</span>
           </h2>
           <p className="mt-3 text-[17px] leading-relaxed text-[var(--text-secondary)]">
-            Transforma tu administración en un sistema <b className="text-[var(--text-primary)]">portable y con alertas</b>. No tienes que pasar nada a mano.
+            <span className="block xl:whitespace-nowrap">
+              Transforma tu administración en un sistema <b className="text-[var(--text-primary)]">portable y con alertas</b>.
+            </span>
+            <span className="block xl:whitespace-nowrap">No tienes que pasar nada a mano.</span>
           </p>
         </div>
 
