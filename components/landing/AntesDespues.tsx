@@ -19,7 +19,7 @@ export function AntesDespues({ id }: { id?: string }) {
       <div className="mx-auto grid w-full max-w-5xl items-end gap-6 px-5 md:grid-cols-2">
         <motion.figure {...entrada(0)} className="m-0 leading-none">
           <Image
-            src="/img/antes-corregida.jpg"
+            src="/img/antes-final.jpg"
             alt="Antes: una agente de viajes confundida, rascándose la cabeza, se pregunta si subió la compra de Disney y cuánto hace que fue el viaje de la Familia Martínez, si ya pasaron más de dos meses"
             width={1093}
             height={1238}
