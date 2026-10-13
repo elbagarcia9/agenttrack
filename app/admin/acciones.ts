@@ -9,7 +9,6 @@ import { headers } from 'next/headers';
 import { dentroDelLimite } from '@/lib/eventos';
 import { aCentavos } from '@/lib/admin/formato';
 import { exigirAdmin } from '@/lib/supabase/servidor';
-import { servicioConfigurado, supabaseServicio } from '@/lib/supabase/servicio';
 
 export type Resultado = { ok: boolean; mensaje: string } | null;
 
@@ -27,63 +26,95 @@ async function origenDelSitio(): Promise<string> {
   return `${proto}://${host}`;
 }
 
-// Manda el enlace de acceso a una cuenta que YA existe (no crea cuentas nuevas)
-async function mandarAcceso(email: string): Promise<boolean> {
+// Manda el enlace de acceso. Con crearCuenta=true (invitados que aún no han entrado) la cuenta se crea al abrirlo
+async function mandarAcceso(email: string, crearCuenta = false): Promise<boolean> {
   const anonimo = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { error } = await anonimo.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: false, emailRedirectTo: `${await origenDelSitio()}/auth/callback` },
+    options: { shouldCreateUser: crearCuenta, emailRedirectTo: `${await origenDelSitio()}/auth/callback` },
   });
   return !error;
 }
 
 // ───────── USUARIOS ─────────
 
+const TIPOS_REGALO = ['14_dias', '1_mes', 'siempre'] as const;
+type TipoRegalo = (typeof TIPOS_REGALO)[number];
+const esTipoRegalo = (v: string): v is TipoRegalo => (TIPOS_REGALO as readonly string[]).includes(v);
+
+function finDelRegalo(tipo: TipoRegalo): string | null {
+  if (tipo === 'siempre') return null;
+  const d = new Date();
+  if (tipo === '14_dias') d.setDate(d.getDate() + 14);
+  else d.setMonth(d.getMonth() + 1);
+  return d.toISOString();
+}
+const textoRegalo = (t: TipoRegalo) => (t === '14_dias' ? '14 días gratis' : t === '1_mes' ? '1 mes gratis' : 'acceso gratis para siempre');
+
+// Agregar a alguien: se guarda su invitación (correo + nombre + tiempo regalado) y, si se quiere, se le manda el enlace de acceso.
+// Al entrar por primera vez, la base crea su cuenta con ese regalo (el reloj empieza ese día). No hace falta la clave del servidor.
 export async function agregarUsuario(_previo: Resultado, fd: FormData): Promise<Resultado> {
-  const { user } = await exigirAdmin();
+  const { sb, user } = await exigirAdmin();
   if (!dentroDelLimite(`alta:${user.id}`, 20)) return falla('Hiciste muchas altas seguidas. Espera un minuto e inténtalo de nuevo.');
   const email = texto(fd, 'email').toLowerCase();
   const nombre = texto(fd, 'nombre');
+  const tipo = texto(fd, 'tiempo');
   if (!CORREO.test(email)) return falla('Escribe un correo válido, como nombre@correo.com.');
   if (nombre.length < 2 || nombre.length > 80) return falla('Escribe el nombre de la persona (entre 2 y 80 letras).');
-  if (!servicioConfigurado()) {
-    return falla('Falta conectar la clave del servidor para crear cuentas. Mientras tanto, la persona puede entrar sola desde la pantalla de acceso con su correo.');
+  if (!esTipoRegalo(tipo)) return falla('Elige cuánto tiempo gratis le das: 14 días, 1 mes o siempre.');
+  const enviar = fd.get('enviar') === 'on';
+
+  const { data: existente } = await sb.from('perfiles').select('id, membresia').ilike('email', email).maybeSingle();
+  let mensaje: string;
+  if (existente) {
+    if (['active', 'trialing', 'past_due'].includes(existente.membresia ?? '')) return falla('Esa persona ya es cliente de pago: no hace falta regalarle tiempo.');
+    const { error } = await sb.from('perfiles').update({ membresia: 'manual', acceso_tipo: tipo, acceso_hasta: finDelRegalo(tipo), nombre }).eq('id', existente.id);
+    if (error) return falla('No pudimos guardar el regalo. Inténtalo de nuevo.');
+    mensaje = `${nombre} ya tenía cuenta: le diste ${textoRegalo(tipo)} desde hoy.`;
+  } else {
+    await sb.from('accesos_regalo').delete().eq('email', email).is('aplicado_en', null); // una sola invitación pendiente por correo
+    const { error } = await sb.from('accesos_regalo').insert({ email, nombre, tipo });
+    if (error) return falla('No pudimos guardar la invitación. Inténtalo de nuevo.');
+    mensaje = `Listo: ${nombre} queda invitada con ${textoRegalo(tipo)}. El tiempo empieza a contar el día que entre por primera vez.`;
   }
-
-  const svc = supabaseServicio();
-  const { data, error } = await svc.auth.admin.createUser({ email, email_confirm: true, user_metadata: { nombre } });
-  if (error || !data.user) {
-    if (error && /already|registered|exists/i.test(error.message)) return falla('Ese correo ya tiene una cuenta.');
-    console.error('panel: no se pudo crear la cuenta', { codigo: error?.status });
-    return falla('No pudimos crear la cuenta. Inténtalo de nuevo en un momento.');
-  }
-
-  // Si esa persona ya había pagado en Hotmart sin tener cuenta, su membresía refleja ese pago; si no, queda como acceso manual
-  const { data: pagos } = await svc
-    .from('payment_transactions')
-    .select('economic_kind, ciclo, source, occurred_at')
-    .ilike('buyer_email', email)
-    .order('occurred_at', { ascending: true });
-  const ventas = (pagos ?? []).filter((p) => p.economic_kind === 'sale');
-  const devuelto = (pagos ?? []).some((p) => p.economic_kind !== 'sale');
-  const ultima = ventas[ventas.length - 1];
-  const cambios =
-    ventas.length === 0
-      ? { membresia: 'manual', fuente: 'manual' }
-      : devuelto
-        ? { membresia: 'refunded', fuente: ventas[0].source, first_paid_at: ventas[0].occurred_at }
-        : { membresia: 'active', ciclo: ultima.ciclo, fuente: ventas[0].source, first_paid_at: ventas[0].occurred_at };
-  await svc.from('perfiles').update({ nombre, ...cambios }).eq('id', data.user.id);
-
-  let aviso = '';
-  if (fd.get('enviar') === 'on') {
-    aviso = (await mandarAcceso(email)) ? ' Le enviamos el enlace de acceso.' : ' No pudimos enviarle el correo; pulsa "Reenviar acceso" en su fila.';
+  if (enviar) {
+    mensaje += (await mandarAcceso(email, !existente)) ? ' Le enviamos el enlace de acceso.' : ' No pudimos enviarle el correo ahora; pulsa "Reenviar acceso" en su fila.';
   }
   revalidatePath('/admin/usuarios');
   revalidatePath('/admin');
-  return exito(`Listo: ${nombre} ya tiene cuenta.${aviso}`);
+  return exito(mensaje);
+}
+
+// Cambiar el tiempo gratis de alguien que YA tiene cuenta (o quitárselo)
+export async function darTiempoGratis(fd: FormData): Promise<Resultado> {
+  const { sb } = await exigirAdmin();
+  const id = texto(fd, 'id');
+  const tiempo = texto(fd, 'tiempo');
+  if (!UUID.test(id)) return falla('No encontramos a esa persona.');
+  const { data: persona } = await sb.from('perfiles').select('membresia, rol').eq('id', id).maybeSingle();
+  if (!persona || persona.rol === 'admin') return falla('Esa cuenta no se puede cambiar.');
+  if (['active', 'trialing', 'past_due'].includes(persona.membresia ?? '')) return falla('Es cliente de pago: no se le cambia el acceso desde aquí.');
+  if (tiempo === 'quitar') {
+    const { error } = await sb.from('perfiles').update({ membresia: null, acceso_tipo: null, acceso_hasta: null }).eq('id', id);
+    if (error) return falla('No pudimos quitarlo. Inténtalo de nuevo.');
+    revalidatePath('/admin/usuarios');
+    return exito('Se le quitó el tiempo gratis.');
+  }
+  if (!esTipoRegalo(tiempo)) return falla('Elige cuánto tiempo gratis.');
+  const { error } = await sb.from('perfiles').update({ membresia: 'manual', acceso_tipo: tiempo, acceso_hasta: finDelRegalo(tiempo) }).eq('id', id);
+  if (error) return falla('No pudimos guardar el regalo. Inténtalo de nuevo.');
+  revalidatePath('/admin/usuarios');
+  return exito(`Listo: ${textoRegalo(tiempo)} desde hoy.`);
+}
+
+export async function quitarInvitacion(fd: FormData): Promise<void> {
+  const { sb } = await exigirAdmin();
+  const id = Number(texto(fd, 'id'));
+  if (!Number.isInteger(id) || id <= 0) return;
+  await sb.from('accesos_regalo').delete().eq('id', id).is('aplicado_en', null);
+  revalidatePath('/admin/usuarios');
 }
 
 export async function cambiarEstadoUsuario(fd: FormData): Promise<void> {
@@ -103,7 +134,7 @@ export async function reenviarAcceso(_previo: Resultado, fd: FormData): Promise<
   if (!dentroDelLimite(`reenvio:${user.id}`, 10)) return falla('Muchos reenvíos seguidos. Espera un minuto.');
   const email = texto(fd, 'email').toLowerCase();
   if (!CORREO.test(email)) return falla('Correo no válido.');
-  return (await mandarAcceso(email)) ? exito(`Enlace enviado a ${email}.`) : falla('No pudimos enviar el correo ahora mismo. Inténtalo en unos minutos.');
+  return (await mandarAcceso(email, fd.get('crear') === '1')) ? exito(`Enlace enviado a ${email}.`) : falla('No pudimos enviar el correo ahora mismo. Inténtalo en unos minutos.');
 }
 
 // ───────── COSTOS Y GASTOS ─────────

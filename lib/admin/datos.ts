@@ -5,7 +5,7 @@ import 'server-only';
 
 import { exigirAdmin } from '@/lib/supabase/servidor';
 import { rangoDeMes } from './formato';
-import type { ActividadReservas, Costo, FilaUsuario, Gasto, Negocio, Salud, Uso, UsuariosResumen, Ventas } from './tipos';
+import type { ActividadReservas, Costo, FilaUsuario, Gasto, Invitacion, Negocio, Salud, Uso, UsuariosResumen, Ventas } from './tipos';
 
 async function rpc<T>(nombre: string, args?: Record<string, unknown>): Promise<T> {
   const { sb } = await exigirAdmin();
@@ -66,7 +66,7 @@ export async function cargarUsuarios(opts: { q?: string; estado?: string; membre
   const pagina = Math.max(1, opts.pagina ?? 1);
   let q = sb
     .from('perfiles')
-    .select('id, email, nombre, rol, estado, membresia, plan, ciclo, fuente, creado_en, ultimo_acceso', { count: 'exact' })
+    .select('id, email, nombre, rol, estado, membresia, plan, ciclo, fuente, creado_en, ultimo_acceso, acceso_tipo, acceso_hasta', { count: 'exact' })
     .order('creado_en', { ascending: false })
     .range((pagina - 1) * porPagina, pagina * porPagina - 1);
   const busca = (opts.q ?? '').trim().replace(/[%,()]/g, ' ').slice(0, 80);
@@ -77,4 +77,12 @@ export async function cargarUsuarios(opts: { q?: string; estado?: string; membre
   const { data, error, count } = await q;
   if (error) throw new Error(`No se pudo cargar la lista de usuarios: ${error.message}`);
   return { filas: (data ?? []) as FilaUsuario[], total: count ?? 0, pagina, porPagina };
+}
+
+// Invitaciones: personas a quienes les regalaste tiempo y todavía no han entrado
+export async function cargarInvitaciones(): Promise<Invitacion[]> {
+  const { sb } = await exigirAdmin();
+  const { data, error } = await sb.from('accesos_regalo').select('id, email, nombre, tipo, creado_en').is('aplicado_en', null).order('creado_en', { ascending: false }).limit(100);
+  if (error) throw new Error(`No se pudieron cargar las invitaciones: ${error.message}`);
+  return (data ?? []) as Invitacion[];
 }

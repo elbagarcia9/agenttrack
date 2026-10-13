@@ -148,3 +148,14 @@ export function serie12<T extends { mes: string }>(filas: T[], vacio: (mes: stri
   }
   return salida;
 }
+
+export type TipoRegalo = '14_dias' | '1_mes' | 'siempre';
+export const ETIQUETA_REGALO: Record<TipoRegalo, string> = { '14_dias': '14 días gratis', '1_mes': '1 mes gratis', siempre: 'Gratis para siempre' };
+
+// "Acceso gratis · hasta el 27 oct" / "siempre" / "venció el 1 oct"
+export function estadoRegalo(tipo: TipoRegalo | null, hasta: string | null): { texto: string; vencido: boolean } | null {
+  if (!tipo) return null;
+  if (tipo === 'siempre' || !hasta) return { texto: 'para siempre', vencido: false };
+  const vencido = new Date(hasta).getTime() < Date.now();
+  return { texto: `${vencido ? 'venció el' : 'hasta el'} ${fechaDia(hasta.slice(0, 10))}`, vencido };
+}

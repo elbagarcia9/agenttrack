@@ -4,11 +4,10 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { AgregarUsuarioForm, ReenviarAcceso } from '@/components/admin/Formularios';
-import { BotonEstado, FiltrosUsuarios } from '@/components/admin/Interacciones';
+import { BotonEstado, DarTiempo, FiltrosUsuarios, QuitarInvitacion } from '@/components/admin/Interacciones';
 import { Datos, Encabezado, Insignia, Kpi, Tarjeta } from '@/components/admin/ui';
-import { cargarUsuarios, cargarUsuariosResumen } from '@/lib/admin/datos';
-import { ETIQUETA_MEMBRESIA, fechaCorta, hace } from '@/lib/admin/formato';
-import { servicioConfigurado } from '@/lib/supabase/servicio';
+import { cargarInvitaciones, cargarUsuarios, cargarUsuariosResumen } from '@/lib/admin/datos';
+import { ETIQUETA_MEMBRESIA, ETIQUETA_REGALO, estadoRegalo, fechaCorta, hace } from '@/lib/admin/formato';
 
 type Params = { q?: string; estado?: string; membresia?: string; pagina?: string };
 
@@ -22,9 +21,10 @@ function enlace(p: Params, cambios: Partial<Params>): string {
 
 export default async function Usuarios({ searchParams }: { searchParams: Promise<Params> }) {
   const p = await searchParams;
-  const [resumen, lista] = await Promise.all([
+  const [resumen, lista, invitaciones] = await Promise.all([
     cargarUsuariosResumen(),
     cargarUsuarios({ q: p.q, estado: p.estado, membresia: p.membresia, pagina: Number(p.pagina) || 1 }),
+    cargarInvitaciones(),
   ]);
   const paginas = Math.max(1, Math.ceil(lista.total / lista.porPagina));
   const hayFiltros = Boolean(p.q || p.estado || p.membresia);
@@ -33,9 +33,24 @@ export default async function Usuarios({ searchParams }: { searchParams: Promise
     <>
       <Encabezado titulo="Usuarios" descripcion="Tus clientes y cuentas. Aquí puedes agregar a alguien a mano o resolver un acceso que no llegó." />
 
-      <Tarjeta titulo="Agregar a alguien" subtitulo="Escribe su correo y su nombre. Si ya pagó en Hotmart sin tener cuenta, su membresía se ajusta sola a ese pago; si no, queda con acceso manual.">
-        <AgregarUsuarioForm claveConfigurada={servicioConfigurado()} />
+      <Tarjeta titulo="Agregar a alguien" subtitulo="Escribe su correo, su nombre y cuánto tiempo gratis le das. El tiempo empieza a contar el día que entra por primera vez. Si ya pagó en Hotmart sin tener cuenta, su membresía se ajusta sola.">
+        <AgregarUsuarioForm />
       </Tarjeta>
+
+      {invitaciones.length > 0 && (
+        <Tarjeta titulo="Invitaciones sin estrenar" subtitulo="Personas a las que les regalaste tiempo y todavía no han entrado a la app." hundida>
+          <Datos
+            filas={invitaciones}
+            clave={(i) => String(i.id)}
+            columnas={[
+              { titulo: 'Persona', principal: true, celda: (i) => (<><span className="block font-bold">{i.nombre}</span><span className="block break-all font-normal text-[var(--text-secondary)]">{i.email}</span></>) },
+              { titulo: 'Regalo', celda: (i) => <Insignia tono="azul">{ETIQUETA_REGALO[i.tipo]}</Insignia> },
+              { titulo: 'Invitada', celda: (i) => <span className="whitespace-nowrap">{fechaCorta(i.creado_en)}</span> },
+              { titulo: 'Acciones', acciones: true, celda: (i) => (<div className="flex flex-wrap items-center gap-x-4"><ReenviarAcceso email={i.email} crear /><QuitarInvitacion id={i.id} nombre={i.nombre} /></div>) },
+            ]}
+          />
+        </Tarjeta>
+      )}
 
       <section aria-label="Resumen de usuarios" className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         <Kpi etiqueta="Con cuenta" valor={String(resumen.total)} detalle="Sin contar la tuya" />
@@ -79,6 +94,10 @@ export default async function Usuarios({ searchParams }: { searchParams: Promise
                   <span className="inline-flex flex-col items-end gap-1 md:items-start">
                     <Insignia tono={clave === 'active' ? 'azul' : clave === 'past_due' ? 'oro' : clave === 'refunded' || clave === 'chargeback' ? 'rojo' : 'gris'}>{ETIQUETA_MEMBRESIA[clave] ?? clave}</Insignia>
                     {u.ciclo && <span className="text-xs text-[var(--text-secondary)]">Plan {u.ciclo}</span>}
+                    {(() => {
+                      const r = estadoRegalo(u.acceso_tipo, u.acceso_hasta);
+                      return r ? <span className={`text-xs ${r.vencido ? 'font-semibold text-[var(--rojo-text)]' : 'text-[var(--text-secondary)]'}`}>Gratis {r.texto}</span> : null;
+                    })()}
                   </span>
                 );
               },
@@ -93,6 +112,7 @@ export default async function Usuarios({ searchParams }: { searchParams: Promise
                   <span className="hidden text-sm text-[var(--text-secondary)] md:inline">—</span>
                 ) : (
                   <div className="flex flex-wrap items-center gap-x-4 md:flex-col md:items-start md:gap-x-0">
+                    <DarTiempo id={u.id} nombre={u.nombre || u.email} />
                     <ReenviarAcceso email={u.email} />
                     <BotonEstado id={u.id} estado={u.estado} email={u.email} />
                   </div>

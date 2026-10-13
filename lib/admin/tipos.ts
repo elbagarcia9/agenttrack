@@ -108,4 +108,14 @@ export interface FilaUsuario {
   fuente: string;
   creado_en: string;
   ultimo_acceso: string | null;
+  acceso_tipo: '14_dias' | '1_mes' | 'siempre' | null;
+  acceso_hasta: string | null;
+}
+
+export interface Invitacion {
+  id: number;
+  email: string;
+  nombre: string;
+  tipo: '14_dias' | '1_mes' | 'siempre';
+  creado_en: string;
 }

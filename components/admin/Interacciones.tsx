@@ -5,8 +5,8 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { Check, Loader2, Search, Trash2, UserCheck, UserX, X } from 'lucide-react';
-import { borrarCosto, borrarGasto, cambiarEstadoUsuario, reabrirError, resolverError } from '@/app/admin/acciones';
+import { Check, Gift, Loader2, Search, Trash2, UserCheck, UserX, X } from 'lucide-react';
+import { borrarCosto, borrarGasto, cambiarEstadoUsuario, darTiempoGratis, quitarInvitacion, reabrirError, resolverError, type Resultado } from '@/app/admin/acciones';
 import { ETIQUETA_MEMBRESIA } from '@/lib/admin/formato';
 
 const boton = 'panel-tap flex min-h-11 items-center gap-1.5 rounded-[var(--radius-button)] px-2 text-sm font-semibold underline underline-offset-4 disabled:opacity-60';
@@ -230,5 +230,82 @@ export function FiltrosUsuarios() {
         </div>
       )}
     </div>
+  );
+}
+
+// ───────── Dar tiempo gratis a alguien que ya tiene cuenta ─────────
+const campoChico =
+  'min-h-11 rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] campo-suave px-2 text-sm outline-none focus-visible:border-[var(--accent)]';
+
+export function DarTiempo({ id, nombre }: { id: string; nombre: string }) {
+  const [res, setRes] = useState<Resultado>(null);
+  const [pendiente, empezar] = useTransition();
+  return (
+    <form
+      className="flex flex-col items-start gap-1"
+      action={(fd) =>
+        empezar(async () => {
+          setRes(await darTiempoGratis(fd));
+        })
+      }
+    >
+      <input type="hidden" name="id" value={id} />
+      <div className="flex items-center gap-1.5">
+        <label>
+          <span className="sr-only">Tiempo gratis para {nombre}</span>
+          <select name="tiempo" defaultValue="14_dias" className={campoChico}>
+            <option value="14_dias">14 días</option>
+            <option value="1_mes">1 mes</option>
+            <option value="siempre">Siempre</option>
+            <option value="quitar">Quitar el regalo</option>
+          </select>
+        </label>
+        <button type="submit" disabled={pendiente} className={`${boton} text-[var(--accent)]`}>
+          {pendiente ? <Loader2 size={16} className="motion-safe:animate-spin" aria-hidden="true" /> : <Gift size={16} aria-hidden="true" />}
+          {pendiente ? 'Guardando…' : 'Dar tiempo gratis'}
+        </button>
+      </div>
+      {res && (
+        <span role={res.ok ? 'status' : 'alert'} className={`text-xs font-medium ${res.ok ? 'text-[var(--verde-text)]' : 'text-[var(--rojo-text)]'}`}>
+          {res.mensaje}
+        </span>
+      )}
+    </form>
+  );
+}
+
+// ───────── Quitar una invitación pendiente (confirma antes) ─────────
+export function QuitarInvitacion({ id, nombre }: { id: number; nombre: string }) {
+  const [confirmando, setConfirmando] = useState(false);
+  const [pendiente, empezar] = useTransition();
+  if (confirmando) {
+    return (
+      <span role="alertdialog" aria-label="Confirmar" className="flex flex-wrap items-center gap-x-2">
+        <span className="text-sm font-medium">¿Quitar la invitación de {nombre}?</span>
+        <button
+          type="button"
+          disabled={pendiente}
+          onClick={() =>
+            empezar(async () => {
+              const fd = new FormData();
+              fd.set('id', String(id));
+              await quitarInvitacion(fd);
+            })
+          }
+          className={`${boton} text-[var(--rojo-text)]`}
+        >
+          {pendiente ? 'Quitando…' : 'Sí, quitar'}
+        </button>
+        <button type="button" disabled={pendiente} onClick={() => setConfirmando(false)} className={`${boton} text-[var(--text-secondary)]`}>
+          No
+        </button>
+      </span>
+    );
+  }
+  return (
+    <button type="button" onClick={() => setConfirmando(true)} aria-label={`Quitar la invitación de ${nombre}`} className={`${boton} text-[var(--rojo-text)]`}>
+      <Trash2 size={16} aria-hidden="true" />
+      Quitar
+    </button>
   );
 }

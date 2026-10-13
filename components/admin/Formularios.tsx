@@ -34,20 +34,13 @@ function Enviar({ pendiente, texto, Icono = Plus }: { pendiente: boolean; texto:
   );
 }
 
-export function AgregarUsuarioForm({ claveConfigurada }: { claveConfigurada: boolean }) {
+export function AgregarUsuarioForm() {
   const [res, accion, pendiente] = useActionState(agregarUsuario, null);
   const form = useRef<HTMLFormElement>(null);
   // Tras un alta exitosa se vacía el formulario para poder agregar a la siguiente persona
   useEffect(() => {
     if (res?.ok) form.current?.reset();
   }, [res]);
-  if (!claveConfigurada) {
-    return (
-      <p className="rounded-[var(--radius-button)] bg-[var(--surface-2)] p-4 text-sm">
-        Todavía no se pueden crear cuentas desde aquí: falta una conexión que haremos juntos cuando conectemos Hotmart. Mientras tanto, la persona puede entrar sola escribiendo su correo en la pantalla de acceso.
-      </p>
-    );
-  }
   return (
     <form ref={form} action={accion} className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -60,6 +53,14 @@ export function AgregarUsuarioForm({ claveConfigurada }: { claveConfigurada: boo
           <input name="nombre" type="text" required minLength={2} maxLength={80} autoComplete="off" placeholder="Ana Pérez" className={campo} />
         </label>
       </div>
+      <label className="block max-w-sm">
+        <span className={etiqueta}>Tiempo gratis</span>
+        <select name="tiempo" required defaultValue="14_dias" className={campo}>
+          <option value="14_dias">14 días</option>
+          <option value="1_mes">1 mes</option>
+          <option value="siempre">Siempre</option>
+        </select>
+      </label>
       <label className="flex min-h-11 items-center gap-3 text-sm">
         <input name="enviar" type="checkbox" defaultChecked className="size-5 accent-[var(--accent)]" />
         Enviarle ahora el enlace de acceso por correo
@@ -72,11 +73,12 @@ export function AgregarUsuarioForm({ claveConfigurada }: { claveConfigurada: boo
   );
 }
 
-export function ReenviarAcceso({ email }: { email: string }) {
+export function ReenviarAcceso({ email, crear = false }: { email: string; crear?: boolean }) {
   const [res, accion, pendiente] = useActionState(reenviarAcceso, null);
   return (
     <form action={accion} className="flex flex-col items-start gap-1">
       <input type="hidden" name="email" value={email} />
+      {crear && <input type="hidden" name="crear" value="1" />}
       <button
         type="submit"
         disabled={pendiente}
