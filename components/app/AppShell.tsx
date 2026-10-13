@@ -46,9 +46,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh bg-[var(--bg)] bg-[image:radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%)] text-[var(--text-primary)] [font-family:var(--font-body)] md:grid md:grid-cols-[240px_1fr]">
       <aside className="hidden border-r border-black/10 bg-[var(--surface)] p-4 md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:gap-1">
-        <Link href="/app" className="flex min-h-11 items-center gap-2 px-2 pb-4 text-base font-semibold text-[var(--accent)]">
+        <Link href="/app" aria-label="AgentTrack, ir al inicio" className="flex min-h-11 items-center px-2 pb-4">
           <Logo />
-          AgentTrack
         </Link>
         <Link
           href="/app/nueva"
@@ -129,9 +128,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         )}
         <header className="flex h-14 items-center justify-between px-4 md:hidden">
-          <Link href="/app" className="flex min-h-11 items-center gap-2 text-base font-semibold text-[var(--accent)]">
+          <Link href="/app" aria-label="AgentTrack, ir al inicio" className="flex min-h-11 items-center">
             <Logo />
-            AgentTrack
           </Link>
           {!AUTH_LOCAL && (
             <button type="button" onClick={salir} aria-label="Salir de mi cuenta" className="flex min-h-11 items-center gap-2 px-2 text-sm font-semibold text-[var(--text-secondary)]">

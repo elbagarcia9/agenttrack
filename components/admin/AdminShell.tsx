@@ -39,7 +39,6 @@ export function AdminShell({ children, correo }: { children: React.ReactNode; co
       <aside className="hidden border-r border-black/10 bg-[var(--surface)] p-4 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:gap-1">
         <div className="flex min-h-11 items-center gap-2 px-2 pb-1 text-base font-semibold text-[var(--accent)]">
           <Logo />
-          AgentTrack
         </div>
         <p className="px-2 pb-4 text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Panel del dueño</p>
         <nav aria-label="Secciones del panel" className="flex flex-col gap-1">
@@ -77,7 +76,7 @@ export function AdminShell({ children, correo }: { children: React.ReactNode; co
         <header className="sticky top-0 z-20 border-b border-black/10 bg-[var(--surface)] lg:hidden">
           <div className="flex h-14 items-center justify-between px-4">
             <div className="flex items-center gap-2 text-base font-semibold text-[var(--accent)]">
-              <Logo />
+              <Logo variante="escudo" alto="h-7" />
               Panel del dueño
             </div>
             <button type="button" onClick={salir} aria-label="Salir" className="flex size-11 items-center justify-center rounded-full text-[var(--text-secondary)]">

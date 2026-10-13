@@ -1,12 +1,10 @@
-// Marca provisional (escudo con tres luces): se reemplaza por el logo de AgentTrack que enviará el usuario en el pulido final.
-export function Logo({ tono = 'accent' }: { tono?: 'accent' | 'neutro' }) {
-  const fondo = tono === 'accent' ? 'var(--accent)' : 'var(--text-tertiary)';
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" className="shrink-0">
-      <path d="M12 2 4 5v6c0 5 3.4 9 8 11 4.6-2 8-6 8-11V5l-8-3Z" fill={fondo} />
-      <circle cx="12" cy="8.2" r="1.7" fill="var(--bg)" />
-      <circle cx="12" cy="12" r="1.7" fill="var(--accent-2)" />
-      <circle cx="12" cy="15.8" r="1.7" fill="var(--bg)" opacity="0.55" />
-    </svg>
-  );
+import Image from 'next/image';
+
+// Logo final de AgentTrack. "completo" = escudo + nombre (ya trae el texto: no se escribe el nombre al lado);
+// "escudo" = solo la marca, para espacios chicos o cuando el texto de al lado es otro (ej. "Panel del dueño").
+export function Logo({ variante = 'completo', alto = 'h-8' }: { variante?: 'completo' | 'escudo'; alto?: string }) {
+  if (variante === 'escudo') {
+    return <Image src="/img/logo-escudo.png" alt="" aria-hidden="true" width={148} height={176} className={`${alto} w-auto shrink-0`} />;
+  }
+  return <Image src="/img/logo-agenttrack.png" alt="AgentTrack" width={997} height={236} className={`${alto} w-auto shrink-0`} />;
 }

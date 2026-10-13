@@ -17,6 +17,8 @@ export interface HeroProps {
   appName: string;
   /** Logo real del proyecto; sin él, marca mínima con el acento. */
   logo?: ReactNode;
+  /** El logo ya incluye el nombre: no se repite escrito al lado. */
+  logoCompleto?: boolean;
   loginHref?: string;
   loginLabel?: string;
   /** Copy MARCADO de docs/copy/landing.md — máx 8-10 palabras, 1-3 en [acento]. */
@@ -39,6 +41,7 @@ export interface HeroProps {
 export function Hero({
   appName,
   logo,
+  logoCompleto = false,
   loginHref,
   loginLabel = 'Entrar',
   h1Marked,
@@ -72,7 +75,7 @@ export function Hero({
         <header className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-[16px] font-semibold text-[var(--text-primary)]">
             {logo ?? <span aria-hidden="true" className="size-6 rounded-[8px] bg-[var(--accent)]" />}
-            {appName}
+            {logoCompleto ? <span className="sr-only">{appName}</span> : appName}
           </Link>
           {loginHref && (
             <a href={loginHref} className="px-2 py-3 text-[14px] font-medium text-[var(--text-tertiary)]">

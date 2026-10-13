@@ -36,7 +36,8 @@ export default function Landing() {
     <div className="min-h-dvh bg-[var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
       <Hero
         appName={BRAND}
-        logo={<Logo />}
+        logo={<Logo alto="h-8 md:h-9" />}
+        logoCompleto
         loginHref="/entrar"
         h1Marked="[acento]Ninguna comisión[/acento] se te vence sin que lo sepas"
         subtitleMarked="Tu asistente vigila cada comisión y te avisa antes de que venza [b]cada plazo[/b]"
@@ -95,7 +96,7 @@ export default function Landing() {
         ]}
       />
 
-      <AntesDespues labelAntes="Antes" labelDespues={`Con ${BRAND}`} />
+      <AntesDespues />
 
       <AvisosAsistente />
 
@@ -205,7 +206,8 @@ export default function Landing() {
 
       <FooterLegal
         appName={BRAND}
-        logo={<Logo tono="neutro" />}
+        logo={<Logo alto="h-7" />}
+        logoCompleto
         soporteEmail="soporte@tu-dominio.mx"
         aviso="No estamos afiliados a Archer ni a ninguna agencia Host. Los nombres se mencionan solo para indicar con qué reglas de plazos funciona la app."
         enlaces={[

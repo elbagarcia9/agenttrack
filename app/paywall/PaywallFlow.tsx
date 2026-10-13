@@ -122,7 +122,6 @@ export function PaywallFlow() {
           <header className="flex h-11 items-center justify-between">
             <Link href="/" aria-label="AgentTrack, ir a la página principal" className="flex min-h-11 items-center gap-2 text-base font-semibold">
               <Logo />
-              AgentTrack
             </Link>
             <Link href="/onboarding" aria-label="Cerrar y volver a mi plan" className="-mr-2 flex size-11 items-center justify-center text-[var(--text-secondary)]">
               <X size={20} />
