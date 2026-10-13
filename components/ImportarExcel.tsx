@@ -3,7 +3,8 @@ import { CircleCheckBig, ShieldCheck, Upload } from 'lucide-react';
 
 // Banda de importación: responde el miedo nº 1 antes de animarse ("¿tengo que pasar todo a mano?").
 // Fase 1 (Excel y CSV) es obligatoria antes de vender: ver ESTADO.md.
-// Orden en celular: texto → imagen (Excel → celular) → pasos. En computadora: texto y pasos a la izquierda, imagen a la derecha.
+// Orden cuando no hay espacio para dos columnas: texto → imagen (Excel → celular) → pasos. Con ≥1120 px: texto y pasos a la izquierda,
+// imagen a la derecha. La imagen conserva SIEMPRE su tamaño original (472 px): si no cabe al lado, baja a su renglón.
 // Imágenes de la usuaria (PNG con fondo transparente): excel-a-app.png (composición), flechas-pasos.png, logo-excel.png.
 
 function IconoColumnas() {
@@ -42,9 +43,9 @@ const PASOS = [
 export function ImportarExcel() {
   return (
     <section aria-label="Importa tu Excel" className="bg-[var(--surface-2)] py-12 md:py-16">
-      <div className="mx-auto grid w-full max-w-[1140px] gap-8 px-5 md:grid-cols-[1fr_auto] md:gap-x-10 md:gap-y-8">
+      <div className="mx-auto grid w-full max-w-[1140px] grid-cols-[minmax(0,1fr)] gap-8 px-5 min-[1120px]:grid-cols-[1fr_auto] min-[1120px]:gap-x-10">
         {/* 1 · Texto */}
-        <div className="text-center md:col-start-1 md:row-start-1 md:text-left">
+        <div className="text-center min-[1120px]:col-start-1 min-[1120px]:row-start-1 min-[1120px]:text-left">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">¿Ya tienes todo en Excel?</p>
           <h2 className="mt-2 text-balance text-[28px] font-bold leading-[1.15] [font-family:var(--font-display)] md:text-[34px]">
             Importa todos los datos de tu Excel <span className="text-[var(--accent)]">en segundos</span>
@@ -58,19 +59,19 @@ export function ImportarExcel() {
         </div>
 
         {/* 2 · Imagen: de Excel al celular. En celular va ANTES de los pasos */}
-        <div className="flex items-center justify-center md:col-start-2 md:row-span-2 md:row-start-1">
+        <div className="flex min-w-0 items-center justify-center min-[1120px]:col-start-2 min-[1120px]:row-span-2 min-[1120px]:row-start-1">
           <Image
             src="/img/excel-a-app.png"
             alt="De una hoja de Excel a tu asistente en el celular"
             width={472}
             height={233}
-            sizes="(min-width: 768px) 472px, 90vw"
-            className="h-auto w-full max-w-[472px]"
+            sizes="472px"
+            className="h-auto w-[472px] max-w-full shrink-0"
           />
         </div>
 
         {/* 3 · Pasos como botones unidos por flechas (en celular, uno bajo otro) */}
-        <ol className="flex flex-col items-center gap-1 md:col-start-1 md:row-start-2 md:flex-row md:items-stretch md:justify-start md:gap-2">
+        <ol className="flex flex-col items-center gap-1 md:flex-row md:items-stretch md:justify-center md:gap-2 min-[1120px]:col-start-1 min-[1120px]:row-start-2 min-[1120px]:justify-start">
           {PASOS.map((p, i) => (
             <li key={p.clave} className="flex flex-col items-center gap-1 md:flex-row md:gap-2">
               <div className="tarjeta-suave flex w-full min-w-0 flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] px-4 py-3 text-center md:h-full md:w-40">
