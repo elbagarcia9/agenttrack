@@ -71,7 +71,7 @@ export default function Reservas() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="mx-auto flex w-full flex-col gap-4 md:w-[90%]">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">Reservas</h1>
@@ -175,7 +175,7 @@ export default function Reservas() {
         <div
           ref={arrastre.ref}
           {...arrastre.props}
-          className={`hidden w-[90%] overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave md:block ${arrastre.arrastrando ? 'cursor-grabbing' : 'cursor-grab'}`}
+          className={`hidden overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave md:block ${arrastre.arrastrando ? 'cursor-grabbing' : 'cursor-grab'}`}
         >
           <table className="w-full min-w-6xl border-collapse text-sm">
             <thead>
