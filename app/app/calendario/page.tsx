@@ -38,6 +38,7 @@ export default function Calendario() {
   const hoy = useMemo(() => new Date(), []);
   const [mes, setMes] = useState(() => new Date(hoy.getFullYear(), hoy.getMonth(), 1));
   const [sel, setSel] = useState<Date>(hoy);
+  const [verMes, setVerMes] = useState(false);
 
   const eventos = useMemo(() => {
     const mapa = new Map<string, Evento[]>();
@@ -78,10 +79,12 @@ export default function Calendario() {
   const visibles = dias.slice(0, filas * 7);
   const titulo = capitalizar(new Intl.DateTimeFormat('es-MX', { month: 'long', year: 'numeric' }).format(mes));
   const delDia = eventos.get(clave(sel)) ?? [];
+  const delMesTodo = [...eventos.values()].flat().filter((e) => e.fecha.getMonth() === mes.getMonth() && e.fecha.getFullYear() === mes.getFullYear()).sort((a, b) => a.fecha.getTime() - b.fecha.getTime());
+  const lista = verMes ? delMesTodo : delDia;
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{titulo}</h1>
         <div className="flex items-center gap-1">
           <button type="button" aria-label="Mes anterior" onClick={() => setMes(new Date(mes.getFullYear(), mes.getMonth() - 1, 1))} className="flex size-11 items-center justify-center rounded-[var(--radius-button)] tarjeta-suave">
@@ -92,6 +95,7 @@ export default function Calendario() {
             onClick={() => {
               setMes(new Date(hoy.getFullYear(), hoy.getMonth(), 1));
               setSel(hoy);
+              setVerMes(false);
             }}
             className="min-h-11 rounded-[var(--radius-button)] tarjeta-suave px-3 text-sm font-semibold"
           >
@@ -122,7 +126,10 @@ export default function Calendario() {
                 <button
                   key={d.toISOString()}
                   type="button"
-                  onClick={() => setSel(d)}
+                  onClick={() => {
+                    setSel(d);
+                    setVerMes(false);
+                  }}
                   aria-label={`${formatoFecha(d, hoy)}${evs.length ? `, ${evs.length} ${evs.length === 1 ? 'elemento' : 'elementos'}` : ''}`}
                   aria-pressed={esSel}
                   className={`flex min-h-16 flex-col items-stretch gap-1 border-l border-t border-black/5 p-1 text-left align-top first:border-l-0 md:min-h-24 md:p-2 ${esSel ? 'bg-[var(--chip-azul-bg)] ring-2 ring-inset ring-[var(--accent)]' : ''} ${delMes ? '' : 'bg-black/[0.02] text-[var(--text-tertiary)]'}`}
@@ -150,11 +157,15 @@ export default function Calendario() {
         </section>
 
         <aside aria-label="Lista del día" className="rounded-[var(--radius-card)] tarjeta-suave p-4">
-          <h2 className="text-lg font-bold [font-family:var(--font-display)]">{capitalizar(new Intl.DateTimeFormat('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }).format(sel))}</h2>
-          <p className="text-sm text-[var(--text-secondary)]">{listo ? (delDia.length === 0 ? 'Nada este día.' : `${delDia.length} ${delDia.length === 1 ? 'elemento' : 'elementos'}`) : 'Cargando…'}</p>
+          <button type="button" onClick={() => setVerMes(true)} aria-pressed={verMes} className="mb-3 min-h-11 w-full rounded-[var(--radius-button)] bg-[var(--accent)] px-3 text-sm font-semibold text-white">
+            Ver todo el mes
+          </button>
+          <h2 className="text-lg font-bold [font-family:var(--font-display)]">{verMes ? titulo : capitalizar(new Intl.DateTimeFormat('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }).format(sel))}</h2>
+          <p className="text-sm text-[var(--text-secondary)]">{listo ? (lista.length === 0 ? (verMes ? 'Nada este mes.' : 'Nada este día.') : `${lista.length} ${lista.length === 1 ? 'elemento' : 'elementos'}`) : 'Cargando…'}</p>
           <ul className="mt-3 flex flex-col gap-2">
-            {delDia.map((e) => (
+            {lista.map((e) => (
               <li key={e.clave} className={`rounded-[var(--radius-button)] border-l-4 bg-[var(--bg)] p-3 ${e.tono === 'vencido' ? 'border-l-[var(--rojo-text)]' : e.tono === 'urgente' ? 'border-l-[var(--btn-oro-to)]' : 'border-l-[var(--accent)]'}`}>
+                {verMes && <p className="text-xs font-semibold text-[var(--text-secondary)]">{capitalizar(new Intl.DateTimeFormat('es-MX', { weekday: 'short', day: 'numeric', month: 'short' }).format(e.fecha))}</p>}
                 <p className="text-sm font-bold">{e.texto}</p>
                 <p className="text-sm text-[var(--text-secondary)]">{e.detalle}</p>
                 <div className="mt-2">

@@ -45,7 +45,7 @@ export function SelectorEstatus({ valor, onCambio, etiqueta }: { valor: Estatus;
         className="min-h-11 cursor-pointer appearance-none rounded-full bg-transparent py-2 pl-3 pr-8 text-xs font-bold outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
       >
         {(Object.keys(ETIQUETA_ESTATUS) as Estatus[]).map((e) => (
-          <option key={e} value={e} className="text-[var(--text-primary)]">
+          <option key={e} value={e} className="bg-[var(--slate)] text-white">
             {ETIQUETA_ESTATUS[e]}
           </option>
         ))}

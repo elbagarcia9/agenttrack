@@ -44,7 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const enNueva = path.startsWith('/app/nueva') || path.startsWith('/app/importar');
 
   return (
-    <div className="min-h-dvh bg-[var(--bg)] bg-[image:radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%)] text-[var(--text-primary)] [font-family:var(--font-body)] md:grid md:grid-cols-[240px_1fr]">
+    <div className="min-h-dvh bg-[var(--bg)] bg-[image:radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_16%,transparent),transparent_70%)] text-[var(--text-primary)] [font-family:var(--font-body)] md:grid md:grid-cols-[240px_minmax(0,1fr)]">
       <aside className="hidden border-r border-black/10 bg-[var(--surface)] p-4 md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:gap-1">
         <Link href="/app" aria-label="AgentTrack, ir al inicio" className="flex min-h-11 items-center px-2 pb-4">
           <Logo />
@@ -138,7 +138,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </button>
           )}
         </header>
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-6 pt-2 md:px-8 md:pt-8">{children}</main>
+        <main className={`mx-auto w-full flex-1 px-4 pb-6 pt-2 md:pt-8 ${path.startsWith('/app/reservas') ? 'max-w-none' : 'max-w-5xl md:px-8'}`}>{children}</main>
       </div>
 
       {!enNueva && (
