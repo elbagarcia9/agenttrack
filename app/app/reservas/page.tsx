@@ -175,7 +175,7 @@ export default function Reservas() {
         <div
           ref={arrastre.ref}
           {...arrastre.props}
-          className={`hidden overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave md:block ${arrastre.arrastrando ? 'cursor-grabbing' : 'cursor-grab'}`}
+          className={`hidden w-[90%] overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave md:block ${arrastre.arrastrando ? 'cursor-grabbing' : 'cursor-grab'}`}
         >
           <table className="w-full min-w-6xl border-collapse text-sm">
             <thead>

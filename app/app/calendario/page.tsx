@@ -182,7 +182,7 @@ export default function Calendario() {
                   className="cursor-pointer appearance-none rounded-[var(--radius-button)] bg-transparent py-1 pr-1 [field-sizing:content] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
                 >
                   {MESES.map((m, i) => (
-                    <option key={m} value={i} className="text-base font-medium">
+                    <option key={m} value={i} className="bg-white text-base font-medium text-black">
                       {m}
                     </option>
                   ))}
@@ -196,7 +196,7 @@ export default function Calendario() {
                   className="cursor-pointer appearance-none rounded-[var(--radius-button)] bg-transparent py-1 pr-1 [field-sizing:content] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
                 >
                   {anios.map((y) => (
-                    <option key={y} value={y} className="text-base font-medium">
+                    <option key={y} value={y} className="bg-white text-base font-medium text-black">
                       {y}
                     </option>
                   ))}
