@@ -86,3 +86,19 @@ export async function cargarInvitaciones(): Promise<Invitacion[]> {
   if (error) throw new Error(`No se pudieron cargar las invitaciones: ${error.message}`);
   return (data ?? []) as Invitacion[];
 }
+
+// Encuesta de salida: por qué no se quedaron y qué los haría volver
+export interface RespuestaEncuesta {
+  id: number;
+  email: string;
+  motivo: 'diseno' | 'uso' | 'otro';
+  motivo_otro: string | null;
+  que_probaria: string | null;
+  creado_en: string;
+}
+export async function cargarEncuestas(): Promise<RespuestaEncuesta[]> {
+  const { sb } = await exigirAdmin();
+  const { data, error } = await sb.from('encuesta_salida').select('id, email, motivo, motivo_otro, que_probaria, creado_en').order('creado_en', { ascending: false }).limit(100);
+  if (error) throw new Error(`No se pudo cargar la encuesta de salida: ${error.message}`);
+  return (data ?? []) as RespuestaEncuesta[];
+}

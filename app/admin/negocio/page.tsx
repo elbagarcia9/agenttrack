@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { Encabezado, Heroe, Insignia, Kpi, SelectorMes, SinDatos, Tarjeta } from '@/components/admin/ui';
 import { CifraDinero, CifraPorcentaje } from '@/components/admin/Cifras';
 import { calcularCanales, churnMensual, type CanalCalculado } from '@/lib/admin/derivados';
-import { cargarNegocio, cargarVentas } from '@/lib/admin/datos';
+import { cargarEncuestas, cargarNegocio, cargarVentas } from '@/lib/admin/datos';
 import { nombreCanal } from '@/lib/admin/etiquetas';
-import { dinero, mesDeParametro, porcentaje, rangoDeMes } from '@/lib/admin/formato';
+import { dinero, fechaCorta, mesDeParametro, porcentaje, rangoDeMes } from '@/lib/admin/formato';
 
 const VEREDICTO: Record<CanalCalculado['veredicto'], { texto: string; tono: 'verde' | 'oro' | 'rojo' | 'gris' | 'azul' }> = {
   invertir: { texto: 'Invierte más', tono: 'verde' },
@@ -55,7 +55,7 @@ function TarjetaCanal({ c }: { c: CanalCalculado }) {
 export default async function NegocioPagina({ searchParams }: { searchParams: Promise<{ mes?: string }> }) {
   const mes = mesDeParametro((await searchParams).mes);
   const rango = rangoDeMes(mes);
-  const [negocio, ventas] = await Promise.all([cargarNegocio(mes), cargarVentas(mes)]);
+  const [negocio, ventas, encuestas] = await Promise.all([cargarNegocio(mes), cargarVentas(mes), cargarEncuestas()]);
   const canales = calcularCanales(negocio, ventas);
   const churn = churnMensual(ventas);
   const t = negocio.trial;
@@ -114,6 +114,33 @@ export default async function NegocioPagina({ searchParams }: { searchParams: Pr
           tono={churn !== null && churn > 0.1 ? 'mal' : 'neutro'}
         />
       </section>
+
+      <Tarjeta titulo="Por qué no se quedaron" subtitulo="Respuestas de la encuesta de salida: se manda por correo el día después de que termina el tiempo gratis.">
+        {encuestas.length === 0 ? (
+          <SinDatos queFalta="Aún nadie la contesta. Aparecerán aquí las respuestas de quienes terminen su tiempo gratis sin pagar." />
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {encuestas.map((e) => (
+              <li key={e.id} className="rounded-[var(--radius-card)] bg-[var(--surface-2)] p-4 text-sm">
+                <p className="flex flex-wrap items-center justify-between gap-2">
+                  <b className="break-all">{e.email}</b>
+                  <span className="text-[var(--text-secondary)]">{fechaCorta(e.creado_en)}</span>
+                </p>
+                <p className="mt-2">
+                  <span className="text-[var(--text-secondary)]">No le convenció: </span>
+                  <b>{e.motivo === 'diseno' ? 'El diseño' : e.motivo === 'uso' ? 'La forma de usarse' : `Otra cosa${e.motivo_otro ? `: ${e.motivo_otro}` : ''}`}</b>
+                </p>
+                {e.que_probaria && (
+                  <p className="mt-1">
+                    <span className="text-[var(--text-secondary)]">Volvería a probarla si tuviera: </span>
+                    {e.que_probaria}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </Tarjeta>
 
       <p className="text-sm text-[var(--text-secondary)]">Cuánto dura un cliente se estima con las bajas del mes: con pocas bajas es solo una guía.</p>
     </>
