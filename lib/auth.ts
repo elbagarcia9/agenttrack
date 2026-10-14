@@ -60,7 +60,7 @@ export async function solicitarAcceso(correo: string): Promise<ResultadoAuth> {
 }
 
 export async function verificarCodigo(correo: string, codigo: string): Promise<ResultadoAuth> {
-  if (!correoValido(correo) || !/^\d{6}$/.test(codigo)) return { ok: false, motivo: 'invalido' };
+  if (!correoValido(correo) || !/^\d{6,10}$/.test(codigo)) return { ok: false, motivo: 'invalido' };
   if (AUTH_LOCAL) return { ok: false, motivo: 'no_disponible' };
   const { error } = await supabaseNavegador().auth.verifyOtp({
     email: correo.trim().toLowerCase(),

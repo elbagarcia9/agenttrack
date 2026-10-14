@@ -1,6 +1,6 @@
 'use client';
 
-// Paso 4 de la secuencia maestra: acceso a la cuenta. Sin contraseñas: enlace de un solo uso + código de 6 dígitos.
+// Paso 4 de la secuencia maestra: acceso a la cuenta. Sin contraseñas: enlace de un solo uso + código de números.
 // Estados diseñados: escribiendo · enviando · enviado (con reenvío a los 60 s) · error · límite de solicitudes.
 // Anti-enumeración: el mensaje de "enviado" es idéntico exista o no la cuenta.
 
@@ -26,7 +26,7 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
   const [correo, setCorreo] = useState('');
   const [error, setError] = useState(
     aviso === 'enlace'
-      ? 'Ese enlace ya no sirve (vence en pocos minutos o se abrió en otro navegador). Pide uno nuevo o usa el código de 6 dígitos.'
+      ? 'Ese enlace ya no sirve (vence en pocos minutos o se abrió en otro navegador). Pide uno nuevo o usa el código de números.'
       : aviso === 'desactivada'
         ? 'Tu cuenta está desactivada. Escríbenos para revisarla.'
         : '',
@@ -180,7 +180,7 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                   </span>
                   <h1 className="text-balance text-3xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">Revisa tu correo</h1>
                   <p className="text-base text-[var(--text-secondary)]">
-                    Si hay una cuenta con <b className="text-[var(--text-primary)]">{correo.trim()}</b>, te enviamos un enlace y un código de 6 dígitos. Vence en pocos minutos.
+                    Si hay una cuenta con <b className="text-[var(--text-primary)]">{correo.trim()}</b>, te enviamos un enlace y un código de números. Vence en pocos minutos.
                   </p>
                   {AUTH_LOCAL && (
                     <p className="rounded-[var(--radius-card)] bg-[var(--alerta-bg)] p-3 text-sm font-medium text-[var(--alerta-text)]">
@@ -197,7 +197,7 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                       value={codigo}
                       inputMode="numeric"
                       autoComplete="one-time-code"
-                      maxLength={6}
+                      maxLength={10}
                       placeholder="123456"
                       onChange={(e) => setCodigo(e.target.value.replace(/\D/g, ''))}
                       className="mt-1 h-14 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)] px-4 text-center text-xl tabular-nums tracking-[0.4em] outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]"
