@@ -11,35 +11,10 @@
 import { useSyncExternalStore } from 'react';
 import { AUTH_LOCAL } from './auth';
 import { supabaseNavegador } from './supabase/client';
-import { sumarDias } from './plazos';
+import { semilla } from './reservas-reglas';
 import type { Estatus, Moneda, Reserva, Tipo } from './reservas-reglas';
 
 export * from './reservas-reglas';
-
-// ───────────────────────── datos de ejemplo ─────────────────────────
-
-function iso(d: Date): string {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-function rel(hoy: Date, dias: number): string {
-  return iso(sumarDias(hoy, dias));
-}
-
-export function semilla(hoy: Date = new Date()): Reserva[] {
-  const base = hoy.getTime();
-  const mk = (i: number, r: Omit<Reserva, 'id' | 'creada'>): Reserva => ({ ...r, id: `demo-${i}`, creada: base - i * 3_600_000 });
-  return [
-    mk(1, { cliente: 'Marcos y Ana', contacto: '55 4402 9981', destino: 'Caribe', tipo: 'Crucero', proveedor: 'Royal Caribbean', precioVenta: 2860, comision: 286, moneda: 'USD', fechaCompra: rel(hoy, -26), fechaViaje: rel(hoy, 34), comentarios: 'Aniversario', estatus: 'pendiente_alta', pagoPendienteFecha: rel(hoy, 4), pagoPendienteMonto: 900 }),
-    mk(2, { cliente: 'Luis Peña', contacto: '55 1234 5678', destino: 'Miami', tipo: 'Crucero', proveedor: 'Royal Caribbean', precioVenta: 3440, comision: 344, moneda: 'USD', fechaCompra: rel(hoy, -3), fechaViaje: rel(hoy, 20), comentarios: 'Regalo de bienvenida pendiente', estatus: 'pendiente_alta' }),
-    mk(3, { cliente: 'Andrea Soto', contacto: '55 8821 0043', destino: 'Cancún', tipo: 'Paquete', proveedor: 'Apple Vacations', precioVenta: 1800, comision: 180, moneda: 'USD', fechaCompra: rel(hoy, -72), fechaViaje: rel(hoy, 2), comentarios: 'Pidió cuarto con vista al mar', estatus: 'pendiente_pago' }),
-    mk(4, { cliente: 'Familia Rojas', contacto: '33 1450 7789', destino: 'Cancún', tipo: 'Paquete', proveedor: 'Apple Vacations', precioVenta: 4120, comision: 412, moneda: 'USD', fechaCompra: rel(hoy, -50), fechaViaje: rel(hoy, 11), comentarios: '4 personas', estatus: 'pendiente_pago' }),
-    mk(5, { cliente: 'Sofía Delgado', contacto: '55 6600 2318', destino: 'Roma', tipo: 'Circuito', proveedor: 'Europamundo', precioVenta: 1980, comision: 198, moneda: 'USD', fechaCompra: rel(hoy, -150), fechaViaje: rel(hoy, -92), comentarios: '', estatus: 'solicitar_revision' }),
-    mk(6, { cliente: 'Grupo Herrera', contacto: '222 310 4477', destino: 'Punta Cana', tipo: 'Hotel', proveedor: 'Dreams Resorts', precioVenta: 5300, comision: 530, moneda: 'USD', fechaCompra: rel(hoy, -140), fechaViaje: rel(hoy, -80), comentarios: '12 personas', estatus: 'pagado' }),
-    mk(7, { cliente: 'Karina Ortiz', contacto: '81 2390 1156', destino: 'Orlando', tipo: 'Paquete', proveedor: 'Delta Vacations', precioVenta: 2150, comision: 215, moneda: 'USD', fechaCompra: rel(hoy, -620), fechaViaje: rel(hoy, -575), comentarios: '', estatus: 'pendiente_pago' }),
-    mk(8, { cliente: 'Daniela Cruz', contacto: '55 7712 0090', destino: 'Los Cabos', tipo: 'Hotel', proveedor: 'Marriott', precioVenta: 18500, comision: 1850, moneda: 'MXN', fechaCompra: rel(hoy, -20), fechaViaje: rel(hoy, 75), comentarios: 'Luna de miel', estatus: 'pendiente_pago', pagoPendienteFecha: rel(hoy, 25), pagoPendienteMonto: 6000 }),
-    mk(9, { cliente: 'Hugo Ramírez', contacto: '56 9904 3311', destino: 'Madrid', tipo: 'Vuelo', proveedor: 'Iberia', precioVenta: 1290, comision: 96, moneda: 'USD', fechaCompra: rel(hoy, -400), fechaViaje: rel(hoy, -330), comentarios: '', estatus: 'solicitar_revision' }),
-  ];
-}
 
 // ───────────────────────── almacén (local o Supabase) ─────────────────────────
 

@@ -5,7 +5,7 @@
 import { useActionState, useEffect, useRef, useState } from 'react';
 import { Loader2, MailPlus, Plus, Send } from 'lucide-react';
 import { OPCIONES_CANAL } from '@/lib/admin/etiquetas';
-import { agregarUsuario, guardarCosto, guardarGasto, guardarTasa, reenviarAcceso, type Resultado } from '@/app/admin/acciones';
+import { agregarUsuario, guardarCosto, guardarGasto, guardarTasa, probarAvisos, reenviarAcceso, type Resultado } from '@/app/admin/acciones';
 
 const campo =
   'mt-1 min-h-11 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] campo-suave px-3 text-sm outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]';
@@ -218,6 +218,26 @@ export function TasaForm({ actual }: { actual: number | null }) {
       <Mensaje r={res} />
       <div>
         <Enviar pendiente={pendiente} texto="Guardar tasa" />
+      </div>
+    </form>
+  );
+}
+
+export function ProbarAvisosForm() {
+  const [res, accion, pendiente] = useActionState(probarAvisos, null);
+  return (
+    <form action={accion} className="flex flex-col gap-3">
+      <label className="block max-w-sm">
+        <span className={etiqueta}>Qué correo quieres ver</span>
+        <select name="tipo" defaultValue="resumen" className={campo}>
+          <option value="resumen">Resumen diario de plazos</option>
+          <option value="fin">Aviso de fin de tiempo gratis</option>
+          <option value="encuesta">Invitación a la encuesta de salida</option>
+        </select>
+      </label>
+      <Mensaje r={res} />
+      <div>
+        <Enviar pendiente={pendiente} texto="Mandármelo a mí" Icono={Send} />
       </div>
     </form>
   );

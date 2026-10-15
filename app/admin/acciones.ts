@@ -8,6 +8,8 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { dentroDelLimite } from '@/lib/eventos';
 import { aCentavos } from '@/lib/admin/formato';
+import { aReserva, avisosDeHoy, correoEncuesta, correoFinDePrueba, correoResumen, enviarCorreo, hoyMexico, type FilaReserva } from '@/lib/avisos';
+import { semilla } from '@/lib/reservas-reglas';
 import { exigirAdmin } from '@/lib/supabase/servidor';
 
 export type Resultado = { ok: boolean; mensaje: string } | null;
@@ -217,4 +219,39 @@ export async function reabrirError(fd: FormData): Promise<void> {
   if (!mensaje) return;
   await sb.from('error_log').update({ resuelto: false }).eq('mensaje', mensaje);
   revalidatePath('/admin', 'layout');
+}
+
+// Mandarte a ti misma un correo de prueba (resumen, fin de prueba o encuesta) para ver cómo le llega a una persona
+export async function probarAvisos(_previo: Resultado, fd: FormData): Promise<Resultado> {
+  const { sb, user } = await exigirAdmin();
+  if (!dentroDelLimite(`prueba-avisos:${user.id}`, 6)) return falla('Muchas pruebas seguidas. Espera un minuto.');
+  if (!user.email) return falla('Tu cuenta no tiene correo.');
+  const tipo = texto(fd, 'tipo');
+  const hoy = hoyMexico();
+  const { data: perfil } = await sb.from('perfiles').select('nombre').eq('id', user.id).maybeSingle();
+  const nombre = perfil?.nombre ?? null;
+  let correo;
+  if (tipo === 'resumen') {
+    const { data } = await sb.from('reservas').select('id, cliente, contacto, destino, tipo, proveedor, precio_venta, comision, moneda, fecha_compra, fecha_viaje, pago_pendiente_fecha, pago_pendiente_monto, comentarios, estatus').eq('user_id', user.id);
+    let avisos = avisosDeHoy(((data ?? []) as FilaReserva[]).map(aReserva), hoy);
+    let ejemplo = false;
+    if (avisos.length === 0) {
+      avisos = avisosDeHoy(semilla(hoy), hoy);
+      ejemplo = true;
+    }
+    if (avisos.length === 0) return falla('Hoy no hay ningún aviso para mostrar ni con datos de ejemplo.');
+    correo = correoResumen(nombre, user.id, avisos, hoy);
+    if (ejemplo) correo.asunto = `[Prueba con datos de ejemplo] ${correo.asunto}`;
+  } else if (tipo === 'fin') {
+    correo = correoFinDePrueba(nombre, user.id, 2, new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 2), hoy);
+    correo.asunto = `[Prueba] ${correo.asunto}`;
+  } else if (tipo === 'encuesta') {
+    correo = correoEncuesta(nombre, user.id);
+    correo.asunto = `[Prueba] ${correo.asunto}`;
+  } else return falla('Elige qué correo quieres probar.');
+  try {
+    return (await enviarCorreo(user.email, correo)) ? exito(`Te lo mandamos a ${user.email}. Revisa tu bandeja (y spam).`) : falla('El servicio de correos no lo aceptó. Revisa que la clave de Resend esté bien puesta.');
+  } catch {
+    return falla('Falta la clave de Resend en el servidor.');
+  }
 }

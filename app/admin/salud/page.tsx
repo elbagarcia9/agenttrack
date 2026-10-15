@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 import { BotonResolver } from '@/components/admin/Interacciones';
+import { ProbarAvisosForm } from '@/components/admin/Formularios';
 import { Datos, Encabezado, Heroe, Insignia, Kpi, SinDatos, Tarjeta } from '@/components/admin/ui';
 import { cargarSalud } from '@/lib/admin/datos';
 import { errorHumano, nombreAviso, nombrePantalla } from '@/lib/admin/etiquetas';
@@ -162,6 +163,10 @@ export default async function SaludPagina() {
           )}
         </Tarjeta>
       </div>
+
+      <Tarjeta titulo="Probar los correos" subtitulo="Te manda a ti misma el correo tal como lo recibiría una agente, para revisar cómo se ve antes de que salga a los demás.">
+        <ProbarAvisosForm />
+      </Tarjeta>
 
       <div id="hotmart" className="scroll-mt-20">
         <Tarjeta titulo="Conexión con Hotmart" subtitulo="Hotmart le avisa a tu app cada compra, cancelación o reembolso. Aquí se ve si esos avisos llegan bien.">
