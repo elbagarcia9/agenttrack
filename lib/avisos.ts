@@ -107,7 +107,7 @@ const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 function plantilla(titulo: string, cuerpo: string, pie: string): string {
   return `<!doctype html><html lang="es"><body style="margin:0;background:#eaeaea;font-family:Arial,Helvetica,sans-serif;color:#111518">
 <div style="max-width:560px;margin:0 auto;padding:24px 16px">
-<p style="margin:0 0 16px;font-size:20px;font-weight:bold;color:#226697">AgentTrack</p>
+<p style="margin:0 0 16px"><a href="${SITIO}"><img src="${SITIO}/img/logo-agenttrack.png" width="180" height="43" alt="AgentTrack" style="display:block;border:0;height:auto;max-width:180px"></a></p>
 <div style="background:#ffffff;border-radius:14px;padding:24px">
 <h1 style="margin:0 0 12px;font-size:22px;line-height:1.25">${titulo}</h1>
 ${cuerpo}
