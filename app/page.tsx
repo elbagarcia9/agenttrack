@@ -5,6 +5,7 @@
 
 import { useEffect } from 'react';
 import { track } from '@/lib/track';
+import { SOPORTE_EMAIL } from '@/lib/legal';
 import { CalendarX, CircleHelp, FileSpreadsheet, FileWarning, Repeat } from 'lucide-react';
 import { Hero } from '@/components/landing/Hero';
 import { Problema } from '@/components/landing/Problema';
@@ -208,11 +209,12 @@ export default function Landing() {
         appName={BRAND}
         logo={<Logo alto="h-7" />}
         logoCompleto
-        soporteEmail="soporte@tu-dominio.mx"
+        soporteEmail={SOPORTE_EMAIL}
         aviso="No estamos afiliados a Archer ni a ninguna agencia Host. Los nombres se mencionan solo para indicar con qué reglas de plazos funciona la app."
         enlaces={[
           { label: 'Privacidad', href: '/privacidad' },
           { label: 'Términos y Condiciones', href: '/terminos' },
+          { label: 'Cancelación y reembolsos', href: '/reembolsos' },
         ]}
       />
 

@@ -7,9 +7,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bell, CalendarDays, FileText, House, LogOut, Plus, type LucideIcon } from 'lucide-react';
+import { Bell, CalendarDays, FileText, House, LogOut, Plus, UserRound, type LucideIcon } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { AUTH_LOCAL, cerrarSesion, registrarActividad } from '@/lib/auth';
+import { VERSION_LEGAL } from '@/lib/legal';
 import { trackSesionDiaria } from '@/lib/track';
 import { alertasDe, useReservas } from '@/lib/reservas';
 
@@ -34,6 +35,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     trackSesionDiaria();
     void registrarActividad();
+    // Si la persona aceptó los documentos al pedir su acceso, ahora que ya es ella la que entró se deja constancia
+    try {
+      if (!AUTH_LOCAL && window.localStorage.getItem('cg_consent_pendiente') === VERSION_LEGAL) {
+        void fetch('/api/consentimiento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version: VERSION_LEGAL }) }).then((r) => {
+          if (r.ok) window.localStorage.removeItem('cg_consent_pendiente');
+        });
+      }
+    } catch {
+      /* sin almacenamiento: se pedirá de nuevo en el próximo acceso */
+    }
   }, []);
   const [confirmando, setConfirmando] = useState(false);
   const { reservas, esDemo, empezarLimpio, listo, error, descartarError } = useReservas();
@@ -75,11 +86,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
+        <Link
+          href="/app/cuenta"
+          aria-current={activo(path, '/app/cuenta') ? 'page' : undefined}
+          className={`mt-auto flex min-h-11 items-center gap-3 rounded-[var(--radius-button)] px-3 text-sm font-semibold ${activo(path, '/app/cuenta') ? 'bg-[var(--surface-2)] text-[var(--accent)]' : 'text-[var(--text-secondary)]'}`}
+        >
+          <UserRound size={18} aria-hidden="true" />
+          Mi cuenta
+        </Link>
         {!AUTH_LOCAL && (
           <button
             type="button"
             onClick={salir}
-            className="mt-auto flex min-h-11 items-center gap-3 rounded-[var(--radius-button)] px-3 text-sm font-semibold text-[var(--text-secondary)]"
+            className="flex min-h-11 items-center gap-3 rounded-[var(--radius-button)] px-3 text-sm font-semibold text-[var(--text-secondary)]"
           >
             <LogOut size={18} aria-hidden="true" />
             Salir
@@ -130,6 +149,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="flex h-14 items-center justify-between px-4 md:hidden">
           <Link href="/app" aria-label="AgentTrack, ir al inicio" className="flex min-h-11 items-center">
             <Logo />
+          </Link>
+          <Link href="/app/cuenta" aria-label="Mi cuenta" className="ml-auto flex min-h-11 items-center gap-2 px-2 text-sm font-semibold text-[var(--text-secondary)]">
+            <UserRound size={18} aria-hidden="true" />
+            Mi cuenta
           </Link>
           {!AUTH_LOCAL && (
             <button type="button" onClick={salir} aria-label="Salir de mi cuenta" className="flex min-h-11 items-center gap-2 px-2 text-sm font-semibold text-[var(--text-secondary)]">

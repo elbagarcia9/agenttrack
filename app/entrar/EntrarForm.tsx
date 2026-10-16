@@ -10,6 +10,7 @@ import { MotionConfig, motion } from 'motion/react';
 import { Loader2, MailCheck } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { AUTH_GOOGLE, AUTH_LOCAL, correoValido, solicitarAcceso, verificarCodigo } from '@/lib/auth';
+import { VERSION_LEGAL } from '@/lib/legal';
 import { track } from '@/lib/track';
 
 type Fase = 'escribiendo' | 'enviando' | 'enviado';
@@ -32,6 +33,8 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
         : '',
   );
   const [intento, setIntento] = useState(false);
+  // La casilla NUNCA viene marcada de antemano: la aceptación es una decisión de cada vez
+  const [acepto, setAcepto] = useState(false);
   const [espera, setEspera] = useState(0);
   const [codigo, setCodigo] = useState('');
   const [errorCodigo, setErrorCodigo] = useState('');
@@ -61,9 +64,19 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
     setIntento(true);
     setError('');
     if (!correoValido(correo)) return;
+    if (!acepto) {
+      setError('Marca la casilla para aceptar los términos y el aviso de privacidad y poder continuar.');
+      return;
+    }
     setFase('enviando');
     const r = await solicitarAcceso(correo);
     if (r.ok) {
+      try {
+        // Se registra en la base cuando la persona ya entró (ahí sí hay una identidad verificada)
+        window.localStorage.setItem('cg_consent_pendiente', VERSION_LEGAL);
+      } catch {
+        /* sin almacenamiento: se le volverá a pedir al entrar */
+      }
       track('acceso_solicitado', { plan: plan ?? 'ninguno' });
       setFase('enviado');
       iniciarCuenta();
@@ -144,6 +157,21 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                     {error}
                   </p>
                 )}
+
+                <motion.label {...entrada(3)} className="flex cursor-pointer items-start gap-3 text-sm">
+                  <input type="checkbox" checked={acepto} onChange={(e) => setAcepto(e.target.checked)} className="mt-0.5 size-6 shrink-0 accent-[var(--accent)]" />
+                  <span>
+                    Acepto los{' '}
+                    <Link href="/terminos" target="_blank" className="font-semibold text-[var(--accent)] underline underline-offset-4">
+                      términos y condiciones
+                    </Link>{' '}
+                    y el{' '}
+                    <Link href="/privacidad" target="_blank" className="font-semibold text-[var(--accent)] underline underline-offset-4">
+                      aviso de privacidad
+                    </Link>
+                    , incluido que mis datos se traten en servidores fuera de México.
+                  </span>
+                </motion.label>
 
                 <motion.div {...entrada(3)} className="flex flex-col gap-3">
                   <motion.button

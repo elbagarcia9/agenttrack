@@ -303,7 +303,22 @@ export function PaywallFlow() {
               Empezar mis 14 días gratis
             </motion.a>
             <p className="mt-2 text-center text-sm text-[var(--text-secondary)]">
-              Después, {p.cobro} {plan === 'anual' ? 'al año' : 'al mes'}. Cancelas cuando quieras.
+              Después, {p.cobro} {plan === 'anual' ? 'al año' : 'al mes'}, con renovación automática. Cancelas cuando quieras desde Hotmart.
+            </p>
+            <p className="mt-1 text-center text-sm text-[var(--text-secondary)]">
+              Al continuar aceptas los{' '}
+              <Link href="/terminos" className="font-semibold underline underline-offset-4">
+                términos
+              </Link>
+              , la{' '}
+              <Link href="/privacidad" className="font-semibold underline underline-offset-4">
+                privacidad
+              </Link>{' '}
+              y los{' '}
+              <Link href="/reembolsos" className="font-semibold underline underline-offset-4">
+                reembolsos
+              </Link>
+              .
             </p>
             <div className="mt-1 flex items-center justify-center gap-4">
               <Link href="/" className="flex min-h-11 items-center px-2 text-sm font-medium text-[var(--text-secondary)] underline underline-offset-4">
