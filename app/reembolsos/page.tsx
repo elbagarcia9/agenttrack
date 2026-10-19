@@ -66,7 +66,7 @@ export default function Reembolsos() {
           y te ayudamos el mismo día hábil.
         </p>
         <p>
-          Cancelar la suscripción es distinto de borrar tu cuenta: tu cuenta y tus reservas se conservan para cuando quieras volver. Si también quieres borrar tus datos, usa <b>Mi cuenta → Eliminar mi cuenta</b> dentro
+          <b>Antes de cancelar puedes llevarte tus datos:</b> en <b>Mi cuenta → Descargar mis reservas en Excel</b> sacas todas tus reservas en un archivo. Cancelar la suscripción es distinto de borrar tu cuenta: tu cuenta y tus reservas se conservan para cuando quieras volver. Si también quieres borrar tus datos, usa <b>Mi cuenta → Eliminar mi cuenta</b> dentro
           de la app. <b>Antes de eliminarla, cancela tu suscripción en Hotmart</b>, porque borrar la cuenta no detiene los cobros.
         </p>
       </Seccion>
@@ -76,8 +76,8 @@ export default function Reembolsos() {
         <Lista
           items={[
             <>
-              <b>Derecho de arrepentimiento:</b> si te cobraron y no quieres continuar, tienes 7 días naturales para pedir la devolución, que es la garantía que Hotmart aplica a este producto. Si quieres reembolso, pídelo cuanto antes. Pídela Pídela
-              desde tu compra en Hotmart o escríbenos y te ayudamos a hacerlo.
+              <b>Derecho de arrepentimiento:</b> si te cobraron y no quieres continuar, tienes 7 días naturales para pedir la devolución, que es la garantía que Hotmart aplica a este producto. Si quieres reembolso, pídelo cuanto antes, desde tu compra en
+              Hotmart o escribiéndonos, y te ayudamos a hacerlo.
             </>,
             <>
               <b>Cobro por error o repetido:</b> si crees que se te cobró algo que no corresponde, escríbenos a {SOPORTE_EMAIL} con el comprobante. Lo revisamos y, si procede, lo devolvemos.

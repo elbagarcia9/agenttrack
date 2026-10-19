@@ -126,7 +126,7 @@ export default function Privacidad() {
         <Lista
           items={[
             <>
-              <b>Acceder</b> a tus datos y saber cómo los usamos.
+              <b>Acceder</b> a tus datos y saber cómo los usamos, y <b>llevártelos</b>: en Mi cuenta puedes descargar todas tus reservas en un archivo de Excel.
             </>,
             <>
               <b>Rectificarlos</b> si están mal o incompletos (puedes editarlos tú misma en la app).

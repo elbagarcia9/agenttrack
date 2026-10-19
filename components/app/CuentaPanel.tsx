@@ -2,10 +2,12 @@
 
 import { useActionState, useState, useTransition } from 'react';
 import Link from 'next/link';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Download, Loader2, Trash2 } from 'lucide-react';
 import { eliminarMiCuenta, guardarAvisosCorreo, type Resultado } from '@/app/app/cuenta/acciones';
 import { AUTH_LOCAL } from '@/lib/auth';
+import { descargarReservasExcel } from '@/lib/exportar';
 import { SOPORTE_EMAIL } from '@/lib/legal';
+import { useReservas } from '@/lib/reservas';
 
 const enlace = 'font-semibold text-[var(--accent)] underline underline-offset-4';
 
@@ -13,6 +15,22 @@ export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; 
   const [avisos, setAvisos] = useState(avisosInicial);
   const [msgAvisos, setMsgAvisos] = useState<Resultado>(null);
   const [guardando, empezar] = useTransition();
+  const { reservas, listo } = useReservas();
+  const propias = reservas.filter((r) => !r.id.startsWith('demo-')).length;
+  const [exportando, setExportando] = useState(false);
+  const [msgExcel, setMsgExcel] = useState('');
+  const exportar = async () => {
+    setExportando(true);
+    setMsgExcel('');
+    try {
+      const n = await descargarReservasExcel(reservas);
+      setMsgExcel(`Listo: descargaste ${n} ${n === 1 ? 'reserva' : 'reservas'} en Excel.`);
+    } catch {
+      setMsgExcel('No pudimos crear el archivo. Inténtalo de nuevo.');
+    } finally {
+      setExportando(false);
+    }
+  };
   const [res, accion, eliminando] = useActionState(async (previo: Resultado, fd: FormData) => {
     const r = await eliminarMiCuenta(previo, fd);
     // Cuenta borrada: navegación completa a la página principal (la sesión ya no existe)
@@ -46,6 +64,26 @@ export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; 
         {msgAvisos && (
           <p role={msgAvisos.ok ? 'status' : 'alert'} className={`mt-1 text-sm font-medium ${msgAvisos.ok ? 'text-[var(--verde-text)]' : 'text-[var(--rojo-text)]'}`}>
             {msgAvisos.mensaje}
+          </p>
+        )}
+      </section>
+
+      <section aria-label="Mis datos" className="rounded-[var(--radius-card)] tarjeta-suave p-4">
+        <h2 className="text-lg font-bold [font-family:var(--font-display)]">Mis datos</h2>
+        <p className="mt-1 text-base">Descarga todas tus reservas en un Excel. Son tuyas: te las puedes llevar cuando quieras, y el mismo archivo se puede volver a importar en AgentTrack.</p>
+        <button
+          type="button"
+          onClick={exportar}
+          disabled={exportando || !listo || propias === 0}
+          className="mt-3 flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-button)] bg-[var(--accent)] px-5 text-base font-semibold text-[var(--on-accent)] disabled:opacity-60"
+        >
+          {exportando ? <Loader2 size={18} className="motion-safe:animate-spin" aria-hidden="true" /> : <Download size={18} aria-hidden="true" />}
+          {exportando ? 'Creando tu Excel…' : 'Descargar mis reservas en Excel'}
+        </button>
+        {listo && propias === 0 && <p className="mt-2 text-sm text-[var(--text-secondary)]">Aún no tienes reservas propias para descargar.</p>}
+        {msgExcel && (
+          <p role="status" className="mt-2 text-sm font-medium text-[var(--text-secondary)]">
+            {msgExcel}
           </p>
         )}
       </section>
@@ -90,7 +128,7 @@ export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; 
           Borra tu cuenta y todo lo que registraste: tus reservas, tus preferencias y tus avisos. <b>No se puede deshacer.</b>
         </p>
         <p className="mt-2 rounded-[var(--radius-button)] bg-[var(--alerta-bg)] p-3 text-sm font-medium text-[var(--alerta-text)]">
-          Antes de eliminarla, cancela tu suscripción en Hotmart: borrar la cuenta no detiene los cobros.
+          Antes de eliminarla, cancela tu suscripción en Hotmart (borrar la cuenta no detiene los cobros) y descarga tus reservas en Excel si quieres conservarlas.
         </p>
         <form action={accion} className="mt-3 flex flex-col gap-3">
           <label className="block">
