@@ -76,7 +76,7 @@ export default function Reembolsos() {
         <Lista
           items={[
             <>
-              <b>Derecho de arrepentimiento:</b> si te cobraron y no quieres continuar, puedes pedir la devolución dentro del plazo que Hotmart establece para tu compra (normalmente 7 días naturales desde el cobro). Pídela
+              <b>Derecho de arrepentimiento:</b> si te cobraron y no quieres continuar, tienes 7 días naturales para pedir la devolución, que es la garantía que Hotmart aplica a este producto. Si quieres reembolso, pídelo cuanto antes. Pídela Pídela
               desde tu compra en Hotmart o escríbenos y te ayudamos a hacerlo.
             </>,
             <>
