@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'not configured' }, { status: 503 });
   }
   const sb = supabaseServicio();
-  const registrar = async (result: string, eventId?: string, type?: string) => {
-    await sb.from('webhook_log').insert({ event_id: eventId ?? null, type: type ?? null, result });
+  const registrar = async (result: string, eventId?: string, type?: string, detalle?: string) => {
+    await sb.from('webhook_log').insert({ event_id: eventId ?? null, type: type ?? null, result, detalle: detalle ?? null });
   };
 
   const crudo = await req.text(); // bytes exactos, antes de interpretar nada
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
   });
   if (error) {
     console.error('webhook hotmart: error al aplicar', { evento: ev.evento, codigo: error.code }); // sin datos personales
-    await registrar('error', ev.eventId, ev.evento);
+    await registrar('error', ev.eventId, ev.evento, `${error.code ?? ''} ${error.message ?? ''}`.trim().slice(0, 300)); // causa técnica para el panel, sin datos de la persona
     return NextResponse.json({ error: 'processing failed' }, { status: 500 }); // Hotmart reintenta
   }
   const estado = (data as { status?: string } | null)?.status;
