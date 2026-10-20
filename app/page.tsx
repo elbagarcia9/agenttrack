@@ -41,7 +41,7 @@ export default function Landing() {
         logoCompleto
         loginHref="/entrar"
         h1Marked="[acento]Ninguna comisión[/acento] se te vence sin que lo sepas"
-        subtitleMarked="Registra tus ventas y tu asistente te avisa a tiempo: [b]alta a los 30 días[/b], cobro del cliente y [b]reclamo a los 18 meses[/b]"
+        subtitleMarked="Te avisamos del [b]alta a 30 días[/b] y del [b]reclamo a 18 meses[/b]"
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
         socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Tarjeta al empezar, sin cobro hoy.</span>}
@@ -153,7 +153,7 @@ export default function Landing() {
       />
 
       <p className="bg-[var(--bg)] px-5 pb-10 text-center text-sm text-[var(--text-secondary)]">
-        Tarjeta al empezar, sin cobro hoy. Si cancelas antes de los 14 días, no pagas nada.
+        Si cancelas antes de los 14 días, no pagas nada.
       </p>
 
       <Garantia
@@ -201,7 +201,7 @@ export default function Landing() {
         futurePacingMarked="Mañana registras tu primera venta y tu asistente empieza a vigilar cada plazo por ti."
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
-        recap="14 días gratis · tarjeta al empezar, sin cobro hoy · cancela cuando quieras"
+        recap="14 días gratis · cancela cuando quieras"
         psMarked="Cada venta que registres hoy tiene sus plazos vigilados desde el primer día. Empieza con 14 días gratis y decide después."
       />
 

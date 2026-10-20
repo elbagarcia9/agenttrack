@@ -77,7 +77,7 @@ export default function Inicio() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-6">
         <motion.div {...entrada(0)}>
           <p className="text-sm font-semibold text-[var(--text-secondary)]">{fechaConDia(hoy)}</p>
           <h1 className="text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">{nombre ? `Hola, ${nombre}` : 'Hola'}</h1>
@@ -86,8 +86,9 @@ export default function Inicio() {
         <motion.section
           {...entrada(2)}
           aria-label="Comisiones por cobrar"
-          className="rounded-[var(--radius-card)] border-b-4 border-[var(--btn-oro-to)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-4 text-white shadow-[var(--shadow-2)]"
+          className="relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-4 pb-5 text-white shadow-[var(--shadow-2)]"
         >
+          <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1.5 bg-[var(--btn-oro-to)]" />
           <p className="text-sm font-semibold">Comisiones por cobrar</p>
           <p className="text-4xl font-extrabold leading-none tabular-nums [font-family:var(--font-display)]">
             <Contador hasta={t.porCobrar.USD} /> <span className="text-sm font-semibold">USD</span>
@@ -99,16 +100,16 @@ export default function Inicio() {
               [t.porCobrarN, 'pago pendiente'],
               [t.enRevision, 'en revisión'],
             ].map(([n, l]) => (
-              <div key={l as string} className="rounded-lg bg-white/15 px-2 py-2">
+              <Link key={l as string} href="/app/reservas" className="rounded-lg bg-white/15 px-2 py-2 transition-transform active:scale-[0.97]">
                 <b className="block text-xl leading-none [font-family:var(--font-display)]">{n}</b>
-                <span className="mt-1 block text-xs leading-tight">{l}</span>
-              </div>
+                <span className="mt-1 block text-sm leading-tight">{l}</span>
+              </Link>
             ))}
           </div>
         </motion.section>
 
         {urgente && (
-          <motion.div {...entrada(3)}>
+          <motion.div {...entrada(3)} className="-mt-2">
             <Link
               href="/app/alertas"
               className={`flex min-h-11 items-center gap-2 rounded-[var(--radius-button)] border px-3 text-sm font-semibold ${
@@ -141,8 +142,14 @@ export default function Inicio() {
           </Link>
         </motion.div>
 
+        {siguientes.length === 0 && !urgente && (
+          <motion.p {...entrada(5)} className="rounded-[var(--radius-card)] tarjeta-suave p-4 text-base font-semibold text-[var(--verde-text)]">
+            Todo al día: no hay plazos por atender.
+          </motion.p>
+        )}
+
         {siguientes.length > 0 && (
-          <motion.section {...entrada(4)} aria-label="Lo que sigue" className="flex flex-col gap-2">
+          <motion.section {...entrada(5)} aria-label="Lo que sigue" className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold [font-family:var(--font-display)]">Lo que sigue</h2>
               <Link href="/app/alertas" className="flex min-h-11 items-center text-sm font-semibold text-[var(--accent)]">
@@ -152,10 +159,13 @@ export default function Inicio() {
             <ul className="flex flex-col gap-2">
               {siguientes.map((a) => (
                 <li key={a.id}>
-                  <Link href="/app/alertas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] tarjeta-suave p-3 transition-transform active:scale-[0.99]">
+                  <Link href="/app/alertas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] tarjeta-suave p-3 transition-transform active:scale-[0.97]">
                     <div className="min-w-0">
-                      <p className="font-semibold">{a.titulo}</p>
-                      <p className="text-sm text-[var(--text-secondary)]">{formatoFecha(a.fecha, hoy)}</p>
+                      <p className="truncate font-semibold">{a.titulo.split(' · ')[0]}</p>
+                      <p className="truncate text-sm text-[var(--text-secondary)]">
+                        {a.titulo.includes(' · ') ? `${a.titulo.split(' · ').slice(1).join(' · ')} · ` : ''}
+                        {formatoFecha(a.fecha, hoy)}
+                      </p>
                     </div>
                     <InsigniaSeveridad alerta={a} hoy={hoy} />
                   </Link>
@@ -165,7 +175,7 @@ export default function Inicio() {
           </motion.section>
         )}
 
-        <motion.section {...entrada(5)} aria-label="Reservas recientes" className="flex flex-col gap-2">
+        <motion.section {...entrada(6)} aria-label="Reservas recientes" className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold [font-family:var(--font-display)]">Reservas recientes</h2>
             <Link href="/app/reservas" className="flex min-h-11 items-center text-sm font-semibold text-[var(--accent)]">
@@ -175,7 +185,7 @@ export default function Inicio() {
           <ul className="flex flex-col gap-2">
             {recientes.map((r) => (
               <li key={r.id}>
-                <Link href="/app/reservas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] tarjeta-suave p-3 transition-transform active:scale-[0.99]">
+                <Link href="/app/reservas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] tarjeta-suave p-3 transition-transform active:scale-[0.97]">
                   <div className="min-w-0">
                     <p className="truncate font-semibold">
                       {r.cliente} · {r.destino}

@@ -210,7 +210,7 @@ export function AppPorDentro({
                 onClick={() => irA(i)}
                 aria-label={`Ir a: ${f.label}`}
                 aria-current={activo === i ? 'true' : undefined}
-                className="flex size-6 items-center justify-center [touch-action:manipulation]"
+                className="flex size-11 items-center justify-center [touch-action:manipulation]"
               >
                 <span
                   className={`size-2 rounded-full transition-colors duration-200 ${

@@ -70,7 +70,7 @@ export function Solucion({
         </motion.div>
 
         {/* El chip del mecanismo bautizado — hairline + <Accent> (55 §4) */}
-        <motion.p variants={item} className="mt-3 text-[15px] font-semibold">
+        <motion.p variants={item} className="mt-4 border-l-4 border-[var(--accent)] pl-3 text-[17px] font-semibold">
           <Accent>{mecanismo}</Accent>
         </motion.p>
 

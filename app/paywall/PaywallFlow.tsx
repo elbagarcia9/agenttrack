@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { MotionConfig, animate, motion } from 'motion/react';
 import Link from 'next/link';
 import { SOPORTE_EMAIL } from '@/lib/legal';
-import { Check, Loader2, X } from 'lucide-react';
+import { Check, ChevronDown, Loader2, X } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { formatoFecha, sumarDias } from '@/lib/plazos';
 import { track } from '@/lib/track';
@@ -122,7 +122,17 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
     window.addEventListener('pageshow', volver);
     return () => window.removeEventListener('pageshow', volver);
   }, []);
+  const [sinAbrir, setSinAbrir] = useState(false);
+  useEffect(() => {
+    if (!abriendo) return;
+    const t = window.setTimeout(() => {
+      setAbriendo(false);
+      setSinAbrir(true);
+    }, 8000);
+    return () => window.clearTimeout(t);
+  }, [abriendo]);
   const iniciar = () => {
+    setSinAbrir(false);
     setAbriendo(true);
     track('checkout_iniciado', { plan, aviso, hora });
     try {
@@ -192,16 +202,6 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
               </motion.div>
             )}
 
-            <ul className="flex flex-col gap-3">
-              {BENEFICIOS.map((b, i) => (
-                <motion.li key={b} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.1 + i * 0.07 }} className="flex items-start gap-3 text-base">
-                  <span aria-hidden="true" className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--chip-bg)]">
-                    <Check size={12} strokeWidth={3} color="var(--accent)" />
-                  </span>
-                  {b}
-                </motion.li>
-              ))}
-            </ul>
 
             <div role="radiogroup" aria-label="Elige tu plan" onKeyDown={alMoverFlecha} className="flex flex-col gap-4">
               {(['anual', 'mensual'] as Plan[]).map((k) => {
@@ -253,7 +253,19 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
               })}
             </div>
 
-            <p className="-mt-2 text-center text-sm font-medium text-[var(--text-secondary)]">Una sola comisión que no dejes vencer puede pagar tu año.</p>
+            <p className="-mt-2 text-center text-base font-semibold">Una comisión que no dejes vencer paga varios meses de AgentTrack. Que ninguna venta te salga de a gratis.</p>
+
+            <ul className="flex flex-col gap-3">
+              {BENEFICIOS.map((b, i) => (
+                <motion.li key={b} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.1 + i * 0.07 }} className="flex items-start gap-3 text-base">
+                  <span aria-hidden="true" className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--chip-bg)]">
+                    <Check size={12} strokeWidth={3} color="var(--accent)" />
+                  </span>
+                  {b}
+                </motion.li>
+              ))}
+            </ul>
+
 
             <section aria-label="Cómo funciona tu prueba gratis" className="rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--text-tertiary)_25%,transparent)] bg-[var(--surface)] p-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Así funciona tu prueba</h2>
@@ -294,7 +306,12 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                   </div>
                 </li>
               </ol>
-              <label className="mt-5 flex min-h-11 cursor-pointer items-center gap-3 text-sm font-medium">
+              <details className="group mt-5">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-[var(--accent)] [&::-webkit-details-marker]:hidden">
+                  Personalizar mi aviso (opcional)
+                  <ChevronDown size={18} aria-hidden="true" className="transition-transform group-open:rotate-180" />
+                </summary>
+              <label className="mt-2 flex min-h-11 cursor-pointer items-center gap-3 text-sm font-medium">
                 <input type="checkbox" checked={aviso} onChange={(e) => setAviso(e.target.checked)} className="size-5 accent-[var(--accent)]" />
                 Avísame por correo 2 días antes del cobro
               </label>
@@ -320,6 +337,7 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                   ))}
                 </div>
               )}
+              </details>
             </section>
 
           <footer className="flex flex-col items-center gap-2 pb-4 text-center">
@@ -362,9 +380,15 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                 'Empezar mis 14 días gratis'
               )}
             </motion.a>
-            <p className="mt-2 text-center text-sm text-[var(--text-secondary)]">
-              Después, {p.cobro} {plan === 'anual' ? 'al año' : 'al mes'}. Cancelas desde Hotmart.
-            </p>
+            {sinAbrir ? (
+              <p role="alert" className="mt-2 text-center text-sm font-semibold text-[var(--rojo-text)]">
+                No se abrió tu pago. Inténtalo de nuevo o escríbenos a {SOPORTE_EMAIL}.
+              </p>
+            ) : (
+              <p className="mt-2 text-center text-sm text-[var(--text-secondary)]">
+                Después, {p.cobro} {plan === 'anual' ? 'al año' : 'al mes'}. Cancelas desde Hotmart.
+              </p>
+            )}
           </div>
         </div>
       </div>

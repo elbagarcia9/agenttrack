@@ -263,11 +263,16 @@ function PasoNombre({ estado, dispatch, avanzar }: PantallaProps) {
   };
   return (
     <form onSubmit={enviar} noValidate className="flex flex-1 flex-col">
-      <Pregunta titulo={<>¿Cómo te <Ac>llamas</Ac>?</>} ayuda="Así tu plan se siente tuyo desde el primer día.">
+      <Pregunta titulo={<>¿Cómo te <Ac>llamas</Ac>?</>} ayuda="Para que tu asistente te hable por tu nombre cuando una comisión esté por vencer.">
         <Campo etiqueta="Tu nombre" valor={estado.nombre} autoFocus placeholder="Laura" error={intento && !listo ? 'Escribe tu nombre para continuar.' : undefined} onCambio={(v) => dispatch({ tipo: 'campo', campo: 'nombre', valor: v })} />
+        <ul className="flex flex-col gap-2 rounded-[var(--radius-card)] bg-[color-mix(in_oklab,var(--accent)_8%,transparent)] p-4 text-sm font-medium">
+          <li>Te avisamos del alta a los 30 días de la compra.</li>
+          <li>Te avisamos antes de que salga tu cliente.</li>
+          <li>Te avisamos del reclamo antes de los 18 meses.</li>
+        </ul>
       </Pregunta>
       <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-[var(--bg)] from-70% to-transparent px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
-        <BotonPrincipal enviar>Continuar</BotonPrincipal>
+        <BotonPrincipal enviar>Seguir con mi plan</BotonPrincipal>
       </div>
     </form>
   );
@@ -356,7 +361,7 @@ function PasoUnica({
               else avanzar();
             }}
           >
-            Continuar
+            Seguir con mi plan
           </BotonPrincipal>
         </div>
       )}
@@ -376,7 +381,7 @@ function PasoReconocimiento({ estado, avanzar }: PantallaProps) {
         <p className="max-w-[34ch] text-base leading-relaxed text-[var(--text-secondary)]">{RECONOCIMIENTO[claveDe(estado.preocupacion)]}</p>
       </div>
       <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-[var(--bg)] from-70% to-transparent px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
-        <BotonPrincipal onClick={avanzar}>Continuar</BotonPrincipal>
+        <BotonPrincipal onClick={avanzar}>Seguir con mi plan</BotonPrincipal>
       </div>
     </div>
   );
@@ -427,9 +432,9 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
           <Campo etiqueta="Cliente" error={eCliente} valor={r.cliente} placeholder="Luis Peña" autoFocus onCambio={(v) => set({ cliente: v })} />
           <Campo etiqueta="Destino" error={eDestino} valor={r.destino} placeholder="Miami" onCambio={(v) => set({ destino: v })} />
         </div>
-        <div className="grid grid-cols-[1fr_auto] items-start gap-3">
+        <div className="grid grid-cols-[1fr_auto] items-end gap-3">
           <Campo etiqueta="Tu comisión" error={eComision} valor={r.comision} inputMode="decimal" tipo="number" placeholder="344" onCambio={(v) => set({ comision: v })} />
-          <div role="group" aria-label="Moneda" className="mt-5 grid h-12 grid-cols-2 rounded-[var(--radius-button)] bg-[color-mix(in_oklab,var(--text-primary)_8%,transparent)] p-1">
+          <div role="group" aria-label="Moneda" className="grid h-12 grid-cols-2 rounded-[var(--radius-button)] bg-[color-mix(in_oklab,var(--text-primary)_8%,transparent)] p-1">
             {(['USD', 'MXN'] as const).map((m) => (
               <button
                 key={m}
@@ -668,9 +673,9 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
         >
           <Check size={14} strokeWidth={3} color="var(--verde-text)" />
         </motion.span>
-        Tu primera reserva está lista
+        {estado.nombre.trim()}, tu primera reserva está lista
       </p>
-      <h1 className="mt-1 text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{esEjemplo ? `Así se verá tu asistente con tu primera reserva real, ${estado.nombre.trim()}` : <>Tu primera reserva ya está <Ac>vigilada</Ac>, {estado.nombre.trim()}</>}</h1>
+      <h1 className="mt-1 text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{esEjemplo ? `Así se verá tu asistente con tu primera reserva real, ${estado.nombre.trim()}` : <>Ya está <Ac>vigilada</Ac></>}</h1>
       <p className="mt-2 text-sm text-[var(--text-secondary)]">
         {frase}: tu asistente cuenta los plazos de {r.cliente.trim()} en {r.destino.trim()} y te avisa antes de que venzan.
       </p>
@@ -720,7 +725,7 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
         >
           Activar mis 14 días gratis
         </motion.a>
-        <p className="mt-3 text-center text-sm text-[var(--text-secondary)]">Tarjeta hoy, sin cobro hasta el {formatoFecha(sumarDias(hoy, 14), hoy)}. Luego $149 MXN al mes o $1,190 al año. Cancelas cuando quieras.</p>
+        <p className="mt-3 text-center text-sm text-[var(--text-secondary)]">Hoy solo registras tu tarjeta: no te cobramos hasta el {formatoFecha(sumarDias(hoy, 14), hoy)}. Luego $149 MXN al mes o $1,190 al año. Cancelas cuando quieras.</p>
       </div>
     </div>
   );
@@ -814,7 +819,7 @@ export function OnboardingFlow() {
 
   return (
     <MotionConfig reducedMotion="user">
-    <div className="min-h-dvh bg-[var(--bg)] bg-[image:radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_24%,transparent),transparent_70%),radial-gradient(420px_300px_at_-10%_105%,color-mix(in_oklab,var(--btn-oro-to)_14%,transparent),transparent_70%)] text-[var(--text-primary)] [font-family:var(--font-body)]">
+    <div className="min-h-dvh bg-[var(--bg)] bg-[image:radial-gradient(640px_420px_at_85%_-8%,color-mix(in_oklab,var(--accent)_24%,transparent),transparent_70%)] text-[var(--text-primary)] [font-family:var(--font-body)]">
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pb-4 pt-4">
         <header className="flex h-11 items-center gap-2">
           {mostrarAtras ? (
