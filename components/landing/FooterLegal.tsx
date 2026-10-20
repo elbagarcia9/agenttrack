@@ -41,14 +41,9 @@ export function FooterLegal({ appName, logo, logoCompleto = false, enlaces, sopo
             {logoCompleto ? <span className="sr-only">{appName}</span> : appName}
           </p>
           <nav aria-label="Enlaces legales">
-            <ul className="flex flex-wrap items-center gap-x-1 gap-y-0">
-              {enlaces.map((e, i) => (
+            <ul className="flex flex-wrap items-center gap-x-4 gap-y-0">
+              {enlaces.map((e) => (
                 <li key={e.href} className="flex items-center">
-                  {i > 0 && (
-                    <span aria-hidden="true" className="px-1 text-[var(--text-tertiary)]">
-                      ·
-                    </span>
-                  )}
                   {/* py-3 = área táctil ≥44px sin líneas pegadas */}
                   <a
                     href={e.href}

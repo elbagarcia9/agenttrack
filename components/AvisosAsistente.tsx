@@ -5,7 +5,7 @@ import { CalendarClock, CircleDollarSign, PlaneTakeoff, Upload } from 'lucide-re
 
 // Los cuatro avisos que da tu asistente por cada venta (definidos por el usuario, 2026-10-03).
 const AVISOS = [
-  { Icon: Upload, titulo: 'Dar de alta en el Hub', detalle: 'Antes de que se te pase el plazo de la venta.' },
+  { Icon: Upload, titulo: 'Dar de alta en el portal de tu agencia', detalle: 'Antes de que se te pase el plazo de la venta.' },
   { Icon: CalendarClock, titulo: 'Cuando ya pasaron 60 días', detalle: 'Es momento de preguntar por tu pago, y de reclamar a tiempo si no llegó.' },
   { Icon: PlaneTakeoff, titulo: 'Cuando tu cliente inicia su viaje', detalle: 'Para que estés al pendiente y lo acompañes.' },
   { Icon: CircleDollarSign, titulo: 'Cuando hay un pago pendiente de tu cliente', detalle: 'Con su fecha y su cantidad, para completar la reserva.' },

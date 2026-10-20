@@ -41,7 +41,7 @@ export default function Landing() {
         logoCompleto
         loginHref="/entrar"
         h1Marked="[acento]Ninguna comisión[/acento] se te vence sin que lo sepas"
-        subtitleMarked="Tu asistente vigila cada comisión y te avisa antes de que venza [b]cada plazo[/b]"
+        subtitleMarked="Registra tus ventas y tu asistente te avisa a tiempo: [b]alta a los 30 días[/b], cobro del cliente y [b]reclamo a los 18 meses[/b]"
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
         socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Tarjeta al empezar, sin cobro hoy.</span>}
@@ -91,9 +91,9 @@ export default function Landing() {
         mecanismo="tu asistente de comisiones"
         bigIdeaMarked="Cada venta que registras tiene su asistente: [b]te avisa antes de que venza cada plazo[/b]."
         pasos={[
-          { titulo: 'Registra la venta', detalle: 'Todos los datos necesarios, en segundos.' },
-          { titulo: 'El asistente ya tiene la información', detalle: 'Las fechas importantes ya tienen su alerta.' },
-          { titulo: 'Actúas a tiempo', detalle: 'Aviso anticipado en dorado para tomar acción.' },
+          { titulo: 'Registra la venta', detalle: 'Cliente, destino, fechas y comisión, en segundos desde tu celular.' },
+          { titulo: 'Calculamos tus plazos', detalle: 'Alta a 30 días de la compra, revisión a 60 días del viaje y reclamo a 18 meses.' },
+          { titulo: 'Actúas a tiempo', detalle: 'Te avisamos en la app y por correo antes de que venza cada plazo.' },
         ]}
       />
 
@@ -140,7 +140,7 @@ export default function Landing() {
           nombre: 'Mensual',
           precioMes: '$149',
           sufijo: 'MXN/mes',
-          ctaLabel: 'Elegir mensual',
+          ctaLabel: 'Empezar con el plan mensual',
           ctaHref: '/onboarding?plan=mensual',
           features: [
             'Avisos por correo y notificación antes de cada plazo',

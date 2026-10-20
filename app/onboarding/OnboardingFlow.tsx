@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } 
 import { AnimatePresence, MotionConfig, animate, motion, useReducedMotion } from 'motion/react';
 import {
   Check,
+  ChevronDown,
   ChevronLeft,
   Smartphone,
   CalendarX,
@@ -21,7 +22,7 @@ import {
   PenLine,
   type LucideIcon,
 } from 'lucide-react';
-import { calcularPlazos, diasRestantes, estadoSemaforo, formatoFecha, parseFecha, type EstadoSemaforo } from '@/lib/plazos';
+import { calcularPlazos, diasRestantes, estadoSemaforo, formatoFecha, parseFecha, sumarDias, type EstadoSemaforo } from '@/lib/plazos';
 import { ETIQUETA_ESTATUS, TIPOS, type Estatus, type Tipo } from '@/lib/reservas-reglas';
 import { track } from '@/lib/track';
 
@@ -94,10 +95,10 @@ const PREOCUPACIONES: { texto: string; Icon: LucideIcon; clave: 'alta' | 'reclam
   { texto: 'No tener mi registro a la mano cuando salgo de la oficina', Icon: Smartphone, clave: 'registro' },
 ];
 const RECONOCIMIENTO: Record<string, string> = {
-  alta: 'Dar de alta se olvida porque vive en otro portal, no en tu agenda. No es descuido tuyo: lo vamos a recordar nosotros.',
+  alta: 'Dar de alta se olvida porque vive en otro portal, no en tu agenda. No es descuido tuyo: lo vamos a recordar nosotros, para que ninguna venta te salga de a gratis.',
   respaldo: 'Un Excel puede perderse con un celular o una laptop. Aquí tus reservas quedan guardadas en tu cuenta, con respaldo, y las descargas a Excel cuando quieras.',
   registro: 'Tu registro debe ir contigo. Aquí lo abres desde el celular o la computadora, y tus avisos te encuentran aunque no estés en la oficina.',
-  reclamo: 'El plazo de reclamo es largo, y por eso se olvida. Lo vamos a contar por ti y te avisaremos a tiempo.',
+  reclamo: 'El plazo de reclamo es largo, y por eso se olvida. Lo vamos a contar por ti y te avisaremos a tiempo, para que ninguna comisión se te escape.',
   otra: 'Gracias por contármelo. Vamos a vigilar cada plazo por ti para que no dependa de tu memoria.',
 };
 
@@ -185,7 +186,9 @@ function BotonPrincipal({ children, onClick, deshabilitado, enviar }: { children
   );
 }
 
-function Pregunta({ titulo, ayuda, children }: { titulo: string; ayuda?: string; children: React.ReactNode }) {
+const Ac = ({ children }: { children: React.ReactNode }) => <span className="text-[var(--accent)]">{children}</span>;
+
+function Pregunta({ titulo, ayuda, children }: { titulo: React.ReactNode; ayuda?: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col">
       <h1 className="text-balance text-4xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">{titulo}</h1>
@@ -260,10 +263,10 @@ function PasoNombre({ estado, dispatch, avanzar }: PantallaProps) {
   };
   return (
     <form onSubmit={enviar} noValidate className="flex flex-1 flex-col">
-      <Pregunta titulo="¿Cómo te llamas?" ayuda="Así tu plan se siente tuyo desde el primer día.">
+      <Pregunta titulo={<>¿Cómo te <Ac>llamas</Ac>?</>} ayuda="Así tu plan se siente tuyo desde el primer día.">
         <Campo etiqueta="Tu nombre" valor={estado.nombre} autoFocus placeholder="Laura" error={intento && !listo ? 'Escribe tu nombre para continuar.' : undefined} onCambio={(v) => dispatch({ tipo: 'campo', campo: 'nombre', valor: v })} />
       </Pregunta>
-      <div className="sticky bottom-0 -mx-4 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
+      <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-[var(--bg)] from-70% to-transparent px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
         <BotonPrincipal enviar>Continuar</BotonPrincipal>
       </div>
     </form>
@@ -281,7 +284,7 @@ function PasoUnica({
   conOtra,
   saltable,
 }: PantallaProps & {
-  titulo: string;
+  titulo: React.ReactNode;
   ayuda?: string;
   opciones: { texto: string; Icon?: LucideIcon }[];
   valor: string;
@@ -346,7 +349,7 @@ function PasoUnica({
         )}
       </Pregunta>
       {otraAbierta && (
-        <div className="sticky bottom-0 -mx-4 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
+        <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-[var(--bg)] from-70% to-transparent px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
           <BotonPrincipal
             onClick={() => {
               if (otraTexto.trim().length < 2) setOtraIntento(true);
@@ -372,7 +375,7 @@ function PasoReconocimiento({ estado, avanzar }: PantallaProps) {
         <h1 className="text-balance text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">Te entiendo, {nombre}</h1>
         <p className="max-w-[34ch] text-base leading-relaxed text-[var(--text-secondary)]">{RECONOCIMIENTO[claveDe(estado.preocupacion)]}</p>
       </div>
-      <div className="sticky bottom-0 -mx-4 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
+      <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-[var(--bg)] from-70% to-transparent px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
         <BotonPrincipal onClick={avanzar}>Continuar</BotonPrincipal>
       </div>
     </div>
@@ -419,12 +422,11 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
 
   return (
     <form onSubmit={enviar} noValidate className="flex flex-1 flex-col">
-      <Pregunta titulo="Registra tu primera reserva" ayuda="Son unos 30 segundos. Con esto armamos tus avisos.">
+      <Pregunta titulo={<>Registra tu <Ac>primera reserva</Ac></>} ayuda="Son unos 30 segundos. Con esto armamos tus avisos.">
         <div className="grid grid-cols-2 gap-3">
           <Campo etiqueta="Cliente" error={eCliente} valor={r.cliente} placeholder="Luis Peña" autoFocus onCambio={(v) => set({ cliente: v })} />
           <Campo etiqueta="Destino" error={eDestino} valor={r.destino} placeholder="Miami" onCambio={(v) => set({ destino: v })} />
         </div>
-        <Campo etiqueta="Proveedor (opcional)" valor={r.proveedor} placeholder="Royal Caribbean" onCambio={(v) => set({ proveedor: v })} />
         <div className="grid grid-cols-[1fr_auto] items-start gap-3">
           <Campo etiqueta="Tu comisión" error={eComision} valor={r.comision} inputMode="decimal" tipo="number" placeholder="344" onCambio={(v) => set({ comision: v })} />
           <div role="group" aria-label="Moneda" className="mt-5 grid h-12 grid-cols-2 rounded-[var(--radius-button)] bg-[color-mix(in_oklab,var(--text-primary)_8%,transparent)] p-1">
@@ -448,11 +450,10 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
         <details className="group rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)]">
           <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between px-4 text-base font-semibold [&::-webkit-details-marker]:hidden">
             Más datos de la reserva (opcional)
-            <span aria-hidden="true" className="text-[var(--text-secondary)] transition-transform group-open:rotate-180">
-              ▾
-            </span>
+            <ChevronDown size={20} aria-hidden="true" className="text-[var(--text-secondary)] transition-transform group-open:rotate-180" />
           </summary>
           <div className="flex flex-col gap-3 px-4 pb-4">
+            <Campo etiqueta="Proveedor" valor={r.proveedor} placeholder="Royal Caribbean" onCambio={(v) => set({ proveedor: v })} />
             <Campo etiqueta="Contacto del cliente" valor={r.contacto} tipo="tel" placeholder="55 1234 5678" onCambio={(v) => set({ contacto: v })} />
             <div>
               <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Tipo de reserva</span>
@@ -498,7 +499,7 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
           Usar datos de ejemplo
         </button>
       </Pregunta>
-      <div className="sticky bottom-0 -mx-4 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
+      <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-[var(--bg)] from-70% to-transparent px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
         <BotonPrincipal enviar>Guardar y armar mis avisos</BotonPrincipal>
       </div>
     </form>
@@ -669,7 +670,7 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
         </motion.span>
         Tu primera reserva está lista
       </p>
-      <h1 className="mt-1 text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{esEjemplo ? `Así se verá tu asistente con tu primera reserva real, ${estado.nombre.trim()}` : `Tu primera reserva ya está vigilada, ${estado.nombre.trim()}`}</h1>
+      <h1 className="mt-1 text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{esEjemplo ? `Así se verá tu asistente con tu primera reserva real, ${estado.nombre.trim()}` : <>Tu primera reserva ya está <Ac>vigilada</Ac>, {estado.nombre.trim()}</>}</h1>
       <p className="mt-2 text-sm text-[var(--text-secondary)]">
         {frase}: tu asistente cuenta los plazos de {r.cliente.trim()} en {r.destino.trim()} y te avisa antes de que venzan.
       </p>
@@ -711,7 +712,7 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
         </b>{' '}
         de comisión con sus plazos vigilados desde hoy.
       </p>
-      <div className="sticky bottom-0 -mx-4 mt-auto bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
+      <div className="sticky bottom-0 -mx-4 mt-auto bg-gradient-to-t from-[var(--bg)] from-70% to-transparent px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
         <motion.a
           whileTap={{ scale: 0.97 }}
           href="/paywall"
@@ -719,7 +720,7 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
         >
           Activar mis 14 días gratis
         </motion.a>
-        <p className="mt-3 text-center text-xs text-[var(--text-secondary)]">Tarjeta al empezar, sin cobro hoy. Después, desde $99 MXN al mes; cancelas cuando quieras.</p>
+        <p className="mt-3 text-center text-sm text-[var(--text-secondary)]">Tarjeta hoy, sin cobro hasta el {formatoFecha(sumarDias(hoy, 14), hoy)}. Luego $149 MXN al mes o $1,190 al año. Cancelas cuando quieras.</p>
       </div>
     </div>
   );
@@ -840,13 +841,13 @@ export function OnboardingFlow() {
           >
             {estado.paso === 'nombre' && <PasoNombre {...props} />}
             {estado.paso === 'agencia' && (
-              <PasoUnica {...props} titulo="¿Con qué agencia trabajas?" ayuda="Empezamos con los plazos de Archer; luego podrás ajustarlos." opciones={AGENCIAS.map((texto) => ({ texto, Icon: Building2 }))} valor={estado.agencia} campo="agencia" conOtra />
+              <PasoUnica {...props} titulo={<>¿Con qué agencia <Ac>trabajas</Ac>?</>} ayuda="Empezamos con los plazos de Archer; luego podrás ajustarlos." opciones={AGENCIAS.map((texto) => ({ texto, Icon: Building2 }))} valor={estado.agencia} campo="agencia" conOtra />
             )}
             {estado.paso === 'control' && (
-              <PasoUnica {...props} titulo="¿Cómo llevas hoy tus comisiones?" opciones={CONTROLES} valor={estado.control} campo="control" conOtra saltable />
+              <PasoUnica {...props} titulo={<>¿Cómo llevas hoy tus <Ac>comisiones</Ac>?</>} opciones={CONTROLES} valor={estado.control} campo="control" conOtra saltable />
             )}
             {estado.paso === 'preocupacion' && (
-              <PasoUnica {...props} titulo="¿Qué te preocupa más?" ayuda="Empezamos por ahí." opciones={PREOCUPACIONES} valor={estado.preocupacion} campo="preocupacion" conOtra />
+              <PasoUnica {...props} titulo={<>¿Qué te <Ac>preocupa</Ac> más?</>} ayuda="Empezamos por ahí." opciones={PREOCUPACIONES} valor={estado.preocupacion} campo="preocupacion" conOtra />
             )}
             {estado.paso === 'reconocimiento' && <PasoReconocimiento {...props} />}
             {estado.paso === 'reserva' && <PasoReserva {...props} />}

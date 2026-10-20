@@ -34,7 +34,7 @@ const PASOS = [
   { clave: 'confirmar', titulo: 'Confirmas qué es cada columna', detalle: null, icono: <IconoColumnas /> },
   {
     clave: 'listo',
-    titulo: '¡Tu sistema listo!',
+    titulo: 'Tu sistema, listo',
     detalle: 'Portable y con alertas',
     icono: <ShieldCheck aria-hidden="true" size={36} strokeWidth={1.6} color="var(--slate)" />,
   },

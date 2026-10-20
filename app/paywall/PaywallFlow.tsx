@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { MotionConfig, animate, motion } from 'motion/react';
 import Link from 'next/link';
 import { SOPORTE_EMAIL } from '@/lib/legal';
-import { Check, Lock, X } from 'lucide-react';
+import { Check, Loader2, X } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { formatoFecha, sumarDias } from '@/lib/plazos';
 import { track } from '@/lib/track';
@@ -116,7 +116,14 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
     if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') setPlan('anual');
   };
 
+  const [abriendo, setAbriendo] = useState(false);
+  useEffect(() => {
+    const volver = () => setAbriendo(false);
+    window.addEventListener('pageshow', volver);
+    return () => window.removeEventListener('pageshow', volver);
+  }, []);
   const iniciar = () => {
+    setAbriendo(true);
     track('checkout_iniciado', { plan, aviso, hora });
     try {
       window.localStorage.setItem('cg_preferencias', JSON.stringify({ avisoCobro: aviso, horaAviso: hora, plan }));
@@ -152,7 +159,7 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
               </div>
             )}
             <div>
-              <h1 className="text-balance text-3xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">
+              <h1 className="text-balance text-4xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">
                 {guardado ? (
                   <>
                     {guardado.nombre}, tu asistente está <span className="text-[var(--accent)]">listo para vigilar</span>
@@ -174,7 +181,7 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                 initial={{ scale: 0.94, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                className="rounded-[var(--radius-card)] border-b-4 border-[var(--btn-oro-to)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-3 text-white shadow-[var(--shadow-2)]"
+                className="rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-4 text-white shadow-[var(--shadow-2)]"
               >
                 <p className="text-xs font-semibold opacity-90">Ya registraste</p>
                 <p className="text-base font-semibold">{guardado.cliente}</p>
@@ -219,7 +226,7 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                         className="pointer-events-none absolute -inset-px rounded-[var(--radius-card)] border-2 border-transparent shadow-[var(--shadow-2)]"
                         style={{
                           background:
-                            'linear-gradient(color-mix(in oklab, var(--accent) 8%, var(--surface)), color-mix(in oklab, var(--accent) 8%, var(--surface))) padding-box, linear-gradient(135deg, var(--accent), var(--btn-oro-to)) border-box',
+                            'linear-gradient(color-mix(in oklab, var(--accent) 8%, var(--surface)), color-mix(in oklab, var(--accent) 8%, var(--surface))) padding-box, linear-gradient(135deg, var(--accent), var(--slate)) border-box',
                         }}
                       />
                     )}
@@ -227,7 +234,7 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                       <span className="absolute -top-3 left-4 z-20 rounded-full bg-[var(--accent)] px-3 py-0.5 text-xs font-bold tracking-wide text-[var(--on-accent)]">RECOMENDADO</span>
                     )}
                     {k === 'anual' && (
-                      <span className="absolute -top-3 right-4 z-20 rounded-full bg-[var(--btn-oro-to)] px-3 py-0.5 text-xs font-bold tracking-wide text-[var(--btn-oro-text)]">AHORRAS 4 MESES</span>
+                      <span className="absolute -top-3 right-4 z-20 rounded-full bg-[var(--slate)] px-3 py-0.5 text-xs font-bold tracking-wide text-white">AHORRAS 4 MESES</span>
                     )}
                     <div className="relative z-10">
                       <p className="font-semibold [font-family:var(--font-display)]">{d.nombre}</p>
@@ -292,8 +299,8 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                 Avísame por correo 2 días antes del cobro
               </label>
               {aviso && (
-                <div role="radiogroup" aria-label="¿A qué hora te avisamos?" className="mt-2 flex flex-wrap items-center gap-2">
-                  <span className="text-sm text-[var(--text-secondary)]">¿A qué hora?</span>
+                <div role="radiogroup" aria-label="¿A qué hora te avisamos?" className="mt-2 grid grid-cols-3 gap-2">
+                  <span className="col-span-3 text-sm text-[var(--text-secondary)]">¿A qué hora?</span>
                   {HORAS.map((h) => (
                     <button
                       key={h.id}
@@ -301,33 +308,23 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                       role="radio"
                       aria-checked={hora === h.id}
                       onClick={() => setHora(h.id)}
-                      className={`min-h-11 rounded-full px-4 text-sm font-semibold [touch-action:manipulation] ${
+                      className={`min-h-11 rounded-full px-2 text-sm font-semibold [touch-action:manipulation] ${
                         hora === h.id
                           ? 'bg-[var(--accent)] text-[var(--on-accent)]'
                           : 'border border-[color-mix(in_oklab,var(--text-tertiary)_40%,transparent)] bg-[var(--surface)]'
                       }`}
                     >
-                      {h.texto} · {h.hora}
+                      <span className="block leading-tight">{h.texto}</span>
+                      <span className="block text-xs font-medium leading-tight">{h.hora}</span>
                     </button>
                   ))}
                 </div>
               )}
             </section>
-          </main>
 
-          <div className="sticky bottom-0 z-20 -mx-4 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_24px_-16px_rgb(34_60_80_/_0.35)]">
-            <motion.a
-              whileTap={{ scale: 0.97 }}
-              href={CHECKOUT[plan]}
-              onClick={iniciar}
-              className="flex h-14 w-full items-center justify-center rounded-[var(--radius-button)] bg-[var(--accent)] px-8 text-base font-semibold text-[var(--on-accent)] shadow-[var(--shadow-2)]"
-            >
-              Empezar mis 14 días gratis
-            </motion.a>
-            <p className="mt-2 text-center text-sm text-[var(--text-secondary)]">
-              Después, {p.cobro} {plan === 'anual' ? 'al año' : 'al mes'}, con renovación automática. Cancelas cuando quieras desde Hotmart.
-            </p>
-            <p className="mt-1 text-center text-sm text-[var(--text-secondary)]">
+          <footer className="flex flex-col items-center gap-2 pb-4 text-center">
+            <p className="text-sm text-[var(--text-secondary)]">Se renueva automáticamente hasta que canceles. Pago procesado por Hotmart.</p>
+            <p className="text-sm text-[var(--text-secondary)]">
               Al continuar aceptas los{' '}
               <Link href="/terminos" className="font-semibold underline underline-offset-4">
                 términos
@@ -342,14 +339,32 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
               </Link>
               .
             </p>
-            <div className="mt-1 flex items-center justify-center gap-4">
-              <Link href="/" className="flex min-h-11 items-center px-2 text-sm font-medium text-[var(--text-secondary)] underline underline-offset-4">
-                Ahora no
-              </Link>
-              <span className="flex items-center gap-1 text-sm text-[var(--text-secondary)]">
-                <Lock size={14} aria-hidden="true" /> Pago procesado por Hotmart
-              </span>
-            </div>
+            <Link href="/" className="flex min-h-11 items-center px-2 text-sm font-medium text-[var(--text-secondary)] underline underline-offset-4">
+              Ahora no
+            </Link>
+          </footer>
+          </main>
+
+          <div className="sticky bottom-0 z-20 -mx-4 bg-gradient-to-t from-[var(--bg)] from-75% to-transparent px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
+            <motion.a
+              whileTap={{ scale: 0.97 }}
+              href={CHECKOUT[plan]}
+              onClick={iniciar}
+              aria-busy={abriendo}
+              className={`flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-button)] bg-[var(--accent)] px-8 text-base font-semibold text-[var(--on-accent)] shadow-[var(--shadow-2)] ${abriendo ? 'pointer-events-none opacity-90' : ''}`}
+            >
+              {abriendo ? (
+                <>
+                  <Loader2 size={20} className="motion-safe:animate-spin" aria-hidden="true" />
+                  Abriendo tu pago seguro…
+                </>
+              ) : (
+                'Empezar mis 14 días gratis'
+              )}
+            </motion.a>
+            <p className="mt-2 text-center text-sm text-[var(--text-secondary)]">
+              Después, {p.cobro} {plan === 'anual' ? 'al año' : 'al mes'}. Cancelas desde Hotmart.
+            </p>
           </div>
         </div>
       </div>

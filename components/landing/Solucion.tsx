@@ -8,7 +8,7 @@
 // escalonados (whileInView + stagger, reduced-motion respetado).
 
 import { motion } from 'motion/react';
-import { Accent, Hairline, Kicker, SectionShell, useReveal, VIEWPORT_ONCE } from './ui';
+import { Accent, Kicker, SectionShell, useReveal, VIEWPORT_ONCE } from './ui';
 import { MarkedCopy, warnCopy } from './MarkedCopy';
 
 export interface PasoMecanismo {
@@ -70,13 +70,9 @@ export function Solucion({
         </motion.div>
 
         {/* El chip del mecanismo bautizado — hairline + <Accent> (55 §4) */}
-        <motion.div variants={item} className="mt-4">
-          <Hairline surface="bg" className="w-fit">
-            <span className="block px-4 py-2 text-[15px] font-semibold">
-              <Accent>{mecanismo}</Accent>
-            </span>
-          </Hairline>
-        </motion.div>
+        <motion.p variants={item} className="mt-3 text-[15px] font-semibold">
+          <Accent>{mecanismo}</Accent>
+        </motion.p>
 
         <motion.p variants={item} className="mt-5 max-w-[620px] text-[17px] leading-relaxed text-[var(--text-secondary)] md:text-[18px]">
           <MarkedCopy text={bigIdeaMarked} />

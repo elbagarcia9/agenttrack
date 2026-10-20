@@ -80,53 +80,51 @@ export default function Inicio() {
       <div className="flex flex-col gap-5">
         <motion.div {...entrada(0)}>
           <p className="text-sm font-semibold text-[var(--text-secondary)]">{fechaConDia(hoy)}</p>
-          <h1 className="text-2xl font-bold leading-[1.1] [font-family:var(--font-display)]">{nombre ? `Hola, ${nombre}` : 'Hola'}</h1>
+          <h1 className="text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">{nombre ? `Hola, ${nombre}` : 'Hola'}</h1>
         </motion.div>
-
-        {urgente && (
-          <motion.div {...entrada(1)}>
-            <Link
-              href="/app/alertas"
-              className={`flex items-start gap-3 rounded-[var(--radius-button)] border p-3 text-sm font-semibold ${
-                urgente.severidad === 'vencido'
-                  ? 'border-[var(--rojo-text)]/40 bg-[var(--chip-rojo-bg)] text-[var(--rojo-text)]'
-                  : 'border-[var(--alerta-border)] bg-[var(--alerta-bg)] text-[var(--alerta-text)]'
-              }`}
-            >
-              <TriangleAlert size={18} aria-hidden="true" className="mt-px shrink-0" />
-              <span className="flex-1">
-                {urgente.titulo}. {urgente.detalle}
-              </span>
-              <ArrowRight size={18} aria-hidden="true" className="mt-px shrink-0" />
-            </Link>
-          </motion.div>
-        )}
 
         <motion.section
           {...entrada(2)}
           aria-label="Comisiones por cobrar"
           className="rounded-[var(--radius-card)] border-b-4 border-[var(--btn-oro-to)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-4 text-white shadow-[var(--shadow-2)]"
         >
-          <p className="text-sm font-semibold opacity-90">Comisiones por cobrar</p>
+          <p className="text-sm font-semibold">Comisiones por cobrar</p>
           <p className="text-4xl font-extrabold leading-none tabular-nums [font-family:var(--font-display)]">
-            <Contador hasta={t.porCobrar.USD} /> <span className="text-sm font-semibold opacity-80">USD</span>
+            <Contador hasta={t.porCobrar.USD} /> <span className="text-sm font-semibold">USD</span>
           </p>
-          {hayMxn && <p className="mt-1 text-sm font-semibold opacity-90">+ {formatoDinero(t.porCobrar.MXN, 'MXN')}</p>}
+          {hayMxn && <p className="mt-1 text-sm font-semibold">+ {formatoDinero(t.porCobrar.MXN, 'MXN')}</p>}
           <div className="mt-4 grid grid-cols-3 gap-2">
             {[
-              [t.porDarDeAlta, 'por dar de alta'],
-              [t.porCobrarN, 'por cobrar'],
+              [t.porDarDeAlta, 'esperan alta'],
+              [t.porCobrarN, 'pago pendiente'],
               [t.enRevision, 'en revisión'],
             ].map(([n, l]) => (
               <div key={l as string} className="rounded-lg bg-white/15 px-2 py-2">
                 <b className="block text-xl leading-none [font-family:var(--font-display)]">{n}</b>
-                <span className="mt-1 block text-xs leading-tight opacity-90">{l}</span>
+                <span className="mt-1 block text-xs leading-tight">{l}</span>
               </div>
             ))}
           </div>
         </motion.section>
 
-        <motion.div {...entrada(3)} className="flex flex-col gap-3 sm:flex-row">
+        {urgente && (
+          <motion.div {...entrada(3)}>
+            <Link
+              href="/app/alertas"
+              className={`flex min-h-11 items-center gap-2 rounded-[var(--radius-button)] border px-3 text-sm font-semibold ${
+                urgente.severidad === 'vencido'
+                  ? 'border-[var(--rojo-text)]/40 bg-[var(--chip-rojo-bg)] text-[var(--rojo-text)]'
+                  : 'border-[var(--alerta-border)] bg-[var(--alerta-bg)] text-[var(--alerta-text)]'
+              }`}
+            >
+              <TriangleAlert size={18} aria-hidden="true" className="shrink-0" />
+              <span className="min-w-0 flex-1 truncate">{urgente.titulo}</span>
+              <ArrowRight size={18} aria-hidden="true" className="shrink-0" />
+            </Link>
+          </motion.div>
+        )}
+
+        <motion.div {...entrada(4)} className="flex flex-col gap-3 sm:flex-row">
           <Link
             href="/app/nueva"
             className="flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-button)] border border-[var(--alerta-text)]/30 bg-gradient-to-b from-[var(--btn-oro-from)] to-[var(--btn-oro-to)] transition-transform active:scale-[0.97] sm:flex-1 text-base font-bold text-[var(--btn-oro-text)] shadow-[var(--shadow-2)]"
@@ -146,9 +144,9 @@ export default function Inicio() {
         {siguientes.length > 0 && (
           <motion.section {...entrada(4)} aria-label="Lo que sigue" className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold [font-family:var(--font-display)]">Lo que sigue</h2>
+              <h2 className="text-xl font-bold [font-family:var(--font-display)]">Lo que sigue</h2>
               <Link href="/app/alertas" className="flex min-h-11 items-center text-sm font-semibold text-[var(--accent)]">
-                Ver todas
+                Ver alertas
               </Link>
             </div>
             <ul className="flex flex-col gap-2">
@@ -169,9 +167,9 @@ export default function Inicio() {
 
         <motion.section {...entrada(5)} aria-label="Reservas recientes" className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold [font-family:var(--font-display)]">Reservas recientes</h2>
+            <h2 className="text-xl font-bold [font-family:var(--font-display)]">Reservas recientes</h2>
             <Link href="/app/reservas" className="flex min-h-11 items-center text-sm font-semibold text-[var(--accent)]">
-              Ver todas
+              Ver reservas
             </Link>
           </div>
           <ul className="flex flex-col gap-2">

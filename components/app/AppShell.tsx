@@ -181,11 +181,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <span
                   className={`flex size-7 items-center justify-center rounded-full transition-colors duration-200 ${on ? 'bg-[var(--accent)] text-[var(--on-accent)] shadow-[0_6px_12px_-6px_rgb(34_102_151_/_0.7)]' : ''}`}
                 >
-                  <Icon size={on ? 16 : 22} aria-hidden="true" />
+                  <Icon size={20} aria-hidden="true" />
                 </span>
                 {texto}
                 {href === '/app/alertas' && urgentes > 0 && (
-                  <span className="absolute right-3 top-1 rounded-full bg-[var(--btn-oro-to)] px-1.5 text-xs font-bold text-[var(--btn-oro-text)]">{urgentes}</span>
+                  <span className="absolute right-2 top-0.5 rounded-full bg-[var(--btn-oro-to)] px-1.5 text-xs font-bold text-[var(--btn-oro-text)]">{urgentes}</span>
                 )}
               </Link>
             );
