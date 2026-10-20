@@ -40,7 +40,7 @@ export default function Landing() {
         logoCompleto
         loginHref="/entrar"
         h1Marked="[acento]Ninguna comisión[/acento] se te vence sin que lo sepas"
-        subtitleMarked="Tu Guardián de ventas te avisa: [b]alta a 30 días[/b], [b]reclamo a 18 meses[/b]"
+        subtitleMarked="Tu Guardián de ventas avisa: [b]alta a 30 días[/b], [b]reclamo a 18 meses[/b]"
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
         socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Tarjeta al empezar, sin cobro hoy.</span>}
