@@ -45,7 +45,7 @@ export function ImportarExcel() {
         {/* 1 · Texto */}
         <div className="text-center min-[1120px]:col-start-1 min-[1120px]:row-start-1 min-[1120px]:text-left">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">¿Ya tienes todo en Excel?</p>
-          <h2 className="mt-2 text-balance text-[28px] font-bold leading-[1.15] [font-family:var(--font-display)] md:text-[34px]">
+          <h2 className="mt-2 text-balance text-[30px] font-bold leading-[1.15] [font-family:var(--font-display)] md:text-[34px]">
             Importa todos los datos de tu Excel <span className="text-[var(--accent)]">en segundos</span>
           </h2>
           <p className="mt-3 text-[17px] leading-relaxed text-[var(--text-secondary)]">

@@ -15,7 +15,6 @@ import { EscenaFondo } from '@/components/landing/EscenaFondo';
 import { Solucion } from '@/components/landing/Solucion';
 import { AppPorDentro } from '@/components/landing/AppPorDentro';
 import { Oferta } from '@/components/landing/Oferta';
-import { Garantia } from '@/components/landing/Garantia';
 import { Faq } from '@/components/landing/Faq';
 import { CtaFinal } from '@/components/landing/CtaFinal';
 import { FooterLegal } from '@/components/landing/FooterLegal';
@@ -41,7 +40,7 @@ export default function Landing() {
         logoCompleto
         loginHref="/entrar"
         h1Marked="[acento]Ninguna comisión[/acento] se te vence sin que lo sepas"
-        subtitleMarked="Te avisamos del [b]alta a 30 días[/b] y del [b]reclamo a 18 meses[/b]"
+        subtitleMarked="Tu Guardián de ventas te avisa: [b]alta a 30 días[/b], [b]reclamo a 18 meses[/b]"
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
         socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Tarjeta al empezar, sin cobro hoy.</span>}
@@ -87,9 +86,9 @@ export default function Landing() {
 
       <Solucion
         kicker="¿CÓMO FUNCIONA?"
-        tituloMarked="[acento]Tu asistente[/acento] vigilando cada comisión"
-        mecanismo="tu asistente de comisiones"
-        bigIdeaMarked="Cada venta que registras tiene su asistente: [b]te avisa antes de que venza cada plazo[/b]."
+        tituloMarked="[acento]Tu Guardián de ventas[/acento] vigilando cada comisión"
+        mecanismo="Guardián de ventas"
+        bigIdeaMarked="Cada venta que registras tiene su guardián: [b]te avisa antes de que venza cada plazo[/b]."
         pasos={[
           { titulo: 'Registra la venta', detalle: 'Cliente, destino, fechas y comisión, en segundos desde tu celular.' },
           { titulo: 'Calculamos tus plazos', detalle: 'Alta a 30 días de la compra, revisión a 60 días del viaje y reclamo a 18 meses.' },
@@ -107,8 +106,8 @@ export default function Landing() {
         kicker="VISTAS DE EJEMPLO DE LA APP"
         tituloMarked="Dale un vistazo a [acento]tu próximo asistente[/acento]"
         frames={[
-          { src: '/mock/nueva-reserva.png', alt: 'Vista de ejemplo: formulario de nueva reserva', label: 'Registra una venta en segundos' },
           { src: '/mock/resultado.png', alt: 'Vista de ejemplo: plazos programados de una reserva', label: 'Tu primera reserva, ya vigilada' },
+          { src: '/mock/nueva-reserva.png', alt: 'Vista de ejemplo: formulario de nueva reserva', label: 'Registra una venta en segundos' },
           { src: '/mock/calendario.png', alt: 'Vista de ejemplo: calendario del mes', label: 'Viajes y cobros en un calendario' },
         ]}
         ctaLabel={CTA_LABEL}
@@ -130,7 +129,7 @@ export default function Landing() {
           ctaHref: '/onboarding?plan=anual',
           features: [
             'Avisos por correo y notificación antes de cada plazo',
-            'Asistente que vigila alta, pago y reclamo',
+            'Guardián de ventas: vigila alta, pago y reclamo',
             'Tabla de reservas con filtros y orden',
             'Calendario de viajes y de cobros',
             'Importa tu Excel: tu base lista el mismo día',
@@ -144,21 +143,12 @@ export default function Landing() {
           ctaHref: '/onboarding?plan=mensual',
           features: [
             'Avisos por correo y notificación antes de cada plazo',
-            'Asistente que vigila alta, pago y reclamo',
+            'Guardián de ventas: vigila alta, pago y reclamo',
             'Importa tu Excel: tu base lista el mismo día',
             'Tabla de reservas con filtros y calendario',
             'Cancelas cuando quieras',
           ],
         }}
-      />
-
-      <p className="bg-[var(--bg)] px-5 pb-10 text-center text-sm text-[var(--text-secondary)]">
-        Si cancelas antes de los 14 días, no pagas nada.
-      </p>
-
-      <Garantia
-        nombre="Prueba de 14 días sin riesgo"
-        condicionMarked="Pruébalo 14 días sin cobro. Si no te sirve, [b]cancelas antes[/b] y no pagas nada."
       />
 
       <Faq

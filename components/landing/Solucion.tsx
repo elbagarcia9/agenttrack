@@ -93,7 +93,7 @@ export function Solucion({
                 {String(i + 1).padStart(2, '0')}
               </span>
               <span aria-hidden="true" className="h-4 w-px bg-[color-mix(in_oklab,var(--accent)_45%,transparent)]" />
-              <div className="tarjeta-suave flex w-full flex-1 flex-col items-center justify-center rounded-[var(--radius-card)] px-5 py-4 text-center">
+              <div className="flex w-full flex-1 flex-col items-center justify-center rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--accent)_45%,transparent)] bg-transparent px-5 py-4 text-center">
                 <h3 className="text-[16px] font-semibold text-[var(--text-primary)]">{p.titulo}</h3>
                 <p className="mt-1 text-[15px] leading-snug text-[var(--text-secondary)]">{p.detalle}</p>
               </div>
