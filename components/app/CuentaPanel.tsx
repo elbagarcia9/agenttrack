@@ -4,7 +4,7 @@ import { useActionState, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { Download, Loader2, Trash2 } from 'lucide-react';
 import { eliminarMiCuenta, guardarAvisosCorreo, type Resultado } from '@/app/app/cuenta/acciones';
-import { AUTH_LOCAL } from '@/lib/auth';
+import { AUTH_LOCAL, guardarContrasena } from '@/lib/auth';
 import { descargarReservasExcel } from '@/lib/exportar';
 import { SOPORTE_EMAIL } from '@/lib/legal';
 import { useReservas } from '@/lib/reservas';
@@ -17,6 +17,25 @@ export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; 
   const [guardando, empezar] = useTransition();
   const { reservas, listo } = useReservas();
   const propias = reservas.filter((r) => !r.id.startsWith('demo-')).length;
+  const [clave1, setClave1] = useState('');
+  const [clave2, setClave2] = useState('');
+  const [msgClave, setMsgClave] = useState<Resultado>(null);
+  const [guardandoClave, setGuardandoClave] = useState(false);
+  const cambiarClave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (clave1.length < 8) return setMsgClave({ ok: false, mensaje: 'Usa al menos 8 caracteres.' });
+    if (clave1 !== clave2) return setMsgClave({ ok: false, mensaje: 'Las dos contraseñas no coinciden.' });
+    setGuardandoClave(true);
+    const r = await guardarContrasena(clave1);
+    setGuardandoClave(false);
+    if (r.ok) {
+      setClave1('');
+      setClave2('');
+      setMsgClave({ ok: true, mensaje: 'Listo: ya puedes entrar con tu correo y esta contraseña.' });
+    } else {
+      setMsgClave({ ok: false, mensaje: 'No pudimos guardarla. Inténtalo de nuevo.' });
+    }
+  };
   const [exportando, setExportando] = useState(false);
   const [msgExcel, setMsgExcel] = useState('');
   const exportar = async () => {
@@ -66,6 +85,50 @@ export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; 
             {msgAvisos.mensaje}
           </p>
         )}
+      </section>
+
+      <section aria-label="Mi contraseña" className="rounded-[var(--radius-card)] tarjeta-suave p-4">
+        <h2 className="text-lg font-bold [font-family:var(--font-display)]">Mi contraseña (opcional)</h2>
+        <p className="mt-1 text-base text-[var(--text-secondary)]">
+          Con una contraseña entras con tu correo sin pedir un código cada vez. Si la olvidas, pides un código por correo y creas otra aquí.
+        </p>
+        <form onSubmit={cambiarClave} className="mt-3 flex flex-col gap-3">
+          <label className="block">
+            <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Nueva contraseña</span>
+            <input
+              type="password"
+              value={clave1}
+              autoComplete="new-password"
+              disabled={AUTH_LOCAL}
+              placeholder="Mínimo 8 caracteres"
+              onChange={(e) => setClave1(e.target.value)}
+              className="mt-1 h-12 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] campo-suave px-3 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]"
+            />
+          </label>
+          <label className="block">
+            <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Repítela</span>
+            <input
+              type="password"
+              value={clave2}
+              autoComplete="new-password"
+              disabled={AUTH_LOCAL}
+              onChange={(e) => setClave2(e.target.value)}
+              className="mt-1 h-12 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] campo-suave px-3 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]"
+            />
+          </label>
+          {msgClave && (
+            <p role={msgClave.ok ? 'status' : 'alert'} className={`text-sm font-medium ${msgClave.ok ? 'text-[var(--verde-text)]' : 'text-[var(--rojo-text)]'}`}>
+              {msgClave.mensaje}
+            </p>
+          )}
+          <button
+            type="submit"
+            disabled={guardandoClave || AUTH_LOCAL}
+            className="flex min-h-12 items-center justify-center rounded-[var(--radius-button)] bg-[var(--accent)] px-5 text-base font-semibold text-[var(--on-accent)] disabled:opacity-60"
+          >
+            {guardandoClave ? 'Guardando…' : 'Guardar mi contraseña'}
+          </button>
+        </form>
       </section>
 
       <section aria-label="Mis datos" className="rounded-[var(--radius-card)] tarjeta-suave p-4">

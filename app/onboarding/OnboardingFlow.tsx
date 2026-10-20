@@ -9,7 +9,7 @@ import { AnimatePresence, MotionConfig, animate, motion, useReducedMotion } from
 import {
   Check,
   ChevronLeft,
-  CircleHelp,
+  Smartphone,
   CalendarX,
   FileSpreadsheet,
   FileWarning,
@@ -22,6 +22,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { calcularPlazos, diasRestantes, estadoSemaforo, formatoFecha, parseFecha, type EstadoSemaforo } from '@/lib/plazos';
+import { ETIQUETA_ESTATUS, TIPOS, type Estatus, type Tipo } from '@/lib/reservas-reglas';
 import { track } from '@/lib/track';
 
 type Paso = 'nombre' | 'agencia' | 'control' | 'preocupacion' | 'reconocimiento' | 'reserva' | 'cargando' | 'resultado';
@@ -35,6 +36,14 @@ interface Reserva {
   comision: string;
   compra: string;
   viaje: string;
+  // datos opcionales (se piden en "Más datos de la reserva")
+  contacto: string;
+  tipo: Tipo;
+  precioVenta: string;
+  pagoFecha: string;
+  pagoMonto: string;
+  estatus: Estatus;
+  comentarios: string;
 }
 interface Estado {
   paso: Paso;
@@ -48,7 +57,7 @@ interface Estado {
   hidratado: boolean;
 }
 
-const RESERVA_VACIA: Reserva = { cliente: '', destino: '', proveedor: '', moneda: 'USD', comision: '', compra: '', viaje: '' };
+const RESERVA_VACIA: Reserva = { cliente: '', destino: '', proveedor: '', moneda: 'USD', comision: '', compra: '', viaje: '', contacto: '', tipo: 'Paquete', precioVenta: '', pagoFecha: '', pagoMonto: '', estatus: 'pendiente_alta', comentarios: '' };
 const INICIAL: Estado = { paso: 'nombre', direccion: 1, nombre: '', agencia: '', control: '', preocupacion: '', reserva: RESERVA_VACIA, hidratado: false };
 const CLAVE = 'cg_onboarding_v1';
 
@@ -78,18 +87,18 @@ const CONTROLES: { texto: string; Icon: LucideIcon }[] = [
   { texto: 'Solo el portal de mi agencia', Icon: Globe },
   { texto: 'Libreta o mi memoria', Icon: NotebookPen },
 ];
-const PREOCUPACIONES: { texto: string; Icon: LucideIcon; clave: 'alta' | 'pago' | 'reclamo' | 'fechas' }[] = [
+const PREOCUPACIONES: { texto: string; Icon: LucideIcon; clave: 'alta' | 'reclamo' | 'respaldo' | 'registro' }[] = [
   { texto: 'Que se me pase dar de alta una venta', Icon: FileWarning, clave: 'alta' },
-  { texto: 'No saber si ya me pagaron', Icon: CircleHelp, clave: 'pago' },
   { texto: 'Que venza el plazo de reclamo', Icon: CalendarX, clave: 'reclamo' },
-  { texto: 'Tener fechas de viaje y de cobro revueltas', Icon: FileSpreadsheet, clave: 'fechas' },
+  { texto: 'Que mi Excel se pierda y no tener respaldo', Icon: FileSpreadsheet, clave: 'respaldo' },
+  { texto: 'No tener mi registro a la mano cuando salgo de la oficina', Icon: Smartphone, clave: 'registro' },
 ];
 const RECONOCIMIENTO: Record<string, string> = {
   alta: 'Dar de alta se olvida porque vive en otro portal, no en tu agenda. No es descuido tuyo: lo vamos a recordar nosotros.',
-  pago: 'Es normal olvidarlo: el pago llega semanas después del viaje. Tu asistente te recordará cuándo preguntar por él.',
+  respaldo: 'Un Excel puede perderse con un celular o una laptop. Aquí tus reservas quedan guardadas en tu cuenta, con respaldo, y las descargas a Excel cuando quieras.',
+  registro: 'Tu registro debe ir contigo. Aquí lo abres desde el celular o la computadora, y tus avisos te encuentran aunque no estés en la oficina.',
   reclamo: 'El plazo de reclamo es largo, y por eso se olvida. Lo vamos a contar por ti y te avisaremos a tiempo.',
   otra: 'Gracias por contármelo. Vamos a vigilar cada plazo por ti para que no dependa de tu memoria.',
-  fechas: 'Mezclar viajes y cobros es lo más común con Excel. Aquí cada uno tiene su propio calendario.',
 };
 
 function claveDe(texto: string) {
@@ -436,6 +445,55 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
           <Campo etiqueta="Fecha de compra" error={eCompra} valor={r.compra} tipo="date" onCambio={(v) => set({ compra: v })} />
           <Campo etiqueta="Fecha de viaje" error={eViaje} valor={r.viaje} tipo="date" min={r.compra || undefined} onCambio={(v) => set({ viaje: v })} />
         </div>
+        <details className="group rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)]">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between px-4 text-base font-semibold [&::-webkit-details-marker]:hidden">
+            Más datos de la reserva (opcional)
+            <span aria-hidden="true" className="text-[var(--text-secondary)] transition-transform group-open:rotate-180">
+              ▾
+            </span>
+          </summary>
+          <div className="flex flex-col gap-3 px-4 pb-4">
+            <Campo etiqueta="Contacto del cliente" valor={r.contacto} tipo="tel" placeholder="55 1234 5678" onCambio={(v) => set({ contacto: v })} />
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Tipo de reserva</span>
+              <div role="group" aria-label="Tipo de reserva" className="mt-1 flex flex-wrap gap-2">
+                {TIPOS.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    aria-pressed={r.tipo === t}
+                    onClick={() => set({ tipo: t })}
+                    className={`min-h-11 rounded-full px-4 text-sm font-semibold ${r.tipo === t ? 'bg-[var(--accent)] text-[var(--on-accent)]' : 'border border-[color-mix(in_oklab,var(--text-tertiary)_40%,transparent)] bg-[var(--surface)]'}`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Campo etiqueta="Precio de venta" valor={r.precioVenta} inputMode="decimal" tipo="number" placeholder="2860" onCambio={(v) => set({ precioVenta: v })} />
+            <div className="grid grid-cols-2 gap-3">
+              <Campo etiqueta="Pago pendiente: fecha" valor={r.pagoFecha} tipo="date" min={r.compra || undefined} onCambio={(v) => set({ pagoFecha: v })} />
+              <Campo etiqueta="Cantidad que debe" valor={r.pagoMonto} inputMode="decimal" tipo="number" placeholder="900" onCambio={(v) => set({ pagoMonto: v })} />
+            </div>
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Estatus</span>
+              <div role="group" aria-label="Estatus" className="mt-1 flex flex-wrap gap-2">
+                {(Object.keys(ETIQUETA_ESTATUS) as Estatus[]).map((es) => (
+                  <button
+                    key={es}
+                    type="button"
+                    aria-pressed={r.estatus === es}
+                    onClick={() => set({ estatus: es })}
+                    className={`min-h-11 rounded-full px-4 text-sm font-semibold ${r.estatus === es ? 'bg-[var(--accent)] text-[var(--on-accent)]' : 'border border-[color-mix(in_oklab,var(--text-tertiary)_40%,transparent)] bg-[var(--surface)]'}`}
+                  >
+                    {ETIQUETA_ESTATUS[es]}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Campo etiqueta="Comentarios" valor={r.comentarios} placeholder="Luna de miel" onCambio={(v) => set({ comentarios: v })} />
+          </div>
+        </details>
         <button type="button" onClick={usarEjemplo} className="self-start py-3 text-sm font-semibold text-[var(--accent)] underline underline-offset-4">
           Usar datos de ejemplo
         </button>
@@ -588,9 +646,9 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
   }
 
   const filas: { id: string; titulo: string; detalle: string; fecha: Date; semaforo: boolean; destacada: boolean }[] = [
-    { id: 'alta', titulo: 'Dar de alta en el portal', detalle: '30 días desde la compra', fecha: plazos.alta, semaforo: true, destacada: clave === 'alta' || clave === 'fechas' || clave === 'otra' },
+    { id: 'alta', titulo: 'Dar de alta en el portal', detalle: '30 días desde la compra', fecha: plazos.alta, semaforo: true, destacada: clave === 'alta' || clave === 'respaldo' || clave === 'registro' || clave === 'otra' },
     { id: 'salida', titulo: 'Tu cliente sale', detalle: `Te aviso el ${formatoFecha(plazos.salidaAviso, hoy)}, 2 días antes`, fecha: v as Date, semaforo: false, destacada: false },
-    { id: 'revision', titulo: 'Solicitar revisión', detalle: 'Desde 60 días tras el viaje', fecha: plazos.revisionDesde, semaforo: false, destacada: clave === 'pago' },
+    { id: 'revision', titulo: 'Solicitar revisión', detalle: 'Desde 60 días tras el viaje', fecha: plazos.revisionDesde, semaforo: false, destacada: false },
     { id: 'reclamo', titulo: 'Último día para reclamar', detalle: '18 meses desde el viaje', fecha: plazos.reclamo, semaforo: true, destacada: clave === 'reclamo' },
   ];
   // Lo que más le preocupa va primero y es la tarjeta héroe.
@@ -687,6 +745,8 @@ export function OnboardingFlow() {
         const e = JSON.parse(guardado) as Estado;
         // si recarga a mitad de la carga, vuelve a la reserva para no quedarse en una pantalla sin datos
         if (e.paso === 'cargando') e.paso = 'reserva';
+        // lo guardado antes de que existieran los campos opcionales se completa con sus valores vacíos
+        e.reserva = { ...RESERVA_VACIA, ...e.reserva };
         dispatch({ tipo: 'restaurar', estado: e });
       } else {
         track('onboarding_iniciado');

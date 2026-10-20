@@ -70,6 +70,23 @@ export async function verificarCodigo(correo: string, codigo: string): Promise<R
   return error ? { ok: false, motivo: 'invalido' } : { ok: true };
 }
 
+// Entrar con contraseña (opcional): quien la creó en "Mi cuenta" no necesita pedir un código cada vez
+export async function entrarConContrasena(correo: string, contrasena: string): Promise<ResultadoAuth> {
+  if (!correoValido(correo) || contrasena.length < 8) return { ok: false, motivo: 'invalido' };
+  if (AUTH_LOCAL) return { ok: false, motivo: 'no_disponible' };
+  const { error } = await supabaseNavegador().auth.signInWithPassword({ email: correo.trim().toLowerCase(), password: contrasena });
+  if (error?.status === 429) return { ok: false, motivo: 'limite' };
+  return error ? { ok: false, motivo: 'invalido' } : { ok: true };
+}
+
+// Crear o cambiar la contraseña (solo con la sesión iniciada)
+export async function guardarContrasena(nueva: string): Promise<ResultadoAuth> {
+  if (nueva.length < 8) return { ok: false, motivo: 'invalido' };
+  if (AUTH_LOCAL) return { ok: false, motivo: 'no_disponible' };
+  const { error } = await supabaseNavegador().auth.updateUser({ password: nueva });
+  return error ? { ok: false, motivo: 'no_disponible' } : { ok: true };
+}
+
 // Marca la última actividad de la persona (el panel del dueño la usa para saber quién sigue activo)
 export async function registrarActividad(): Promise<void> {
   if (AUTH_LOCAL) return;

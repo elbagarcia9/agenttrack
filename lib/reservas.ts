@@ -12,7 +12,7 @@ import { useSyncExternalStore } from 'react';
 import { AUTH_LOCAL } from './auth';
 import { supabaseNavegador } from './supabase/client';
 import { semilla } from './reservas-reglas';
-import type { Estatus, Moneda, Reserva, Tipo } from './reservas-reglas';
+import { TIPOS, type Estatus, type Moneda, type Reserva, type Tipo } from './reservas-reglas';
 
 export * from './reservas-reglas';
 
@@ -70,17 +70,18 @@ function reservaDelOnboarding(): Reserva | null {
     return {
       id: 'onboarding-1',
       cliente: r.cliente,
-      contacto: '',
+      contacto: r.contacto ?? '',
       destino: r.destino,
-      tipo: 'Otro',
+      tipo: (TIPOS as readonly string[]).includes(r.tipo) ? (r.tipo as Tipo) : 'Otro',
       proveedor: r.proveedor ?? '',
-      precioVenta: 0,
+      precioVenta: Number(r.precioVenta) || 0,
       comision: Number(r.comision) || 0,
       moneda: r.moneda === 'MXN' ? 'MXN' : 'USD',
       fechaCompra: r.compra,
       fechaViaje: r.viaje,
-      comentarios: 'Registrada en el cuestionario',
-      estatus: 'pendiente_alta',
+      ...(r.pagoFecha && Number(r.pagoMonto) > 0 ? { pagoPendienteFecha: r.pagoFecha, pagoPendienteMonto: Number(r.pagoMonto) } : {}),
+      comentarios: r.comentarios?.trim() || 'Registrada en el cuestionario',
+      estatus: ['pagado', 'pendiente_alta', 'pendiente_pago', 'solicitar_revision'].includes(r.estatus) ? (r.estatus as Estatus) : 'pendiente_alta',
       creada: Date.now(),
     };
   } catch {

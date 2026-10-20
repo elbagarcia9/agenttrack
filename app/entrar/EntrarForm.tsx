@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { MotionConfig, motion } from 'motion/react';
 import { Loader2, MailCheck } from 'lucide-react';
 import { Logo } from '@/components/Logo';
-import { AUTH_GOOGLE, AUTH_LOCAL, correoValido, solicitarAcceso, verificarCodigo } from '@/lib/auth';
+import { AUTH_GOOGLE, AUTH_LOCAL, correoValido, entrarConContrasena, solicitarAcceso, verificarCodigo } from '@/lib/auth';
 import { VERSION_LEGAL } from '@/lib/legal';
 import { track } from '@/lib/track';
 
@@ -35,6 +35,10 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
   const [intento, setIntento] = useState(false);
   // La casilla NUNCA viene marcada de antemano: la aceptación es una decisión de cada vez
   const [acepto, setAcepto] = useState(false);
+  // Entrar con contraseña (para quien ya la creó en Mi cuenta)
+  const [conClave, setConClave] = useState(false);
+  const [clave, setClave] = useState('');
+  const [entrandoClave, setEntrandoClave] = useState(false);
   const [espera, setEspera] = useState(0);
   const [codigo, setCodigo] = useState('');
   const [errorCodigo, setErrorCodigo] = useState('');
@@ -57,6 +61,30 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
         return Math.max(0, s - 1);
       });
     }, 1000);
+  };
+
+  const entrarClave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIntento(true);
+    setError('');
+    if (!correoValido(correo) || clave.length < 8) {
+      if (correoValido(correo)) setError('Tu contraseña tiene al menos 8 caracteres.');
+      return;
+    }
+    setEntrandoClave(true);
+    const r = await entrarConContrasena(correo, clave);
+    if (r.ok) {
+      window.location.assign('/app');
+      return;
+    }
+    setEntrandoClave(false);
+    setError(
+      r.motivo === 'limite'
+        ? 'Demasiados intentos seguidos. Espera unos minutos.'
+        : r.motivo === 'no_disponible'
+          ? 'Aún no podemos entrar con contraseña: falta conectar el servicio de cuentas.'
+          : 'El correo o la contraseña no coinciden. Si no la recuerdas, pide un código por correo y cámbiala después en Mi cuenta.',
+    );
   };
 
   const enviar = async (e?: React.FormEvent) => {
@@ -122,7 +150,7 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
 
           <main className="flex flex-1 flex-col justify-start gap-6 pb-8 pt-16" aria-live="polite">
             {fase !== 'enviado' ? (
-              <form onSubmit={enviar} noValidate className="flex flex-col gap-6">
+              <form onSubmit={conClave ? entrarClave : enviar} noValidate className="flex flex-col gap-6">
                 <motion.div {...entrada(1)}>
                   <h1 className="text-balance text-3xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">Entra a tu plan</h1>
                   <p className="mt-2 text-base text-[var(--text-secondary)]">
@@ -158,6 +186,21 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                   </p>
                 )}
 
+                {conClave && (
+                  <motion.label {...entrada(3)} className="block">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Tu contraseña</span>
+                    <input
+                      type="password"
+                      value={clave}
+                      autoComplete="current-password"
+                      placeholder="Mínimo 8 caracteres"
+                      onChange={(e) => setClave(e.target.value)}
+                      className="mt-1 h-14 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)] px-4 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]"
+                    />
+                  </motion.label>
+                )}
+
+                {!conClave && (
                 <motion.label {...entrada(3)} className="flex cursor-pointer items-start gap-3 text-sm">
                   <input type="checkbox" checked={acepto} onChange={(e) => setAcepto(e.target.checked)} className="mt-0.5 size-6 shrink-0 accent-[var(--accent)]" />
                   <span>
@@ -172,19 +215,22 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                     , incluido que mis datos se traten en servidores fuera de México.
                   </span>
                 </motion.label>
+                )}
 
                 <motion.div {...entrada(3)} className="flex flex-col gap-3">
                   <motion.button
                     type="submit"
                     whileTap={{ scale: 0.97 }}
-                    disabled={fase === 'enviando'}
+                    disabled={fase === 'enviando' || entrandoClave}
                     className="flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-button)] bg-[var(--accent)] px-8 text-base font-semibold text-[var(--on-accent)] shadow-[var(--shadow-2)] disabled:opacity-80 [touch-action:manipulation]"
                   >
-                    {fase === 'enviando' ? (
+                    {fase === 'enviando' || entrandoClave ? (
                       <>
                         <Loader2 size={20} className="motion-safe:animate-spin" aria-hidden="true" />
-                        Enviando…
+                        {entrandoClave ? 'Entrando…' : 'Enviando…'}
                       </>
+                    ) : conClave ? (
+                      'Entrar'
                     ) : (
                       'Enviarme mi enlace de acceso'
                     )}
@@ -197,7 +243,19 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                       Continuar con Google
                     </button>
                   )}
-                  <p className="text-center text-sm text-[var(--text-secondary)]">Sin contraseñas: te llega un enlace de un solo uso.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setConClave(!conClave);
+                      setError('');
+                    }}
+                    className="flex min-h-11 items-center justify-center text-sm font-semibold text-[var(--accent)] underline underline-offset-4"
+                  >
+                    {conClave ? 'Prefiero que me manden un código por correo' : 'Entrar con mi contraseña'}
+                  </button>
+                  <p className="text-center text-sm text-[var(--text-secondary)]">
+                    {conClave ? 'Si no creaste una contraseña, pide un código y créala después en Mi cuenta.' : 'Te llega un enlace y un código de un solo uso. Después puedes crear una contraseña para no pedirlo cada vez.'}
+                  </p>
                 </motion.div>
               </form>
             ) : (

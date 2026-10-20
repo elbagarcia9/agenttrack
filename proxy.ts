@@ -50,6 +50,15 @@ export async function proxy(request: NextRequest) {
       return salida;
     }
   }
+  // Con la sesión ya iniciada no se vuelve a pedir el correo ni el código: directo a la app
+  if (data.user && request.nextUrl.pathname === '/entrar' && !request.nextUrl.searchParams.has('error')) {
+    const destino = request.nextUrl.clone();
+    destino.pathname = '/app';
+    destino.search = '';
+    const salida = NextResponse.redirect(destino);
+    respuesta.cookies.getAll().forEach(({ name, value }) => salida.cookies.set(name, value));
+    return salida;
+  }
   if (!data.user && enApp) {
     const destino = request.nextUrl.clone();
     destino.pathname = '/entrar';

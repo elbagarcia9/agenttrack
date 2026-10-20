@@ -152,7 +152,7 @@ export default function Privacidad() {
 
       <Seccion n={8} titulo="Seguridad">
         <p>
-          Protegemos tus datos con conexión cifrada, acceso a tu cuenta por enlace o código de un solo uso y reglas en la base de datos para que cada persona vea únicamente sus propios registros. Ningún sistema es
+          Protegemos tus datos con conexión cifrada, acceso a tu cuenta por enlace o código de un solo uso (o por una contraseña opcional, que guardamos cifrada y que ni nosotros podemos leer) y reglas en la base de datos para que cada persona vea únicamente sus propios registros. Ningún sistema es
           100% infalible; si llegara a ocurrir una vulneración que te afecte de forma importante, te lo avisaremos.
         </p>
       </Seccion>
