@@ -141,17 +141,19 @@ export function CostoForm({ mes }: { mes: string }) {
 }
 
 export function GastoForm({ hoy }: { hoy: string }) {
-  const [res, accion, pendiente] = useActionState(guardarGasto, null);
   const [desde, setDesde] = useState(hoy);
   const [hasta, setHasta] = useState(hoy);
   const form = useRef<HTMLFormElement>(null);
-  useEffect(() => {
-    if (res?.ok) {
+  // Al guardar bien se vacía el formulario y las fechas vuelven a hoy (dentro de la acción, no en un efecto)
+  const [res, accion, pendiente] = useActionState(async (previo: Resultado, fd: FormData) => {
+    const r = await guardarGasto(previo, fd);
+    if (r?.ok) {
       form.current?.reset();
       setDesde(hoy);
       setHasta(hoy);
     }
-  }, [res, hoy]);
+    return r;
+  }, null);
   return (
     <form ref={form} action={accion} className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

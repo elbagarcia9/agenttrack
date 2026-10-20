@@ -10,17 +10,14 @@ function useConteo(hasta: number): [React.RefObject<HTMLSpanElement | null>, num
   const ref = useRef<HTMLSpanElement>(null);
   const visible = useInView(ref, { once: true });
   const reducir = useReducedMotion();
-  const [valor, setValor] = useState(reducir ? hasta : 0);
+  const [valor, setValor] = useState(0);
   useEffect(() => {
-    if (reducir) {
-      setValor(hasta);
-      return;
-    }
-    if (!visible) return;
+    if (reducir || !visible) return;
     const c = animate(0, hasta, { duration: 0.9, ease: 'easeOut', onUpdate: (v) => setValor(v) });
     return () => c.stop();
   }, [visible, reducir, hasta]);
-  return [ref, valor];
+  // con "reducir movimiento" la cifra sale completa, sin contar
+  return [ref, reducir ? hasta : valor];
 }
 
 // Cifras grandes: pesos enteros y la moneda como sufijo pequeño pegado (nunca se parte en dos líneas).

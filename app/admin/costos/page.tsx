@@ -7,7 +7,7 @@ import { Datos, Encabezado, Heroe, SelectorMes, Tarjeta } from '@/components/adm
 import { CifraDinero } from '@/components/admin/Cifras';
 import { cargarCostos, cargarGastos, cargarTasaImpuestos } from '@/lib/admin/datos';
 import { nombreCanal } from '@/lib/admin/etiquetas';
-import { dinero, etiquetaMes, mesDeParametro, periodo, pct, rangoDeMes } from '@/lib/admin/formato';
+import { dinero, etiquetaMes, hoyMexicoISO, mesDeParametro, periodo, pct, rangoDeMes } from '@/lib/admin/formato';
 
 const CONCEPTO: Record<string, string> = { infra: 'Servidores y base de datos', email: 'Envío de correos', dominio: 'Dominio', otro: 'Otro' };
 
@@ -33,7 +33,7 @@ export default async function CostosPagina({ searchParams }: { searchParams: Pro
   const inicio = `${mes}-01`;
   const fin = `${mes}-${String(new Date(Date.UTC(a, m, 0)).getUTCDate()).padStart(2, '0')}`;
   const gastos = todosLosGastos.filter((g) => g.hasta >= inicio && g.desde <= fin);
-  const hoy = new Date(Date.now() - 6 * 3600_000).toISOString().slice(0, 10);
+  const hoy = hoyMexicoISO();
 
   const monedas = [...new Set([...costos.map((c) => c.moneda), ...gastos.map((g) => g.moneda)])];
   const faltan = [!costos.some((c) => c.concepto === 'infra') && 'servidores', !costos.some((c) => c.concepto === 'email') && 'correos'].filter(Boolean) as string[];

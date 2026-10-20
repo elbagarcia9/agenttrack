@@ -1,0 +1,29 @@
+name: Revisión automática
+
+# En cada cambio: tipos, código, pruebas y que la app compile. Si algo falla, GitHub avisa antes de que llegue a tus clientas.
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Tipos
+        run: npx tsc --noEmit
+      - name: Código
+        run: npm run lint
+      - name: Pruebas
+        run: npm test
+      - name: Compilar
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ''
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ''

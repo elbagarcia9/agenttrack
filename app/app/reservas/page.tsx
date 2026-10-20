@@ -23,7 +23,7 @@ function fechaCorta(iso: string, hoy: Date): string {
 
 export default function Reservas() {
   const { reservas, listo, actualizar } = useReservas();
-  const arrastre = useArrastreHorizontal<HTMLDivElement>();
+  const { enganchar, arrastrando } = useArrastreHorizontal<HTMLDivElement>();
   const hoy = useMemo(() => new Date(), []);
   const [busca, setBusca] = useState('');
   const [proveedor, setProveedor] = useState('');
@@ -173,9 +173,8 @@ export default function Reservas() {
       {/* Tabla (computadora) */}
       {filas.length > 0 && (
         <div
-          ref={arrastre.ref}
-          {...arrastre.props}
-          className={`hidden overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave md:block ${arrastre.arrastrando ? 'cursor-grabbing' : 'cursor-grab'}`}
+          ref={enganchar}
+          className={`hidden overflow-x-auto rounded-[var(--radius-card)] tarjeta-suave md:block ${arrastrando ? 'cursor-grabbing' : 'cursor-grab'}`}
         >
           <table className="w-full min-w-6xl border-collapse text-sm">
             <thead>

@@ -159,3 +159,8 @@ export function estadoRegalo(tipo: TipoRegalo | null, hasta: string | null): { t
   const vencido = new Date(hasta).getTime() < Date.now();
   return { texto: `${vencido ? 'venció el' : 'hasta el'} ${fechaDia(hasta.slice(0, 10))}`, vencido };
 }
+
+// Fecha de hoy en México (UTC-6) como AAAA-MM-DD
+export function hoyMexicoISO(): string {
+  return new Date(Date.now() - 6 * 3600_000).toISOString().slice(0, 10);
+}
