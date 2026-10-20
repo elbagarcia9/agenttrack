@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Download, Loader2, Trash2 } from 'lucide-react';
 import { eliminarMiCuenta, guardarAvisosCorreo, type Resultado } from '@/app/app/cuenta/acciones';
 import { AUTH_LOCAL, guardarContrasena } from '@/lib/auth';
+import { AvisosCelular } from '@/components/app/AvisosCelular';
 import { descargarReservasExcel } from '@/lib/exportar';
 import { SOPORTE_EMAIL } from '@/lib/legal';
 import { useReservas } from '@/lib/reservas';
@@ -72,6 +73,8 @@ export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; 
         <h1 className="text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">Mi cuenta</h1>
         <p className="mt-1 break-all text-sm text-[var(--text-secondary)]">{correo ?? 'Modo de prueba: aún sin cuenta conectada'}</p>
       </div>
+
+      <AvisosCelular />
 
       <section aria-label="Avisos por correo" className="rounded-[var(--radius-card)] tarjeta-suave p-4">
         <h2 className="text-lg font-bold [font-family:var(--font-display)]">Avisos por correo</h2>

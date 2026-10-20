@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Sora, Inter_Tight } from 'next/font/google';
 import './globals.css';
 
@@ -9,7 +9,10 @@ export const metadata: Metadata = {
   title: 'AgentTrack — Ninguna comisión se te vence sin que lo sepas',
   description:
     'Para agentes de viajes de agencias Host: tu asistente vigila cada comisión y te avisa antes de que venza cada plazo de alta, pago y reclamo. Prueba 14 días gratis.',
+  appleWebApp: { capable: true, title: 'AgentTrack', statusBarStyle: 'default' },
 };
+
+export const viewport: Viewport = { themeColor: '#226697' };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

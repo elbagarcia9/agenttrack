@@ -38,7 +38,7 @@ export async function eliminarMiCuenta(_previo: Resultado, fd: FormData): Promis
   const correo = (perfil?.email ?? p.user.email ?? '').toLowerCase();
 
   // Tablas con datos de la persona (los registros de pagos se conservan: la ley fiscal exige guardarlos)
-  const porUsuario = ['reservas', 'preferencias', 'event_log', 'error_log', 'encuesta_salida', 'avisos_enviados', 'consentimientos'];
+  const porUsuario = ['reservas', 'preferencias', 'event_log', 'error_log', 'encuesta_salida', 'avisos_enviados', 'consentimientos', 'push_suscripciones'];
   for (const tabla of porUsuario) {
     const { error } = await sb.from(tabla).delete().eq('user_id', p.user.id);
     if (error) return falla('No pudimos borrar todo. Nada se cerró; inténtalo de nuevo o escríbenos a soporte@agenttrack.app.');

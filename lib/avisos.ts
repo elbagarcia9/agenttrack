@@ -158,6 +158,15 @@ export function correoEncuesta(nombre: string | null, userId: string): { asunto:
   return { asunto: '¿Qué faltó en AgentTrack? Son 2 preguntas', html: plantilla('Cuéntanos qué no te convenció', cuerpo, baja.texto), baja: baja.url };
 }
 
+// El aviso corto que aparece en la pantalla del celular: lo más urgente primero
+export function resumenPush(avisos: Alerta[], hoy: Date): { titulo: string; cuerpo: string } {
+  const a = avisos[0];
+  const d = diasRestantes(a.fecha, hoy);
+  const cuando = a.tipo === 'salida' ? (d === 0 ? 'sale hoy' : d === 1 ? 'sale mañana' : `sale en ${d} días`) : a.severidad === 'vencido' ? 'venció ayer' : d === 0 ? 'vence hoy' : d === 1 ? 'vence mañana' : `quedan ${d} días`;
+  const n = avisos.length;
+  return { titulo: n === 1 ? '1 plazo por atender' : `${n} plazos por atender`, cuerpo: `${a.titulo}: ${cuando}${n > 1 ? ` (y ${n - 1} más)` : ''}` };
+}
+
 // ───────────── envío (Resend) ─────────────
 export async function enviarCorreo(para: string, c: { asunto: string; html: string; baja: string }): Promise<boolean> {
   const k = process.env.RESEND_API_KEY;

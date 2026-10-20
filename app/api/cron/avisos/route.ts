@@ -3,7 +3,8 @@
 
 import { timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { aReserva, avisosDeHoy, claveDia, correoEncuesta, correoFinDePrueba, correoResumen, enviarCorreo, hoyMexico, type FilaReserva } from '@/lib/avisos';
+import { aReserva, avisosDeHoy, claveDia, correoEncuesta, correoFinDePrueba, correoResumen, enviarCorreo, hoyMexico, resumenPush, type FilaReserva } from '@/lib/avisos';
+import { enviarPush } from '@/lib/push';
 import { diasRestantes } from '@/lib/plazos';
 import { servicioConfigurado, supabaseServicio } from '@/lib/supabase/servicio';
 
@@ -39,7 +40,7 @@ export async function GET(req: NextRequest) {
   const sb = supabaseServicio();
   const hoy = hoyMexico();
   const dia = claveDia(hoy);
-  const conteo = { personas: 0, resumenes: 0, fin_de_prueba: 0, encuestas: 0, fallidos: 0 };
+  const conteo = { personas: 0, resumenes: 0, fin_de_prueba: 0, encuestas: 0, pushes: 0, fallidos: 0 };
 
   const { data: perfiles, error } = await sb
     .from('perfiles')
@@ -96,6 +97,23 @@ export async function GET(req: NextRequest) {
       const faltan = diasRestantes(finDia, hoy);
       if (faltan === 2 && (await enviarUnaVez(p, 'fin_de_prueba', () => correoFinDePrueba(p.nombre, p.id, faltan, finDia, hoy)))) conteo.fin_de_prueba += 1;
       if (faltan === -1 && (await enviarUnaVez(p, 'encuesta', () => correoEncuesta(p.nombre, p.id)))) conteo.encuestas += 1;
+    }
+  }
+
+  // Avisos en la pantalla del celular: a quien activó las notificaciones (aunque haya dejado los correos) y tiene acceso hoy
+  const { data: subs } = await sb.from('push_suscripciones').select('user_id');
+  for (const uid of [...new Set((subs ?? []).map((s) => s.user_id as string))]) {
+    if (!permitidos.has(uid)) continue;
+    const avisos = avisosDeHoy((porPersona.get(uid) ?? []).map(aReserva), hoy);
+    if (avisos.length === 0) continue;
+    const { error: dup } = await sb.from('avisos_enviados').insert({ user_id: uid, tipo: 'push_resumen', dia });
+    if (dup) continue; // ya se mandó hoy
+    const texto = resumenPush(avisos, hoy);
+    const r = await enviarPush(uid, { titulo: texto.titulo, cuerpo: texto.cuerpo, url: '/app/alertas', tag: 'resumen' }).catch(() => ({ enviados: 0, fallidos: 1 }));
+    if (r.enviados > 0) conteo.pushes += 1;
+    else {
+      conteo.fallidos += r.fallidos;
+      await sb.from('avisos_enviados').delete().eq('user_id', uid).eq('tipo', 'push_resumen').eq('dia', dia);
     }
   }
 

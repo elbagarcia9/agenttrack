@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion, MotionConfig } from 'motion/react';
-import { ArrowRight, FileUp, Plus, TriangleAlert } from 'lucide-react';
+import { ArrowRight, BellRing, FileUp, Plus, TriangleAlert, X } from 'lucide-react';
 import { Contador } from '@/components/Contador';
 import { InsigniaEstatus, InsigniaSeveridad } from '@/components/app/Insignias';
 import { fechaConDia, formatoFecha } from '@/lib/plazos';
@@ -29,11 +29,19 @@ const entrada = (i: number) => ({
 export default function Inicio() {
   const { reservas, listo } = useReservas();
   const [nombre, setNombre] = useState('');
+  const [verTip, setVerTip] = useState(false);
   const hoy = useMemo(() => new Date(), []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setNombre(nombreGuardado());
+    try {
+      const instalada = window.matchMedia('(display-mode: standalone)').matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setVerTip(!instalada && window.localStorage.getItem('cg_tip_instalar') !== '1');
+    } catch {
+      /* sin almacenamiento: no se muestra */
+    }
   }, []);
 
   const alertas = useMemo(() => todasLasAlertas(reservas, hoy), [reservas, hoy]);
@@ -87,6 +95,34 @@ export default function Inicio() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="flex flex-col gap-6">
+        {verTip && (
+          <motion.div {...entrada(0)} className="md:hidden">
+            <div className="flex items-center gap-3 rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--accent)_35%,transparent)] bg-[var(--surface)] p-3">
+              <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-button)] bg-[var(--chip-bg)]">
+                <BellRing size={20} strokeWidth={1.8} color="var(--accent)" />
+              </span>
+              <Link href="/app/cuenta#celular" className="min-w-0 flex-1 text-sm font-semibold">
+                Instala la app y recibe tus avisos como notificaciones
+              </Link>
+              <button
+                type="button"
+                aria-label="Cerrar este aviso"
+                onClick={() => {
+                  setVerTip(false);
+                  try {
+                    window.localStorage.setItem('cg_tip_instalar', '1');
+                  } catch {
+                    /* sin almacenamiento */
+                  }
+                }}
+                className="flex size-11 shrink-0 items-center justify-center text-[var(--text-secondary)]"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         <motion.div {...entrada(0)}>
           <p className="text-sm font-semibold text-[var(--text-secondary)]">{fechaConDia(hoy)}</p>
           <h1 className="text-3xl font-bold leading-[1.1] [font-family:var(--font-display)]">{nombre ? `Hola, ${nombre}` : 'Hola'}</h1>

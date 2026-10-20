@@ -35,6 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     trackSesionDiaria();
     void registrarActividad();
+    if (!AUTH_LOCAL && 'serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => undefined);
     // Si la persona aceptó los documentos al pedir su acceso, ahora que ya es ella la que entró se deja constancia
     try {
       if (!AUTH_LOCAL && window.localStorage.getItem('cg_consent_pendiente') === VERSION_LEGAL) {

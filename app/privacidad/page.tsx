@@ -40,6 +40,7 @@ export default function Privacidad() {
             'El estado de tu suscripción (si está activa, en prueba o cancelada) y el plan elegido. Los datos de tu tarjeta los guarda Hotmart; nosotros no los vemos.',
             'Cuándo entras a la app y los errores que te salen, para saber si algo falla.',
             'Si decides contestar la encuesta de salida, tus respuestas.',
+            'Si activas los avisos en tu celular, un identificador técnico de ese dispositivo para poder enviarte las notificaciones.',
             'La fecha y la versión de los documentos que aceptaste.',
           ]}
         />
