@@ -3,7 +3,7 @@
 
 import { timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { aReserva, avisosDeHoy, claveDia, correoEncuesta, correoFinDePrueba, correoReactivar, correoResumen, enviarCorreo, hoyMexico, resumenPush, type FilaReserva } from '@/lib/avisos';
+import { aReserva, avisosDeHoy, claveDia, correoEncuesta, correoFinDePrueba, correoReactivar, correoRecordatorioRespaldo, correoResumen, enviarCorreo, hoyMexico, resumenPush, type FilaReserva } from '@/lib/avisos';
 import { enviarPush } from '@/lib/push';
 import { diasRestantes } from '@/lib/plazos';
 import { servicioConfigurado, supabaseServicio } from '@/lib/supabase/servicio';
@@ -103,6 +103,17 @@ export async function GET(req: NextRequest) {
       const faltan = diasRestantes(finDia, hoy);
       if (faltan === 2 && (await enviarUnaVez(p, 'fin_de_prueba', () => correoFinDePrueba(p.nombre, p.id, faltan, finDia, hoy)))) conteo.fin_de_prueba += 1;
       if (faltan === -1 && (await enviarUnaVez(p, 'encuesta', () => correoEncuesta(p.nombre, p.id)))) conteo.encuestas += 1;
+    }
+  }
+
+  // Lunes: recordatorio de respaldo a la dueña
+  if (hoy.getDay() === 1) {
+    const { data: duenas } = await sb.from('perfiles').select('id, email').eq('rol', 'admin');
+    for (const d of duenas ?? []) {
+      const { error: dup } = await sb.from('avisos_enviados').insert({ user_id: d.id, tipo: 'respaldo', dia });
+      if (dup || !d.email) continue;
+      const ok = await enviarCorreo(d.email, correoRecordatorioRespaldo()).catch(() => false);
+      if (!ok) await sb.from('avisos_enviados').delete().eq('user_id', d.id).eq('tipo', 'respaldo').eq('dia', dia);
     }
   }
 

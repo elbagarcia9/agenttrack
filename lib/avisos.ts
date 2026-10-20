@@ -189,6 +189,13 @@ export function correoReactivar(nombre: string | null, userId: string): { asunto
   return { asunto: 'Tus reservas te esperan en AgentTrack', html: plantilla('Tus reservas siguen aquí', cuerpo, baja.texto), baja: baja.url };
 }
 
+// Recordatorio semanal para la dueña: bajar el respaldo (el plan gratis de Supabase no guarda copias)
+export function correoRecordatorioRespaldo(): { asunto: string; html: string } {
+  const cuerpo = `<p style="margin:0 0 12px;font-size:16px">Es lunes: toca bajar el respaldo de tus datos de AgentTrack.</p>
+<p style="margin:0 0 12px;font-size:16px">Son 10 segundos: entra a <b>Panel → Salud</b> y pulsa <b>Descargar respaldo ahora</b>. Guarda el archivo en un lugar privado.</p>${boton(`${SITIO}/admin/salud`, 'Ir a descargar el respaldo')}`;
+  return { asunto: 'Lunes de respaldo: baja tus datos de AgentTrack', html: plantilla('Recordatorio de respaldo', cuerpo, 'Este recordatorio llega cada lunes solo a la dueña de AgentTrack.') };
+}
+
 // Manda un correo de cobro a quien tenga cuenta, una sola vez al día por tipo. Nunca lanza error: el aviso de pagos de Hotmart no debe fallar por un correo.
 export async function correoDeCobro(email: string, tipo: 'pago_atrasado' | 'cancelacion'): Promise<void> {
   try {

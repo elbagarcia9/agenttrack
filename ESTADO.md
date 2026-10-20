@@ -1,7 +1,7 @@
 # ESTADO — AgentTrack
 Última actualización: 2026-09-29 | Sesión actual: 1
 
-⏸️ CHECKPOINT — Última acción completada: app interna (Inicio, Reservas, Calendario, Alertas, Nueva, Importar Excel) construida y probada con datos de ejemplo / Siguiente acción exacta: veredicto de Inicio; luego servicios externos (cuentas, base de datos, correos, Hotmart, dominio) guiados paso a paso; pulido final con las imágenes del usuario.
+⏸️ CHECKPOINT (2026-10-20) — Auditoría 10/10, Fase 4: hecho Next 16.4.2, CSP/cabeceras, lint 0, 32 pruebas + CI, contraseña de dueña estricta, alerta de límite de Resend, 3 correos de cobro, botón de respaldo en /admin/salud (+ recordatorio los lunes). Decisiones: sin planes Pro por ahora (riesgo aceptado), sin MFA, respaldo semanal SÍ. Registro abierto NO cerrado aún: esperando OK explícito (cerrar registro + crear cuenta al comprar/invitar + NEXT_PUBLIC_AUTH_SOLO_COMPRADORES=1). Pantallas del dinero (landing/onboarding/paywall/principal) siguen NO LISTA. Siguiente: verificar /admin con la CSP y el botón de respaldo en producción; escribir docs/RESPALDO-Y-RESTAURACION.md.
 
 ## Qué es esta app
 Asistente móvil ligero para agentes de viajes independientes afiliados a agencias Host (Archer, Evolution, InteleTravel, Nexion): audita, rastrea y avisa para cobrar el 100% de sus comisiones (alerta de alta en el portal dentro de 30 días; alerta de revisión y de reclamo hasta 18 meses después del viaje). Suscripción SaaS.

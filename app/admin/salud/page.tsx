@@ -164,6 +164,21 @@ export default async function SaludPagina() {
         </Tarjeta>
       </div>
 
+      <Tarjeta titulo="Respaldo de tus datos" subtitulo="Baja a tu computadora un archivo con tus clientas, reservas, pagos y ajustes. Hazlo cada lunes: el plan gratis de Supabase no guarda copias por ti.">
+        <div className="flex flex-col gap-3">
+          <a
+            href="/api/admin/respaldo"
+            className="panel-tap flex min-h-11 w-fit items-center rounded-[var(--radius-button)] bg-[var(--accent)] px-5 text-sm font-semibold text-[var(--on-accent)] shadow-[var(--shadow-1)]"
+          >
+            Descargar respaldo ahora
+          </a>
+          <p className="text-sm text-[var(--text-secondary)]">
+            El archivo trae datos personales (correos, nombres y teléfonos de los clientes de tus agentes). <b>Guárdalo en un lugar privado</b>: no lo compartas ni lo subas a ningún sitio. Si algún día hace falta restaurar,
+            pídemelo y lo hago con ese archivo.
+          </p>
+        </div>
+      </Tarjeta>
+
       <Tarjeta titulo="Probar los correos" subtitulo="Te manda a ti misma el correo tal como lo recibiría una agente, para revisar cómo se ve antes de que salga a los demás.">
         <ProbarAvisosForm />
       </Tarjeta>
