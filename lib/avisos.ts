@@ -6,7 +6,9 @@ import 'server-only';
 
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { alertasDe, type Alerta, type Reserva } from '@/lib/reservas-reglas';
+import { SOPORTE_EMAIL } from '@/lib/legal';
 import { capitalizar, diasRestantes, formatoFecha, parseFecha, sumarDias } from '@/lib/plazos';
+import { supabaseServicio } from '@/lib/supabase/servicio';
 
 export const SITIO = 'https://agenttrack.app';
 const REMITENTE = 'AgentTrack <avisos@agenttrack.app>';
@@ -158,6 +160,59 @@ export function correoEncuesta(nombre: string | null, userId: string): { asunto:
   return { asunto: '¿Qué faltó en AgentTrack? Son 2 preguntas', html: plantilla('Cuéntanos qué no te convenció', cuerpo, baja.texto), baja: baja.url };
 }
 
+// ───────────── correos de cobro (los manda el aviso de pagos de Hotmart) ─────────────
+const HOTMART_COMPRAS = 'https://consumer.hotmart.com';
+
+// Pago atrasado: es un aviso de cuenta, no de mercadotecnia (no lleva "dejar de recibir")
+export function correoPagoAtrasado(nombre: string | null): { asunto: string; html: string } {
+  const cuerpo = `<p style="margin:0 0 12px;font-size:16px">${nombre ? `Hola, ${esc(nombre.split(' ')[0])}. ` : ''}Hotmart no pudo cobrar el último pago de tu suscripción de AgentTrack.</p>
+<p style="margin:0 0 12px;font-size:16px"><b>Tu acceso sigue activo unos días</b> para que lo resuelvas. Para no perderlo, actualiza tu forma de pago en Hotmart: entra a <b>Mis compras</b>, abre AgentTrack, <b>Mostrar detalles</b> y <b>Configurar forma de pago</b>.</p>${boton(HOTMART_COMPRAS, 'Actualizar mi forma de pago')}
+<p style="margin:16px 0 0;font-size:14px;color:#5b666d">¿Dudas? Responde a este correo o escríbenos a ${esc(SOPORTE_EMAIL)}.</p>`;
+  return { asunto: 'No pudimos cobrar tu suscripción de AgentTrack', html: plantilla('Hubo un problema con tu pago', cuerpo, 'Si ya lo resolviste, ignora este correo.') };
+}
+
+// Cancelación: confirma que no habrá más cobros, hasta cuándo tiene acceso y cómo llevarse sus datos
+export function correoCancelacion(nombre: string | null, userId: string, hasta: Date | null, hoy: Date): { asunto: string; html: string } {
+  const quedan = hasta && hasta.getTime() > hoy.getTime() ? `Tienes acceso hasta el <b>${esc(formatoFecha(hasta, hoy))}</b>.` : 'Tu acceso termina ahora.';
+  const url = `${SITIO}/encuesta?t=${encodeURIComponent(firmar(userId, 'encuesta'))}`;
+  const cuerpo = `<p style="margin:0 0 12px;font-size:16px">${nombre ? `Hola, ${esc(nombre.split(' ')[0])}. ` : ''}Cancelamos tu suscripción de AgentTrack. <b>No habrá más cobros.</b></p>
+<p style="margin:0 0 12px;font-size:16px">${quedan} Tus reservas se conservan y puedes descargarlas a Excel cuando quieras desde <b>Mi cuenta</b>.</p>${boton(`${SITIO}/app/cuenta`, 'Descargar mis reservas')}
+<p style="margin:20px 0 0;font-size:16px">¿Nos cuentas qué faltó? Son 2 preguntas y nos ayudan a mejorar: <a href="${url}" style="color:#226697;font-weight:bold">contestar</a>.</p>`;
+  return { asunto: 'Cancelaste AgentTrack: así queda tu cuenta', html: plantilla('Tu suscripción quedó cancelada', cuerpo, `Si fue un error, puedes volver cuando quieras en ${SITIO}/paywall.`) };
+}
+
+// A los 30 días de cancelar: una sola invitación a volver (sí lleva "dejar de recibir")
+export function correoReactivar(nombre: string | null, userId: string): { asunto: string; html: string; baja: string } {
+  const baja = pieBaja(userId);
+  const cuerpo = `<p style="margin:0 0 12px;font-size:16px">${nombre ? `Hola, ${esc(nombre.split(' ')[0])}. ` : ''}Hace un mes dejaste AgentTrack. <b>Tus reservas siguen guardadas</b>, tal como las dejaste.</p>
+<p style="margin:0 0 12px;font-size:16px">Si quieres que tu asistente vuelva a vigilar tus plazos de alta, cobro y reclamo, puedes retomar tu plan cuando quieras.</p>${boton(`${SITIO}/paywall`, 'Volver a mi plan')}`;
+  return { asunto: 'Tus reservas te esperan en AgentTrack', html: plantilla('Tus reservas siguen aquí', cuerpo, baja.texto), baja: baja.url };
+}
+
+// Manda un correo de cobro a quien tenga cuenta, una sola vez al día por tipo. Nunca lanza error: el aviso de pagos de Hotmart no debe fallar por un correo.
+export async function correoDeCobro(email: string, tipo: 'pago_atrasado' | 'cancelacion'): Promise<void> {
+  try {
+    const sb = supabaseServicio();
+    const { data: p } = await sb.from('perfiles').select('id, nombre').eq('email', email).maybeSingle();
+    if (!p) return; // todavía no tiene cuenta
+    const hoy = hoyMexico();
+    const dia = claveDia(hoy);
+    const { error: dup } = await sb.from('avisos_enviados').insert({ user_id: p.id, tipo, dia });
+    if (dup) return; // ya se mandó hoy
+    let correo: { asunto: string; html: string };
+    if (tipo === 'pago_atrasado') correo = correoPagoAtrasado(p.nombre);
+    else {
+      const { data: acceso } = await sb.rpc('acceso_de', { uid: p.id });
+      const hasta = (acceso as { hasta?: string } | null)?.hasta;
+      correo = correoCancelacion(p.nombre, p.id, hasta ? new Date(hasta) : null, hoy);
+    }
+    const ok = await enviarCorreo(email, correo).catch(() => false);
+    if (!ok) await sb.from('avisos_enviados').delete().eq('user_id', p.id).eq('tipo', tipo).eq('dia', dia);
+  } catch {
+    /* un correo que falla nunca rompe el aviso de pagos */
+  }
+}
+
 // El aviso corto que aparece en la pantalla del celular: lo más urgente primero
 export function resumenPush(avisos: Alerta[], hoy: Date): { titulo: string; cuerpo: string } {
   const a = avisos[0];
@@ -168,7 +223,16 @@ export function resumenPush(avisos: Alerta[], hoy: Date): { titulo: string; cuer
 }
 
 // ───────────── envío (Resend) ─────────────
-export async function enviarCorreo(para: string, c: { asunto: string; html: string; baja: string }): Promise<boolean> {
+let alertaDeLimiteDada = false;
+async function avisarFalla(estado: number, detalle: string): Promise<void> {
+  // Si el proveedor rechaza por límite o por permisos, queda una alerta visible en el panel (Salud → Errores)
+  if (alertaDeLimiteDada || (estado !== 429 && estado !== 401 && estado !== 403)) return;
+  alertaDeLimiteDada = true;
+  const mensaje = estado === 429 ? 'Resend: se alcanzó el límite de correos (revisa tu plan y uso en resend.com)' : 'Resend: rechazó el envío (revisa la clave en Vercel)';
+  await supabaseServicio().from('error_log').insert({ mensaje, contexto: `correo ${estado}: ${detalle.slice(0, 120)}`, ruta: 'avisos' });
+}
+
+export async function enviarCorreo(para: string, c: { asunto: string; html: string; baja?: string }): Promise<boolean> {
   const k = process.env.RESEND_API_KEY;
   if (!k) throw new Error('Falta RESEND_API_KEY');
   const r = await fetch('https://api.resend.com/emails', {
@@ -179,8 +243,9 @@ export async function enviarCorreo(para: string, c: { asunto: string; html: stri
       to: [para],
       subject: c.asunto,
       html: c.html,
-      headers: { 'List-Unsubscribe': `<${c.baja}>` },
+      ...(c.baja ? { headers: { 'List-Unsubscribe': `<${c.baja}>` } } : {}),
     }),
   });
+  if (!r.ok) await avisarFalla(r.status, await r.text().catch(() => '')).catch(() => undefined);
   return r.ok;
 }

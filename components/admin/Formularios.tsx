@@ -235,6 +235,9 @@ export function ProbarAvisosForm() {
           <option value="resumen">Resumen diario de plazos</option>
           <option value="fin">Aviso de fin de tiempo gratis</option>
           <option value="encuesta">Invitación a la encuesta de salida</option>
+          <option value="pago_atrasado">Pago atrasado (para la clienta)</option>
+          <option value="cancelacion">Cancelación (para la clienta)</option>
+          <option value="reactivar">Volver a mi plan (30 días después de cancelar)</option>
         </select>
       </label>
       <Mensaje r={res} />

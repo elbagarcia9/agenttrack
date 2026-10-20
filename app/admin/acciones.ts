@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { dentroDelLimite } from '@/lib/eventos';
 import { aCentavos } from '@/lib/admin/formato';
-import { aReserva, avisosDeHoy, correoEncuesta, correoFinDePrueba, correoResumen, enviarCorreo, hoyMexico, type FilaReserva } from '@/lib/avisos';
+import { aReserva, avisosDeHoy, correoCancelacion, correoEncuesta, correoFinDePrueba, correoPagoAtrasado, correoReactivar, correoResumen, enviarCorreo, hoyMexico, type FilaReserva } from '@/lib/avisos';
 import { semilla } from '@/lib/reservas-reglas';
 import { exigirAdmin } from '@/lib/supabase/servidor';
 
@@ -244,6 +244,15 @@ export async function probarAvisos(_previo: Resultado, fd: FormData): Promise<Re
     if (ejemplo) correo.asunto = `[Prueba con datos de ejemplo] ${correo.asunto}`;
   } else if (tipo === 'fin') {
     correo = correoFinDePrueba(nombre, user.id, 2, new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 2), hoy);
+    correo.asunto = `[Prueba] ${correo.asunto}`;
+  } else if (tipo === 'pago_atrasado') {
+    correo = correoPagoAtrasado(nombre);
+    correo.asunto = `[Prueba] ${correo.asunto}`;
+  } else if (tipo === 'cancelacion') {
+    correo = correoCancelacion(nombre, user.id, new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 10), hoy);
+    correo.asunto = `[Prueba] ${correo.asunto}`;
+  } else if (tipo === 'reactivar') {
+    correo = correoReactivar(nombre, user.id);
     correo.asunto = `[Prueba] ${correo.asunto}`;
   } else if (tipo === 'encuesta') {
     correo = correoEncuesta(nombre, user.id);

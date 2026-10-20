@@ -3,7 +3,7 @@
 
 import { timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { aReserva, avisosDeHoy, claveDia, correoEncuesta, correoFinDePrueba, correoResumen, enviarCorreo, hoyMexico, resumenPush, type FilaReserva } from '@/lib/avisos';
+import { aReserva, avisosDeHoy, claveDia, correoEncuesta, correoFinDePrueba, correoReactivar, correoResumen, enviarCorreo, hoyMexico, resumenPush, type FilaReserva } from '@/lib/avisos';
 import { enviarPush } from '@/lib/push';
 import { diasRestantes } from '@/lib/plazos';
 import { servicioConfigurado, supabaseServicio } from '@/lib/supabase/servicio';
@@ -20,6 +20,7 @@ interface Perfil {
   acceso_tipo: string | null;
   acceso_hasta: string | null;
   trial_ends_at: string | null;
+  cancelado_en: string | null;
 }
 
 const COLUMNAS_RESERVA =
@@ -40,11 +41,11 @@ export async function GET(req: NextRequest) {
   const sb = supabaseServicio();
   const hoy = hoyMexico();
   const dia = claveDia(hoy);
-  const conteo = { personas: 0, resumenes: 0, fin_de_prueba: 0, encuestas: 0, pushes: 0, fallidos: 0 };
+  const conteo = { personas: 0, resumenes: 0, fin_de_prueba: 0, encuestas: 0, reactivar: 0, pushes: 0, fallidos: 0 };
 
   const { data: perfiles, error } = await sb
     .from('perfiles')
-    .select('id, email, nombre, membresia, acceso_tipo, acceso_hasta, trial_ends_at')
+    .select('id, email, nombre, membresia, acceso_tipo, acceso_hasta, trial_ends_at, cancelado_en')
     .eq('estado', 'activo')
     .eq('avisos_correo', true);
   if (error) return NextResponse.json({ error: 'No se pudo leer a las personas' }, { status: 500 });
@@ -88,6 +89,11 @@ export async function GET(req: NextRequest) {
 
     const avisos = avisosDeHoy((porPersona.get(p.id) ?? []).map(aReserva), hoy);
     if (permitidos.has(p.id) && avisos.length > 0 && (await enviarUnaVez(p, 'resumen', () => correoResumen(p.nombre, p.id, avisos, hoy)))) conteo.resumenes += 1;
+
+    // A los 30 días de cancelar: una sola invitación a volver
+    if ((p.membresia === 'cancelled' || p.membresia === 'expired') && p.cancelado_en && diasRestantes(hoyMexico(new Date(p.cancelado_en)), hoy) === -30) {
+      if (await enviarUnaVez(p, 'reactivar', () => correoReactivar(p.nombre, p.id))) conteo.reactivar += 1;
+    }
 
     // Fin del tiempo gratis (regalo del dueño o prueba): aviso 2 días antes y encuesta al día siguiente de terminar
     const paga = p.membresia === 'active' || p.membresia === 'past_due';

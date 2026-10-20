@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
+import { correoDeCobro } from '@/lib/avisos';
 import { hottokValido, interpretarEvento } from '@/lib/hotmart';
 import { servicioConfigurado, supabaseServicio } from '@/lib/supabase/servicio';
 
@@ -82,6 +83,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'processing failed' }, { status: 500 }); // Hotmart reintenta
   }
   const estado = (data as { status?: string } | null)?.status;
+  // Correos de cobro: solo cuando el evento se aplicó de verdad (no en duplicados ni reintentos)
+  if (estado === 'applied' && (ev.nuevaMembresia === 'past_due' || ev.nuevaMembresia === 'cancelled')) {
+    await correoDeCobro(ev.email, ev.nuevaMembresia === 'past_due' ? 'pago_atrasado' : 'cancelacion');
+  }
   await registrar(estado === 'duplicate' ? 'duplicate' : estado === 'illegal_transition' ? 'illegal' : 'applied', ev.eventId, ev.evento);
   return NextResponse.json({ received: true, result: estado ?? 'ok' });
 }

@@ -6,13 +6,14 @@ import { Download, Loader2, Trash2 } from 'lucide-react';
 import { eliminarMiCuenta, guardarAvisosCorreo, type Resultado } from '@/app/app/cuenta/acciones';
 import { AUTH_LOCAL, guardarContrasena } from '@/lib/auth';
 import { AvisosCelular } from '@/components/app/AvisosCelular';
+import { reglaDeClave, revisarClave } from '@/lib/clave';
 import { descargarReservasExcel } from '@/lib/exportar';
 import { SOPORTE_EMAIL } from '@/lib/legal';
 import { useReservas } from '@/lib/reservas';
 
 const enlace = 'font-semibold text-[var(--accent)] underline underline-offset-4';
 
-export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; avisosInicial: boolean }) {
+export function CuentaPanel({ correo, avisosInicial, esAdmin = false }: { correo: string | null; avisosInicial: boolean; esAdmin?: boolean }) {
   const [avisos, setAvisos] = useState(avisosInicial);
   const [msgAvisos, setMsgAvisos] = useState<Resultado>(null);
   const [guardando, empezar] = useTransition();
@@ -24,7 +25,8 @@ export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; 
   const [guardandoClave, setGuardandoClave] = useState(false);
   const cambiarClave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (clave1.length < 8) return setMsgClave({ ok: false, mensaje: 'Usa al menos 8 caracteres.' });
+    const falta = revisarClave(clave1, esAdmin);
+    if (falta) return setMsgClave({ ok: false, mensaje: falta });
     if (clave1 !== clave2) return setMsgClave({ ok: false, mensaje: 'Las dos contraseñas no coinciden.' });
     setGuardandoClave(true);
     const r = await guardarContrasena(clave1);
@@ -95,6 +97,7 @@ export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; 
         <p className="mt-1 text-base text-[var(--text-secondary)]">
           Con una contraseña entras con tu correo sin pedir un código cada vez. Si la olvidas, pides un código por correo y creas otra aquí.
         </p>
+        <p className="mt-1 text-sm font-medium">{reglaDeClave(esAdmin)}</p>
         <form onSubmit={cambiarClave} className="mt-3 flex flex-col gap-3">
           <label className="block">
             <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Nueva contraseña</span>
@@ -103,7 +106,7 @@ export function CuentaPanel({ correo, avisosInicial }: { correo: string | null; 
               value={clave1}
               autoComplete="new-password"
               disabled={AUTH_LOCAL}
-              placeholder="Mínimo 8 caracteres"
+              placeholder={esAdmin ? 'Mínimo 10 caracteres' : 'Mínimo 8 caracteres'}
               onChange={(e) => setClave1(e.target.value)}
               className="mt-1 h-12 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] campo-suave px-3 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]"
             />
