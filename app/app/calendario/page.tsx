@@ -169,8 +169,8 @@ export default function Calendario() {
     <div className="flex flex-col gap-4">
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="flex min-w-0 flex-col gap-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-2 text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+            <div className="flex min-w-0 items-center gap-2 text-3xl font-bold md:text-4xl leading-[1.1] [font-family:var(--font-display)]">
               <h1 className="sr-only">Calendario</h1>
               <label className="relative">
                 <span className="sr-only">Mes</span>
@@ -208,7 +208,7 @@ export default function Calendario() {
                 className="shrink-0 text-[var(--text-secondary)]"
               />
             </div>
-            <div className="flex items-center gap-1">
+            <div className="ml-auto flex items-center gap-1">
               <button
                 type="button"
                 aria-label="Mes anterior"

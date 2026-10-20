@@ -152,13 +152,13 @@ export function AvisosCelular() {
                 <li className={paso}>
                   <span className={numero}>1</span>
                   <span>
-                    Abre esta página en <b>Safari</b> y toca el botón <Share size={16} aria-hidden="true" className="mx-0.5 inline align-text-bottom" /> <b>Compartir</b>.
+                    Abre esta página en <b>Safari</b>. Toca el menú de abajo (las rayitas <b>☰</b> o los tres puntos <b>⋯</b>) y elige <Share size={16} aria-hidden="true" className="mx-0.5 inline align-text-bottom" /> <b>Compartir</b>.
                   </span>
                 </li>
                 <li className={paso}>
                   <span className={numero}>2</span>
                   <span>
-                    Elige <SquarePlus size={16} aria-hidden="true" className="mx-0.5 inline align-text-bottom" /> <b>Agregar a pantalla de inicio</b> y toca <b>Agregar</b>.
+                    Elige <SquarePlus size={16} aria-hidden="true" className="mx-0.5 inline align-text-bottom" /> <b>Agregar a inicio</b> (en algunos iPhone dice <b>Agregar a pantalla de inicio</b>) y toca <b>Agregar</b>.
                   </span>
                 </li>
                 <li className={paso}>
