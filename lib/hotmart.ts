@@ -59,7 +59,8 @@ function aIso(ms: unknown): string {
 
 export function interpretarEvento(payload: any): EventoInterpretado | null {
   const evento: unknown = payload?.event;
-  const email: unknown = payload?.data?.buyer?.email;
+  // Los avisos de compra traen al comprador en data.buyer; los de suscripción (p. ej. cancelación) en data.subscriber
+  const email: unknown = payload?.data?.buyer?.email ?? payload?.data?.subscriber?.email ?? payload?.data?.subscription?.subscriber?.email;
   if (typeof evento !== 'string' || typeof email !== 'string' || !email.includes('@')) return null;
 
   const compra = payload?.data?.purchase ?? {};
@@ -81,8 +82,8 @@ export function interpretarEvento(payload: any): EventoInterpretado | null {
     eventId: String(payload?.id ?? `${evento}:${transaccion ?? email}`),
     evento,
     email: email.trim().toLowerCase(),
-    nombre: typeof payload?.data?.buyer?.name === 'string' ? payload.data.buyer.name.slice(0, 120) : '',
-    subscriberCode: payload?.data?.subscription?.subscriber?.code ? String(payload.data.subscription.subscriber.code) : null,
+    nombre: String(payload?.data?.buyer?.name ?? payload?.data?.subscriber?.name ?? '').slice(0, 120),
+    subscriberCode: (payload?.data?.subscription?.subscriber?.code ?? payload?.data?.subscriber?.code) ? String(payload?.data?.subscription?.subscriber?.code ?? payload.data.subscriber.code) : null,
     productId,
     ciclo: ciclo as 'mensual' | 'anual' | null,
     recurrencia: Number.isInteger(compra?.recurrence_number) ? (compra.recurrence_number as number) : null,

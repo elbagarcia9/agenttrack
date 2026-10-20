@@ -41,7 +41,10 @@ export async function POST(req: NextRequest) {
 
   const ev = interpretarEvento(payload);
   if (!ev) {
-    await registrar('ignored');
+    // Aviso que no sabemos leer: se guarda su nombre y la forma (solo nombres de campos, nunca datos de la persona)
+    const raiz = payload as { event?: unknown; data?: Record<string, unknown> } | null;
+    const forma = raiz?.data && typeof raiz.data === 'object' ? Object.keys(raiz.data).join(',').slice(0, 280) : 'sin data';
+    await registrar('ignored', undefined, typeof raiz?.event === 'string' ? raiz.event.slice(0, 60) : undefined, `campos: ${forma}`);
     return NextResponse.json({ received: true, ignored: true });
   }
 
