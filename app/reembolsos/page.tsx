@@ -15,7 +15,7 @@ export default function Reembolsos() {
       resumen={
         <>
           <p>Tienes {PRECIOS.prueba} gratis para probar. Si cancelas antes de que terminen, no se te cobra nada.</p>
-          <p>Cancelas tú misma, en unos minutos, desde Hotmart (que es quien cobra). Si te cobraron y no querías, puedes pedir el reembolso dentro del plazo de Hotmart.</p>
+          <p>Cancelas tú misma en unos minutos, desde Hotmart (que es quien cobra). Cancelar detiene los cobros futuros. Si te llegó un cobro que no esperabas, escríbenos dentro de los 7 días siguientes y revisamos tu caso.</p>
         </>
       }
     >
@@ -44,22 +44,25 @@ export default function Reembolsos() {
         <p>Puedes cancelar cuando quieras, sin llamar a nadie y sin dar explicaciones:</p>
         <ol className="flex list-decimal flex-col gap-1.5 pl-5 marker:font-bold marker:text-[var(--accent)]">
           <li>
-            Busca el correo de confirmación de compra que te mandó <b>Hotmart</b> cuando empezaste (revisa también spam).
-          </li>
-          <li>
-            Dentro de ese correo, entra a <b>Acceder a mi compra</b> o <b>Gestionar mi suscripción</b>. También puedes entrar a{' '}
+            Entra a{' '}
             <a href="https://consumer.hotmart.com" target="_blank" rel="noopener noreferrer" className={enlace}>
               consumer.hotmart.com
             </a>{' '}
-            con el mismo correo con el que compraste.
+            con el mismo correo con el que compraste. Si no recuerdas tu contraseña de Hotmart, usa <b>Olvidé mi contraseña</b>.
           </li>
           <li>
-            Elige la suscripción de AgentTrack y pulsa <b>Cancelar suscripción</b>.
+            En <b>Mis compras</b>, busca <b>AgentTrack</b> y pulsa <b>Mostrar detalles</b>.
+          </li>
+          <li>
+            En tu transacción, pulsa <b>Configurar forma de pago</b>.
+          </li>
+          <li>
+            Pulsa <b>Cancelar tu suscripción</b> y confirma con <b>Sí</b>.
           </li>
           <li>Hotmart te confirma la cancelación por correo. Guárdalo.</li>
         </ol>
         <p>
-          Al cancelar, <b>conservas el acceso hasta el final del periodo que ya pagaste</b>. Si no encuentras el correo de Hotmart o algo no te deja cancelar, escríbenos a{' '}
+          Al cancelar <b>se detienen los cobros futuros</b>, y en general conservas el acceso hasta el final del periodo que ya está cubierto (la prueba o el mes o año pagado). Si no encuentras el correo de Hotmart o algo no te deja cancelar, escríbenos a{' '}
           <a href={`mailto:${SOPORTE_EMAIL}`} className={enlace}>
             {SOPORTE_EMAIL}
           </a>{' '}
@@ -72,25 +75,29 @@ export default function Reembolsos() {
       </Seccion>
 
       <Seccion n={4} titulo="Reembolsos">
-        <p>El cobro de tu suscripción lo procesa Hotmart y se rige también por su política de garantía y devoluciones al consumidor. Esto significa:</p>
+        <p>
+          El cobro de tu suscripción lo procesa Hotmart y se rige por sus reglas. Según esas reglas, la garantía de devolución se aplica a la <b>compra inicial</b>, y <b>cancelar evita los cobros futuros pero no devuelve
+          lo que ya se cobró</b>. Esto significa:
+        </p>
         <Lista
           items={[
             <>
-              <b>Derecho de arrepentimiento:</b> si te cobraron y no quieres continuar, tienes 7 días naturales para pedir la devolución, que es la garantía que Hotmart aplica a este producto. Si quieres reembolso, pídelo cuanto antes, desde tu compra en
-              Hotmart o escribiéndonos, y te ayudamos a hacerlo.
+              <b>Lo normal es cancelar, no pedir reembolso:</b> como empiezas con {PRECIOS.prueba} sin costo, si no te convence cancelas antes de que terminen y no pagas nada.
             </>,
             <>
-              <b>Cobro por error o repetido:</b> si crees que se te cobró algo que no corresponde, escríbenos a {SOPORTE_EMAIL} con el comprobante. Lo revisamos y, si procede, lo devolvemos.
+              <b>Garantía de 7 días de Hotmart:</b> la compra inicial tiene una garantía de 7 días. Como esa compra inicial es la prueba gratis, en ese momento no hay dinero que devolver.
             </>,
             <>
-              <b>Después del plazo:</b> no ofrecemos devoluciones de periodos ya usados, pero puedes cancelar para que no se cobre el siguiente.
+              <b>Si te llegó un primer cobro que no esperabas:</b> escríbenos a {SOPORTE_EMAIL} dentro de los 7 días siguientes al cobro. Hotmart no siempre devuelve cobros posteriores a la compra inicial, pero revisamos cada
+              caso de buena fe y, si procede, te lo devolvemos.
+            </>,
+            <>
+              <b>Cobro por error o repetido:</b> si crees que se te cobró algo que no corresponde, escríbenos con el comprobante. Lo revisamos y, si procede, lo devolvemos.
             </>,
           ]}
         />
-        <p>El reembolso llega al mismo método de pago que usaste. El tiempo en que aparece depende de tu banco y de Hotmart.</p>
-        <p>
-          Si se aprueba un reembolso o hay un contracargo, tu acceso de pago se termina y tus datos siguen disponibles para exportarlos o borrarlos, según lo que pidas.
-        </p>
+        <p>Cuando hay una devolución, llega al mismo método de pago que usaste. El tiempo en que aparece depende de tu banco y de Hotmart.</p>
+        <p>Si se aprueba un reembolso o hay un contracargo, tu acceso de pago se termina y tus datos siguen disponibles para exportarlos o borrarlos, según lo que pidas.</p>
       </Seccion>
 
       <Seccion n={5} titulo="Cambios de precio">
