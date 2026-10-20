@@ -10,8 +10,6 @@ import { CircleCheckBig, ShieldCheck, Upload } from 'lucide-react';
 function IconoColumnas() {
   return (
     <span aria-hidden="true" className="relative flex h-10 w-14 items-center justify-center">
-      <span className="absolute left-1 top-1.5 h-3 w-10 rounded-sm bg-[color-mix(in_oklab,var(--accent)_16%,var(--surface))]" />
-      <span className="absolute bottom-1.5 right-1 h-3 w-10 rounded-sm bg-[color-mix(in_oklab,var(--accent)_16%,var(--surface))]" />
       <CircleCheckBig size={34} strokeWidth={1.8} color="var(--slate)" className="relative" />
     </span>
   );
@@ -70,11 +68,11 @@ export function ImportarExcel() {
           />
         </div>
 
-        {/* 3 · Pasos como botones unidos por flechas (en celular, uno bajo otro) */}
+        {/* 3 · Pasos (solo contorno, sin relleno ni sombra: no son botones) unidos por flechas (en celular, uno bajo otro) */}
         <ol className="flex flex-col items-center gap-1 md:flex-row md:items-stretch md:justify-center md:gap-2 min-[1120px]:col-start-1 min-[1120px]:row-start-2 min-[1120px]:justify-start">
           {PASOS.map((p, i) => (
             <li key={p.clave} className="flex flex-col items-center gap-1 md:flex-row md:gap-2">
-              <div className="tarjeta-suave flex w-full min-w-0 flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] px-4 py-3 text-center md:h-full md:w-40">
+              <div className="flex w-full min-w-0 flex-col items-center justify-center gap-2 rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--accent)_45%,transparent)] bg-transparent px-4 py-3 text-center md:h-full md:w-40">
                 <span className="flex h-10 items-center justify-center">{p.icono}</span>
                 <span className="text-[15px] leading-snug text-[var(--text-primary)]">
                   {p.detalle ? <b className="block font-semibold">{p.titulo}</b> : p.titulo}
