@@ -24,14 +24,27 @@ export async function proxy(request: NextRequest) {
   // getUser() valida el token con el servidor de Supabase (getSession() solo lee la cookie y no basta)
   const { data } = await supabase.auth.getUser();
   const enApp = request.nextUrl.pathname.startsWith('/app');
-  // Cuenta desactivada desde el panel del dueño: se cierra su sesión y no entra a la app
+  // CANDADO DE ACCESO. La regla vive en la base (mi_acceso): una sola fuente para la app y los correos.
+  // · Cuenta desactivada desde el panel del dueño: se cierra su sesión.
+  // · Sin acceso (nunca pagó, terminó su prueba o su suscripción): ve la pantalla de planes. Solo "Mi cuenta" sigue
+  //   abierta, para descargar su Excel, ver cómo cancelar o borrar sus datos.
+  // · Si la consulta falla no se bloquea a nadie (es un candado comercial; los datos siguen protegidos por RLS).
   if (data.user && enApp) {
-    const { data: perfil } = await supabase.from('perfiles').select('estado').eq('id', data.user.id).maybeSingle();
-    if (perfil?.estado === 'desactivado') {
+    const { data: acceso } = await supabase.rpc('mi_acceso');
+    const info = acceso as { ok?: boolean; motivo?: string; estado?: string } | null;
+    if (info?.estado === 'desactivado') {
       await supabase.auth.signOut();
       const destino = request.nextUrl.clone();
       destino.pathname = '/entrar';
       destino.search = '?error=desactivada';
+      const salida = NextResponse.redirect(destino);
+      respuesta.cookies.getAll().forEach(({ name, value }) => salida.cookies.set(name, value));
+      return salida;
+    }
+    if (info?.ok === false && !request.nextUrl.pathname.startsWith('/app/cuenta')) {
+      const destino = request.nextUrl.clone();
+      destino.pathname = '/paywall';
+      destino.search = `?acceso=${encodeURIComponent(info.motivo ?? 'sin_plan')}`;
       const salida = NextResponse.redirect(destino);
       respuesta.cookies.getAll().forEach(({ name, value }) => salida.cookies.set(name, value));
       return salida;

@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default function Paywall() {
-  return <PaywallFlow />;
+export default async function Paywall({ searchParams }: { searchParams: Promise<{ acceso?: string }> }) {
+  const { acceso } = await searchParams;
+  return <PaywallFlow acceso={acceso ?? null} />;
 }

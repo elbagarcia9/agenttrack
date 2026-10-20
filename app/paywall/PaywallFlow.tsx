@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react';
 import { MotionConfig, animate, motion } from 'motion/react';
 import Link from 'next/link';
+import { SOPORTE_EMAIL } from '@/lib/legal';
 import { Check, Lock, X } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { formatoFecha, sumarDias } from '@/lib/plazos';
@@ -80,7 +81,16 @@ function Numero({ valor }: { valor: number }) {
   return <>{mostrado.toLocaleString('en-US')}</>;
 }
 
-export function PaywallFlow() {
+const AVISO_ACCESO: Record<string, string> = {
+  sin_plan: 'Para usar AgentTrack elige un plan. Empiezas con 14 días gratis.',
+  prueba_terminada: 'Tu prueba gratis terminó. Elige un plan para seguir; tus reservas siguen guardadas.',
+  cancelada: 'Tu suscripción terminó. Elige un plan para volver; tus reservas siguen guardadas.',
+  pago_atrasado: 'No pudimos cobrar tu último pago. Actualiza tu forma de pago en Hotmart para volver a entrar.',
+  reembolsada: 'Tu compra fue reembolsada. Si quieres volver, elige un plan.',
+  regalo_terminado: 'Tu tiempo gratis terminó. Elige un plan para seguir; tus reservas siguen guardadas.',
+};
+
+export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
   const [plan, setPlan] = useState<Plan>('anual');
   const [guardado, setGuardado] = useState<Guardado | null>(null);
   const [aviso, setAviso] = useState(true);
@@ -129,6 +139,18 @@ export function PaywallFlow() {
           </header>
 
           <main className="flex flex-1 flex-col gap-6 pb-6">
+            {acceso && (
+              <div role="status" className="rounded-[var(--radius-card)] bg-[var(--alerta-bg)] p-4 text-[var(--alerta-text)]">
+                <p className="text-base font-semibold">{AVISO_ACCESO[acceso] ?? AVISO_ACCESO.sin_plan}</p>
+                <p className="mt-2 text-sm">
+                  ¿Ya pagaste? A veces tarda uno o dos minutos en activarse: <Link href="/entrar" className="font-semibold underline underline-offset-4">vuelve a entrar</Link> o escríbenos a{' '}
+                  <a href={`mailto:${SOPORTE_EMAIL}`} className="font-semibold underline underline-offset-4">
+                    {SOPORTE_EMAIL}
+                  </a>
+                  . Tus datos siguen disponibles en <Link href="/app/cuenta" className="font-semibold underline underline-offset-4">Mi cuenta</Link>, donde puedes descargar tus reservas en Excel.
+                </p>
+              </div>
+            )}
             <div>
               <h1 className="text-balance text-3xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">
                 {guardado ? (

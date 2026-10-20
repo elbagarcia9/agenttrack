@@ -50,6 +50,12 @@ export async function GET(req: NextRequest) {
   const personas = (perfiles ?? []) as Perfil[];
   conteo.personas = personas.length;
 
+  // El resumen de plazos solo va a quien tiene acceso hoy (la misma regla del candado); el aviso de fin de prueba y la
+  // encuesta sí pueden ir a quien está por perderlo o ya lo perdió
+  const { data: conAcceso, error: eAcceso } = await sb.rpc('ids_con_acceso');
+  if (eAcceso) return NextResponse.json({ error: 'No se pudo leer quién tiene acceso' }, { status: 500 });
+  const permitidos = new Set((conAcceso ?? []) as string[]);
+
   // Reservas de todas las personas, por tandas de 1000
   const porPersona = new Map<string, FilaReserva[]>();
   for (let desde = 0; ; desde += 1000) {
@@ -80,7 +86,7 @@ export async function GET(req: NextRequest) {
     if (!p.email) continue;
 
     const avisos = avisosDeHoy((porPersona.get(p.id) ?? []).map(aReserva), hoy);
-    if (avisos.length > 0 && (await enviarUnaVez(p, 'resumen', () => correoResumen(p.nombre, p.id, avisos, hoy)))) conteo.resumenes += 1;
+    if (permitidos.has(p.id) && avisos.length > 0 && (await enviarUnaVez(p, 'resumen', () => correoResumen(p.nombre, p.id, avisos, hoy)))) conteo.resumenes += 1;
 
     // Fin del tiempo gratis (regalo del dueño o prueba): aviso 2 días antes y encuesta al día siguiente de terminar
     const paga = p.membresia === 'active' || p.membresia === 'past_due';
