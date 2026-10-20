@@ -143,7 +143,7 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
               <div role="status" className="rounded-[var(--radius-card)] bg-[var(--alerta-bg)] p-4 text-[var(--alerta-text)]">
                 <p className="text-base font-semibold">{AVISO_ACCESO[acceso] ?? AVISO_ACCESO.sin_plan}</p>
                 <p className="mt-2 text-sm">
-                  ¿Ya pagaste? A veces tarda uno o dos minutos en activarse: <Link href="/entrar" className="font-semibold underline underline-offset-4">vuelve a entrar</Link> o escríbenos a{' '}
+                  ¿Ya pagaste? A veces tarda uno o dos minutos en activarse: <a href="/app" className="font-semibold underline underline-offset-4">revisa tu acceso de nuevo</a> o escríbenos a{' '}
                   <a href={`mailto:${SOPORTE_EMAIL}`} className="font-semibold underline underline-offset-4">
                     {SOPORTE_EMAIL}
                   </a>
