@@ -169,7 +169,7 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
               </div>
             )}
             <div>
-              <h1 className="text-balance text-4xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">
+              <h1 className="text-balance text-3xl font-bold leading-[1.1] tracking-tight [font-family:var(--font-display)]">
                 {guardado ? (
                   <>
                     {guardado.nombre}, tu asistente está <span className="text-[var(--accent)]">listo para vigilar</span>
@@ -193,12 +193,11 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                 transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                 className="rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--hero-from)] via-[var(--hero-mid)] to-[var(--hero-to)] p-4 text-white shadow-[var(--shadow-2)]"
               >
-                <p className="text-xs font-semibold opacity-90">Ya registraste</p>
                 <p className="text-base font-semibold">{guardado.cliente}</p>
                 <p className="mt-2 inline-flex rounded-full bg-[var(--btn-oro-to)] px-3 py-1 text-xs font-bold text-[var(--btn-oro-text)]">
                   {Number(guardado.comision).toLocaleString('en-US')} {guardado.moneda} con sus plazos vigilados
                 </p>
-                <p className="mt-2 text-sm opacity-90">Sin plan, esta reserva y sus avisos no se guardan.</p>
+                <p className="mt-2 text-sm">Sin plan, no se guarda.</p>
               </motion.div>
             )}
 
@@ -233,13 +232,10 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
                     {k === 'anual' && (
                       <span className="absolute -top-3 left-4 z-20 rounded-full bg-[var(--accent)] px-3 py-0.5 text-xs font-bold tracking-wide text-[var(--on-accent)]">RECOMENDADO</span>
                     )}
-                    {k === 'anual' && (
-                      <span className="absolute -top-3 right-4 z-20 rounded-full bg-[var(--slate)] px-3 py-0.5 text-xs font-bold tracking-wide text-white">AHORRAS 4 MESES</span>
-                    )}
                     <div className="relative z-10">
                       <p className="font-semibold [font-family:var(--font-display)]">{d.nombre}</p>
                       <p className="text-sm text-[var(--text-secondary)]">
-                        {k === 'anual' ? `Se cobra ${d.cobro} al año` : 'Cancelas cuando quieras'}
+                        {k === 'anual' ? `Se cobra ${d.cobro} al año · ahorras 4 meses` : 'Cancelas cuando quieras'}
                       </p>
                     </div>
                     <div className="relative z-10 shrink-0 whitespace-nowrap text-right">
@@ -382,11 +378,11 @@ export function PaywallFlow({ acceso = null }: { acceso?: string | null }) {
             </motion.a>
             {sinAbrir ? (
               <p role="alert" className="mt-2 text-center text-sm font-semibold text-[var(--rojo-text)]">
-                No se abrió tu pago. Inténtalo de nuevo o escríbenos a {SOPORTE_EMAIL}.
+                No se abrió tu pago. Revisa tu conexión e inténtalo otra vez, o escríbenos a <a href={`mailto:${SOPORTE_EMAIL}`} className="underline underline-offset-4">{SOPORTE_EMAIL}</a>.
               </p>
             ) : (
               <p className="mt-2 text-center text-sm text-[var(--text-secondary)]">
-                Después, {p.cobro} {plan === 'anual' ? 'al año' : 'al mes'}. Cancelas desde Hotmart.
+                Hoy no pagas. Primer cobro el {diaCobro}: {p.cobro}.
               </p>
             )}
           </div>

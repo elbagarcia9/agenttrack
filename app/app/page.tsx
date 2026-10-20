@@ -39,7 +39,16 @@ export default function Inicio() {
   const alertas = useMemo(() => todasLasAlertas(reservas, hoy), [reservas, hoy]);
   const t = useMemo(() => totales(reservas, hoy), [reservas, hoy]);
   const urgente = alertas.find((a) => a.severidad === 'vencido' || a.severidad === 'urgente');
-  const siguientes = alertas.filter((a) => a.id !== urgente?.id).slice(0, 4);
+  const restantes = alertas.filter((a) => a.id !== urgente?.id);
+  // una fila por reserva: si tiene varias acciones, se listan juntas
+  const siguientes = Object.values(
+    restantes.reduce<Record<string, { base: (typeof restantes)[number]; acciones: string[] }>>((g, a) => {
+      const accion = a.titulo.split(' · ')[0];
+      if (g[a.reservaId]) g[a.reservaId].acciones.push(accion);
+      else g[a.reservaId] = { base: a, acciones: [accion] };
+      return g;
+    }, {}),
+  ).slice(0, 4);
   const recientes = [...reservas].sort((a, b) => b.creada - a.creada).slice(0, 3);
 
   if (!listo) {
@@ -97,13 +106,13 @@ export default function Inicio() {
           <div className="mt-4 grid grid-cols-3 gap-2">
             {[
               [t.porDarDeAlta, 'esperan alta'],
-              [t.porCobrarN, 'pago pendiente'],
+              [t.porCobrarN, 'esperan pago'],
               [t.enRevision, 'en revisión'],
             ].map(([n, l]) => (
-              <Link key={l as string} href="/app/reservas" className="rounded-lg bg-white/15 px-2 py-2 transition-transform active:scale-[0.97]">
+              <div key={l as string} className="rounded-[11px] bg-white/15 px-2 py-2">
                 <b className="block text-xl leading-none [font-family:var(--font-display)]">{n}</b>
-                <span className="mt-1 block text-sm leading-tight">{l}</span>
-              </Link>
+                <span className="mt-1 block text-[13px] leading-tight">{l}</span>
+              </div>
             ))}
           </div>
         </motion.section>
@@ -135,7 +144,7 @@ export default function Inicio() {
           </Link>
           <Link
             href="/app/importar"
-            className="flex h-14 items-center justify-center gap-2 rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_45%,transparent)] bg-[var(--surface)] px-5 text-base font-semibold transition-transform active:scale-[0.97]"
+            className="flex min-h-11 items-center justify-center gap-2 px-5 text-sm font-semibold text-[var(--accent)] underline underline-offset-4 transition-transform active:scale-[0.97]"
           >
             <FileUp size={18} aria-hidden="true" />
             Importar Excel
@@ -157,14 +166,13 @@ export default function Inicio() {
               </Link>
             </div>
             <ul className="flex flex-col gap-2">
-              {siguientes.map((a) => (
-                <li key={a.id}>
+              {siguientes.map(({ base: a, acciones }) => (
+                <li key={a.reservaId}>
                   <Link href="/app/alertas" className="flex items-center justify-between gap-3 rounded-[var(--radius-card)] tarjeta-suave p-3 transition-transform active:scale-[0.97]">
                     <div className="min-w-0">
-                      <p className="truncate font-semibold">{a.titulo.split(' · ')[0]}</p>
+                      <p className="truncate font-semibold">{a.titulo.includes(' · ') ? a.titulo.split(' · ').slice(1).join(' · ') : a.titulo}</p>
                       <p className="truncate text-sm text-[var(--text-secondary)]">
-                        {a.titulo.includes(' · ') ? `${a.titulo.split(' · ').slice(1).join(' · ')} · ` : ''}
-                        {formatoFecha(a.fecha, hoy)}
+                        {acciones.join(' y ')} · {formatoFecha(a.fecha, hoy)}
                       </p>
                     </div>
                     <InsigniaSeveridad alerta={a} hoy={hoy} />

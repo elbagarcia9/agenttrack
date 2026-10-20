@@ -151,7 +151,7 @@ function Opcion({
       className={`flex min-h-14 w-full items-center gap-3 rounded-[var(--radius-button)] border px-4 py-3 text-left text-base font-medium transition-colors duration-200 [touch-action:manipulation] ${
         seleccionada
           ? 'border-2 border-[var(--accent)] bg-[color-mix(in_oklab,var(--accent)_10%,var(--surface))]'
-          : 'border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)]'
+          : 'border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)] shadow-[var(--shadow-1)]'
       }`}
     >
       {Icon && (
@@ -265,14 +265,29 @@ function PasoNombre({ estado, dispatch, avanzar }: PantallaProps) {
     <form onSubmit={enviar} noValidate className="flex flex-1 flex-col">
       <Pregunta titulo={<>¿Cómo te <Ac>llamas</Ac>?</>} ayuda="Para que tu asistente te hable por tu nombre cuando una comisión esté por vencer.">
         <Campo etiqueta="Tu nombre" valor={estado.nombre} autoFocus placeholder="Laura" error={intento && !listo ? 'Escribe tu nombre para continuar.' : undefined} onCambio={(v) => dispatch({ tipo: 'campo', campo: 'nombre', valor: v })} />
-        <ul className="flex flex-col gap-2 rounded-[var(--radius-card)] bg-[color-mix(in_oklab,var(--accent)_8%,transparent)] p-4 text-sm font-medium">
-          <li>Te avisamos del alta a los 30 días de la compra.</li>
-          <li>Te avisamos antes de que salga tu cliente.</li>
-          <li>Te avisamos del reclamo antes de los 18 meses.</li>
-        </ul>
+        <div className="rounded-[var(--radius-card)] bg-[var(--surface-2)] p-4">
+          <p className="text-sm font-semibold text-[var(--text-secondary)]">Para que ninguna venta te salga de a gratis, te avisamos:</p>
+          <ul className="mt-3 flex flex-col gap-3">
+            {[
+              [FileWarning, 'Del alta, a los 30 días de la compra'],
+              [Smartphone, 'Antes de que salga tu cliente'],
+              [CalendarX, 'Del reclamo, antes de los 18 meses'],
+            ].map(([Icono, texto]) => {
+              const I = Icono as LucideIcon;
+              return (
+                <li key={texto as string} className="flex items-center gap-3 text-base font-medium">
+                  <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-button)] bg-[var(--chip-bg)]">
+                    <I size={20} strokeWidth={1.8} color="var(--accent)" />
+                  </span>
+                  {texto as string}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </Pregunta>
       <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-[var(--bg)] from-70% to-transparent px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
-        <BotonPrincipal enviar>Seguir con mi plan</BotonPrincipal>
+        <BotonPrincipal enviar>Empezar mi plan</BotonPrincipal>
       </div>
     </form>
   );
@@ -403,9 +418,9 @@ function PasoReserva({ estado, dispatch, avanzar }: PantallaProps) {
   const listo = r.cliente.trim().length >= 2 && r.destino.trim().length >= 2 && comision > 0 && Boolean(fechasOk);
   const [intento, setIntento] = useState(false);
   const errFechas = compra && viaje && !fechasOk ? 'El viaje no puede ser antes de la compra.' : '';
-  const eCliente = intento && r.cliente.trim().length < 2 ? 'Escribe el cliente.' : undefined;
-  const eDestino = intento && r.destino.trim().length < 2 ? 'Escribe el destino.' : undefined;
-  const eComision = intento && !(comision > 0) ? 'Escribe tu comisión.' : undefined;
+  const eCliente = intento && r.cliente.trim().length < 2 ? 'Escribe el nombre del cliente. Ej.: Luis Peña' : undefined;
+  const eDestino = intento && r.destino.trim().length < 2 ? 'Escribe el destino. Ej.: Miami' : undefined;
+  const eComision = intento && !(comision > 0) ? 'Escribe tu comisión, solo el número. Ej.: 344' : undefined;
   const eCompra = intento && !compra ? 'Elige la fecha.' : undefined;
   const eViaje = errFechas || (intento && !viaje ? 'Elige la fecha.' : undefined);
   const enviar = (e: React.FormEvent) => {
@@ -673,9 +688,9 @@ function PasoResultado({ estado, dispatch }: PantallaProps) {
         >
           <Check size={14} strokeWidth={3} color="var(--verde-text)" />
         </motion.span>
-        {estado.nombre.trim()}, tu primera reserva está lista
+        {esEjemplo ? 'Reserva de ejemplo' : `${estado.nombre.trim()}, tu primera reserva está lista`}
       </p>
-      <h1 className="mt-1 text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{esEjemplo ? `Así se verá tu asistente con tu primera reserva real, ${estado.nombre.trim()}` : <>Ya está <Ac>vigilada</Ac></>}</h1>
+      <h1 className="mt-1 text-balance text-4xl font-bold leading-[1.1] [font-family:var(--font-display)]">{esEjemplo ? 'Así te vigilamos' : <>Ya está <Ac>vigilada</Ac></>}</h1>
       <p className="mt-2 text-sm text-[var(--text-secondary)]">
         {frase}: tu asistente cuenta los plazos de {r.cliente.trim()} en {r.destino.trim()} y te avisa antes de que venzan.
       </p>
