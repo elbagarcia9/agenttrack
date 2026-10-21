@@ -180,8 +180,8 @@ export default function Reservas() {
           <table className="w-full min-w-6xl border-collapse text-sm">
             <thead>
               <tr className="bg-[var(--surface-2)] text-left text-xs uppercase tracking-wide text-[var(--text-secondary)]">
-                <th scope="col" className="w-12 whitespace-nowrap px-3 py-3 text-center font-semibold">
-                  Editar
+                <th scope="col" className="w-24 whitespace-nowrap px-3 py-3 text-center font-semibold">
+                  Acciones
                 </th>
                 {['Cliente', 'Contacto', 'Destino', 'Tipo', 'Proveedor', 'Precio venta', 'Comisión', 'Compra', 'Viaje', 'Pago pendiente', 'Comentarios', 'Estatus'].map((h, i) => (
                   <th key={h} scope="col" className={`whitespace-nowrap px-3 py-3 font-semibold ${i === 5 || i === 6 ? 'text-right' : ''}`}>
@@ -193,24 +193,25 @@ export default function Reservas() {
             <tbody>
               {filas.map((r) => (
                 <tr key={r.id} className={`border-t border-black/5 ${tono(r)}`}>
-                  <td className="px-3 py-1 text-center">
+                  <td className="whitespace-nowrap px-3 py-1 text-center"><div className="flex items-center justify-center gap-1">
                     <Link
                       href={`/app/nueva?editar=${r.id}`}
                       aria-label={`Editar la reserva de ${r.cliente}`}
                       title="Editar esta reserva"
-                      className="inline-flex size-11 items-center justify-center rounded-full bg-[var(--chip-azul-bg)] text-[var(--accent)] transition-transform active:scale-95"
+                      className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--chip-azul-bg)] text-[var(--accent)] transition-transform active:scale-95"
                     >
-                      <Pencil size={18} aria-hidden="true" />
+                      <Pencil size={16} aria-hidden="true" />
                     </Link>
                     <button
                       type="button"
                       onClick={() => setPorBorrar(r)}
                       aria-label={`Borrar la reserva de ${r.cliente}`}
                       title="Borrar esta reserva"
-                      className="ml-1 inline-flex size-11 items-center justify-center rounded-full bg-[var(--chip-rojo-bg)] text-[var(--rojo-text)] transition-transform active:scale-95"
+                      className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--chip-rojo-bg)] text-[var(--rojo-text)] transition-transform active:scale-95"
                     >
-                      <Trash2 size={18} aria-hidden="true" />
+                      <Trash2 size={16} aria-hidden="true" />
                     </button>
+                    </div>
                   </td>
                   <th scope="row" className="whitespace-nowrap px-3 py-2 text-left font-bold">
                     {r.cliente}
@@ -276,7 +277,7 @@ export default function Reservas() {
                   className="flex min-h-11 items-center gap-2 rounded-[var(--radius-button)] bg-[var(--chip-azul-bg)] px-4 text-sm font-semibold text-[var(--accent)]"
                 >
                   <Pencil size={16} aria-hidden="true" />
-                  Editar
+                  Acciones
                 </Link>
                 <button
                   type="button"
