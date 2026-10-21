@@ -270,7 +270,7 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                   </p>
                   <p className="text-sm text-[var(--text-secondary)]">
                     ¿No te llega nada? Quizá aún no tienes plan.{' '}
-                    <a href="/paywall" className="font-semibold text-[var(--accent)] underline underline-offset-4">
+                    <a href="/onboarding" className="font-semibold text-[var(--accent)] underline underline-offset-4">
                       Empieza aquí
                     </a>
                     .
