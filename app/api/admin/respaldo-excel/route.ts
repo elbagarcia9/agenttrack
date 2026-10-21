@@ -57,8 +57,8 @@ export async function GET() {
 
   const clientas = hoja(
     'Clientas',
-    ['Correo', 'Nombre', 'Rol', 'Estado', 'Membresía', 'Ciclo', 'Origen', 'Se registró', 'Último acceso', 'Primer pago', 'Fin de prueba', 'Cancelada', 'Acceso regalado', 'Regalo hasta'],
-    perfiles.map((p) => [texto(p.email), texto(p.nombre), texto(p.rol), texto(p.estado), texto(p.membresia), texto(p.ciclo), texto(p.fuente), fecha(p.creado_en), fecha(p.ultimo_acceso), fecha(p.first_paid_at), fecha(p.trial_ends_at), fecha(p.cancelado_en), texto(p.acceso_tipo), fecha(p.acceso_hasta)]),
+    ['Correo', 'Nombre', 'Rol', 'Cuenta', 'Membresía', 'Ciclo', 'Origen', 'Se registró', 'Último acceso', 'Primer pago', 'Fin de prueba', 'Cancelada', 'Acceso regalado', 'Regalo hasta'],
+    perfiles.map((p) => [texto(p.email), texto(p.nombre), texto(p.rol), p.estado === 'activo' ? 'encendida' : p.estado === 'desactivado' ? 'apagada' : texto(p.estado), texto(p.membresia), texto(p.ciclo), texto(p.fuente), fecha(p.creado_en), fecha(p.ultimo_acceso), fecha(p.first_paid_at), fecha(p.trial_ends_at), fecha(p.cancelado_en), texto(p.acceso_tipo), fecha(p.acceso_hasta)]),
     [30, 22, 10, 12, 14, 10, 12, 14, 14, 14, 14, 14, 16, 14],
   );
   const pagosHoja = hoja(
