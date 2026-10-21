@@ -13,7 +13,7 @@ import { parseFecha, sumarDias, formatoFecha } from '@/lib/plazos';
 import { TIPOS, useReservas, type Estatus, type Moneda, type Tipo } from '@/lib/reservas';
 
 const entradaClase =
-  'mt-1 h-12 w-full rounded-[var(--radius-button)] border campo-suave px-3 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]';
+  'mt-1 h-12 w-full min-w-0 max-w-full appearance-none rounded-[var(--radius-button)] border campo-suave px-3 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]';
 const borde = 'border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)]';
 const bordeError = 'border-2 border-[var(--rojo-text)]';
 
@@ -24,7 +24,7 @@ function hoyISO() {
 
 function Campo({ etiqueta, error, children }: { etiqueta: string; error?: string; children: React.ReactNode }) {
   return (
-    <label className="block">
+    <label className="block min-w-0">
       <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">{etiqueta}</span>
       {children}
       {error && (
@@ -181,7 +181,7 @@ function Formulario() {
   }
 
   return (
-    <form onSubmit={guardar} noValidate className="flex flex-col gap-5 pb-24 md:pb-0">
+    <form onSubmit={guardar} noValidate className="flex flex-col gap-5 overflow-x-clip pb-2 md:pb-0">
       <div>
         <Link href="/app/reservas" className="-ml-2 flex min-h-11 w-fit items-center gap-1 px-2 text-sm font-semibold text-[var(--text-secondary)]">
           <ChevronLeft size={18} aria-hidden="true" />
@@ -261,7 +261,7 @@ function Formulario() {
       </Campo>
       {estatus === 'pendiente_alta' && limiteAlta && <p className="-mt-2 text-sm text-[var(--text-secondary)]">Tienes hasta el {limiteAlta} para darla de alta (30 días desde la compra).</p>}
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-black/10 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-3 md:static md:border-0 md:bg-transparent md:p-0">
+      <div className="sticky bottom-0 z-30 -mx-4 border-t border-black/10 bg-[var(--bg)] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-3 md:static md:mx-0 md:border-0 md:bg-transparent md:p-0">
         <button type="submit" className="flex h-14 w-full items-center justify-center rounded-[var(--radius-button)] bg-gradient-to-b from-[var(--btn-oro-from)] to-[var(--btn-oro-to)] text-base font-bold text-[var(--btn-oro-text)] shadow-[var(--shadow-2)] md:max-w-xs">
           {editarId ? 'Guardar cambios' : 'Guardar reserva'}
         </button>

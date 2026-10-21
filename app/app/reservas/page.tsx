@@ -4,7 +4,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { FileUp, Pencil, Plus, Search } from 'lucide-react';
+import { FileUp, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { useArrastreHorizontal } from '@/components/app/useArrastreHorizontal';
 import { SelectorEstatus } from '@/components/app/Insignias';
 import { fechaCorta as fechaCortaDe, parseFecha } from '@/lib/plazos';
@@ -22,7 +22,8 @@ function fechaCorta(iso: string, hoy: Date): string {
 }
 
 export default function Reservas() {
-  const { reservas, listo, actualizar } = useReservas();
+  const { reservas, listo, actualizar, eliminar } = useReservas();
+  const [porBorrar, setPorBorrar] = useState<Reserva | null>(null);
   const { enganchar, arrastrando } = useArrastreHorizontal<HTMLDivElement>();
   const hoy = useMemo(() => new Date(), []);
   const [busca, setBusca] = useState('');
@@ -201,6 +202,15 @@ export default function Reservas() {
                     >
                       <Pencil size={18} aria-hidden="true" />
                     </Link>
+                    <button
+                      type="button"
+                      onClick={() => setPorBorrar(r)}
+                      aria-label={`Borrar la reserva de ${r.cliente}`}
+                      title="Borrar esta reserva"
+                      className="ml-1 inline-flex size-11 items-center justify-center rounded-full bg-[var(--chip-rojo-bg)] text-[var(--rojo-text)] transition-transform active:scale-95"
+                    >
+                      <Trash2 size={18} aria-hidden="true" />
+                    </button>
                   </td>
                   <th scope="row" className="whitespace-nowrap px-3 py-2 text-left font-bold">
                     {r.cliente}
@@ -259,7 +269,7 @@ export default function Reservas() {
                 ) : null}
               </dl>
               {r.comentarios && <p className="mt-2 text-sm text-[var(--text-secondary)]">{r.comentarios}</p>}
-              <div className="mt-3 flex items-center justify-between gap-3">
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <Link
                   href={`/app/nueva?editar=${r.id}`}
                   aria-label={`Editar la reserva de ${r.cliente}`}
@@ -268,11 +278,45 @@ export default function Reservas() {
                   <Pencil size={16} aria-hidden="true" />
                   Editar
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => setPorBorrar(r)}
+                  aria-label={`Borrar la reserva de ${r.cliente}`}
+                  className="flex min-h-11 items-center gap-2 rounded-[var(--radius-button)] bg-[var(--chip-rojo-bg)] px-4 text-sm font-semibold text-[var(--rojo-text)]"
+                >
+                  <Trash2 size={16} aria-hidden="true" />
+                  Borrar
+                </button>
                 <SelectorEstatus valor={r.estatus} etiqueta={`Estatus de ${r.cliente}`} onCambio={(e) => actualizar(r.id, { estatus: e })} />
               </div>
             </li>
           ))}
         </ul>
+      )}
+
+      {porBorrar && (
+        <div role="alertdialog" aria-modal="true" aria-labelledby="borrar-titulo" className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 md:items-center">
+          <div className="w-full max-w-sm rounded-[var(--radius-card)] bg-[var(--surface)] p-5 shadow-[var(--shadow-2)]">
+            <h2 id="borrar-titulo" className="text-lg font-bold">¿Borrar la reserva de {porBorrar.cliente}?</h2>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">Se quitan también sus avisos. Esto no se puede deshacer.</p>
+            <div className="mt-4 flex flex-col gap-2">
+              <button
+                type="button"
+                autoFocus
+                onClick={() => {
+                  eliminar(porBorrar.id);
+                  setPorBorrar(null);
+                }}
+                className="flex min-h-12 items-center justify-center rounded-[var(--radius-button)] bg-[var(--rojo-text)] text-base font-bold text-white"
+              >
+                Sí, borrar
+              </button>
+              <button type="button" onClick={() => setPorBorrar(null)} className="flex min-h-12 items-center justify-center text-base font-semibold text-[var(--text-secondary)]">
+                No, conservarla
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

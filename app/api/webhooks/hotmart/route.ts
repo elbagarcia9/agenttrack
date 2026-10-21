@@ -1,7 +1,7 @@
 // Webhook de Hotmart (18): autenticidad → catálogo → frescura → idempotencia + libro de transacciones + membresía (atómico en la base).
 // Cada intento queda en webhook_log para el panel del dueño. Responde 5xx si falla de verdad (Hotmart reintenta)
 // y 200 cuando la decisión ya se tomó (duplicado, ignorado, rechazado).
-// ALCANCE: registra ventas y membresías. Crear la cuenta del comprador y mandarle el acceso es el paso de Hotmart/Resend.
+// ALCANCE: registra ventas y membresías y, al comprar, crea la cuenta del comprador (el registro abierto está cerrado: solo entra quien ya tiene cuenta).
 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
@@ -61,6 +61,17 @@ export async function POST(req: NextRequest) {
   if (!ev.nuevaMembresia) {
     await registrar('ignored', ev.eventId, ev.evento); // evento que aún no mapeamos: visible en el panel
     return NextResponse.json({ received: true, ignored: ev.evento });
+  }
+
+  // Registro cerrado: quien compra recibe su cuenta aquí (antes de aplicar el evento, para que la membresía caiga en su perfil).
+  // Si la cuenta ya existe no pasa nada; si falla por otra causa se responde 5xx y Hotmart reintenta (nada quedó a medias).
+  if (ev.email && (ev.nuevaMembresia === 'active' || ev.nuevaMembresia === 'trialing')) {
+    const { error: errCuenta } = await sb.auth.admin.createUser({ email: ev.email, email_confirm: true });
+    if (errCuenta && !/already|registered|exists/i.test(errCuenta.message)) {
+      console.error('webhook hotmart: no se pudo crear la cuenta', { evento: ev.evento, estado: errCuenta.status });
+      await registrar('error', ev.eventId, ev.evento, `cuenta: ${errCuenta.message}`.slice(0, 300));
+      return NextResponse.json({ error: 'account creation failed' }, { status: 500 });
+    }
   }
 
   const { data, error } = await sb.rpc('aplicar_evento_hotmart', {

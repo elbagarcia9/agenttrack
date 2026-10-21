@@ -10,6 +10,7 @@ import { dentroDelLimite } from '@/lib/eventos';
 import { aCentavos } from '@/lib/admin/formato';
 import { aReserva, avisosDeHoy, correoCancelacion, correoEncuesta, correoFinDePrueba, correoPagoAtrasado, correoReactivar, correoResumen, enviarCorreo, hoyMexico, type FilaReserva } from '@/lib/avisos';
 import { semilla } from '@/lib/reservas-reglas';
+import { servicioConfigurado, supabaseServicio } from '@/lib/supabase/servicio';
 import { exigirAdmin } from '@/lib/supabase/servidor';
 
 export type Resultado = { ok: boolean; mensaje: string } | null;
@@ -79,6 +80,11 @@ export async function agregarUsuario(_previo: Resultado, fd: FormData): Promise<
     await sb.from('accesos_regalo').delete().eq('email', email).is('aplicado_en', null); // una sola invitación pendiente por correo
     const { error } = await sb.from('accesos_regalo').insert({ email, nombre, tipo });
     if (error) return falla('No pudimos guardar la invitación. Inténtalo de nuevo.');
+    // Registro cerrado: la cuenta se crea ya (la base le aplica el regalo al crearla), para que pueda entrar con su correo cuando quiera
+    if (servicioConfigurado()) {
+      const { error: errCuenta } = await supabaseServicio().auth.admin.createUser({ email, email_confirm: true });
+      if (errCuenta && !/already|registered|exists/i.test(errCuenta.message)) return falla('No pudimos crear su cuenta. Inténtalo de nuevo.');
+    }
     mensaje = `Listo: ${nombre} queda invitada con ${textoRegalo(tipo)}. El tiempo empieza a contar el día que entre por primera vez.`;
   }
   if (enviar) {

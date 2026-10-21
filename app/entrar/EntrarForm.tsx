@@ -268,6 +268,13 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                   <p className="text-base text-[var(--text-secondary)]">
                     Si hay una cuenta con <b className="text-[var(--text-primary)]">{correo.trim()}</b>, te enviamos un enlace y un código de números. Vence en pocos minutos.
                   </p>
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    ¿No te llega nada? Quizá aún no tienes plan.{' '}
+                    <a href="/paywall" className="font-semibold text-[var(--accent)] underline underline-offset-4">
+                      Empieza aquí
+                    </a>
+                    .
+                  </p>
                   {AUTH_LOCAL && (
                     <p className="rounded-[var(--radius-card)] bg-[var(--alerta-bg)] p-3 text-sm font-medium text-[var(--alerta-text)]">
                       Modo de prueba: todavía no se envían correos reales. Se activarán al conectar el servicio de cuentas.

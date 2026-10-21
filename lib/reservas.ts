@@ -287,6 +287,24 @@ export function useReservas() {
         }
       })();
     },
+    eliminar(id: string) {
+      const antes = (estado.reservas ?? []).find((r) => r.id === id);
+      if (!antes) return;
+      estado = { ...estado, reservas: (estado.reservas ?? []).filter((r) => r.id !== id) };
+      emitir();
+      if (AUTH_LOCAL) {
+        guardarLocal();
+        return;
+      }
+      if (esEjemplo(id)) return;
+      void (async () => {
+        const { error } = await supabaseNavegador().from('reservas').delete().eq('id', id);
+        if (error) {
+          estado = { ...estado, reservas: [antes, ...(estado.reservas ?? [])], error: MSG_ERROR_GUARDAR };
+          emitir();
+        }
+      })();
+    },
     empezarLimpio() {
       // quita solo los datos de ejemplo: las reservas que registró o importó la persona se conservan
       if (!AUTH_LOCAL) escribirFlag(CLAVE_DEMO_OFF, true);
