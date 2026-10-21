@@ -277,7 +277,7 @@ export default function Reservas() {
                   className="flex min-h-11 items-center gap-2 rounded-[var(--radius-button)] bg-[var(--chip-azul-bg)] px-4 text-sm font-semibold text-[var(--accent)]"
                 >
                   <Pencil size={16} aria-hidden="true" />
-                  Acciones
+                  Editar
                 </Link>
                 <button
                   type="button"
