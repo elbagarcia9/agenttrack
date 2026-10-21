@@ -172,6 +172,12 @@ export default async function SaludPagina() {
           >
             Descargar respaldo ahora
           </a>
+          <a
+            href="/api/admin/respaldo-excel"
+            className="panel-tap flex min-h-11 w-fit items-center rounded-[var(--radius-button)] border border-[var(--accent)] px-5 text-sm font-semibold text-[var(--accent)]"
+          >
+            Descargar en Excel (para leerlo)
+          </a>
           <p className="text-sm text-[var(--text-secondary)]">
             El archivo trae datos personales (correos, nombres y teléfonos de los clientes de tus agentes). <b>Guárdalo en un lugar privado</b>: no lo compartas ni lo subas a ningún sitio. Si algún día hace falta restaurar,
             pídemelo y lo hago con ese archivo.
