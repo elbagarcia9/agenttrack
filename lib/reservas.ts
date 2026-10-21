@@ -166,6 +166,18 @@ function aFilaCompleta(r: Reserva): Record<string, unknown> {
 
 const esEjemplo = (id: string) => id.startsWith('demo-');
 
+// Quitar los datos de ejemplo se guarda en la cuenta (no solo en este aparato): así se ve igual en el celular y en la computadora
+async function guardarEjemplosOcultos(ocultos: boolean) {
+  try {
+    const sb = supabaseNavegador();
+    const { data } = await sb.auth.getUser();
+    if (!data.user) return;
+    await sb.from('preferencias').upsert({ user_id: data.user.id, ejemplos_ocultos: ocultos, actualizada_en: new Date().toISOString() }, { onConflict: 'user_id' });
+  } catch {
+    /* sin conexión: queda guardado en este aparato y se reintenta la próxima vez que se pulse */
+  }
+}
+
 async function cargarRemoto() {
   const sb = supabaseNavegador();
   const { data, error } = await sb.from('reservas').select('*').order('creada_en', { ascending: false });
@@ -185,7 +197,11 @@ async function cargarRemoto() {
       escribirFlag(CLAVE_ONB_SUBIDA, true);
     }
   }
-  const mostrarEjemplo = !leerFlag(CLAVE_DEMO_OFF);
+  const { data: pref } = await sb.from('preferencias').select('ejemplos_ocultos').maybeSingle();
+  // Si en otro aparato ya se quitaron, aquí también (y se recuerda); si solo se quitaron aquí, se sube a la cuenta
+  if (pref?.ejemplos_ocultos) escribirFlag(CLAVE_DEMO_OFF, true);
+  else if (leerFlag(CLAVE_DEMO_OFF)) void guardarEjemplosOcultos(true);
+  const mostrarEjemplo = !(pref?.ejemplos_ocultos || leerFlag(CLAVE_DEMO_OFF));
   estado = { reservas: [...filas.map(deFila), ...(mostrarEjemplo ? semilla() : [])], demo: mostrarEjemplo, error: null };
   emitir();
 }
@@ -307,7 +323,10 @@ export function useReservas() {
     },
     empezarLimpio() {
       // quita solo los datos de ejemplo: las reservas que registró o importó la persona se conservan
-      if (!AUTH_LOCAL) escribirFlag(CLAVE_DEMO_OFF, true);
+      if (!AUTH_LOCAL) {
+        escribirFlag(CLAVE_DEMO_OFF, true);
+        void guardarEjemplosOcultos(true);
+      }
       estado = { ...estado, reservas: (estado.reservas ?? []).filter((r) => !esEjemplo(r.id)), demo: false };
       if (AUTH_LOCAL) guardarLocal();
       emitir();
@@ -318,6 +337,7 @@ export function useReservas() {
         guardarLocal();
       } else {
         escribirFlag(CLAVE_DEMO_OFF, false);
+        void guardarEjemplosOcultos(false);
         const reales = (estado.reservas ?? []).filter((r) => !esEjemplo(r.id));
         estado = { ...estado, reservas: [...reales, ...semilla()], demo: true };
       }
