@@ -46,15 +46,17 @@ export default function Landing() {
         socialProof={<span className="text-balance">Hecho para agentes de agencias Host en México. Tarjeta al empezar, sin cobro hoy.</span>}
         visual={
           <div>
+            <div className="overflow-hidden md:overflow-visible">
             <Image
               src="/img/hero-agente.webp"
               alt="Una agente de viajes sonriendo con su computadora, junto a la pantalla de inicio de AgentTrack en un celular"
               width={926}
               height={713}
               priority
-              sizes="(min-width: 768px) 720px, 100vw"
-              className="h-auto w-full"
+              sizes="(min-width: 768px) 720px, 150vw"
+              className="h-auto w-full origin-[50%_55%] scale-[1.4] md:scale-100"
             />
+            </div>
             <p className="mt-3 text-center text-xs text-[var(--text-tertiary)]">Vista de ejemplo con datos ficticios</p>
           </div>
         }
