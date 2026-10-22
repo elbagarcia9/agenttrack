@@ -255,22 +255,26 @@ export default function Reservas() {
                 </div>
                 <p className="shrink-0 text-base font-extrabold tabular-nums [font-family:var(--font-display)]">{formatoDinero(r.comision, r.moneda)}</p>
               </div>
-              <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
-                <dt className="text-[var(--text-secondary)]">Compra</dt>
-                <dd className="text-right font-medium">{fechaCorta(r.fechaCompra, hoy)}</dd>
-                <dt className="text-[var(--text-secondary)]">Viaje</dt>
-                <dd className="text-right font-medium">{fechaCorta(r.fechaViaje, hoy)}</dd>
+              <dl className="mt-3 text-sm">
+                <div className="flex items-baseline justify-between gap-3 border-t border-black/[0.07] py-1.5">
+                  <dt className="text-[var(--text-secondary)]">Compra</dt>
+                  <dd className="text-right font-medium">{fechaCorta(r.fechaCompra, hoy)}</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-3 border-t border-black/[0.07] py-1.5">
+                  <dt className="text-[var(--text-secondary)]">Viaje</dt>
+                  <dd className="text-right font-medium">{fechaCorta(r.fechaViaje, hoy)}</dd>
+                </div>
                 {r.pagoPendienteFecha && r.pagoPendienteMonto ? (
-                  <>
+                  <div className="flex items-baseline justify-between gap-3 border-t border-black/[0.07] py-1.5">
                     <dt className="text-[var(--text-secondary)]">Pago pendiente</dt>
                     <dd className="text-right font-medium">
                       {fechaCorta(r.pagoPendienteFecha, hoy)} · {formatoDinero(r.pagoPendienteMonto, r.moneda)}
                     </dd>
-                  </>
+                  </div>
                 ) : null}
               </dl>
-              {r.comentarios && <p className="mt-2 text-sm text-[var(--text-secondary)]">{r.comentarios}</p>}
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+              {r.comentarios && <p className="border-t border-black/[0.07] py-2 text-sm text-[var(--text-secondary)]">{r.comentarios}</p>}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-black/[0.07] pt-3">
                 <Link
                   href={`/app/nueva?editar=${r.id}`}
                   aria-label={`Editar la reserva de ${r.cliente}`}
