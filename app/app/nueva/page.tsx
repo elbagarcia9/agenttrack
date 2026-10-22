@@ -240,6 +240,18 @@ function Formulario() {
         <div className="grid gap-4 sm:grid-cols-2">
           <Campo etiqueta="Fecha del pago">
             <input value={pagoFecha} onChange={(e) => setPagoFecha(e.target.value)} type="date" className={`${entradaClase} ${borde}`} />
+            {pagoFecha && (
+              <button
+                type="button"
+                onClick={() => {
+                  setPagoFecha('');
+                  setPagoMonto('');
+                }}
+                className="mt-1 flex min-h-11 items-center text-sm font-semibold text-[var(--accent)] underline underline-offset-4"
+              >
+                Quitar la fecha (no hay pago pendiente)
+              </button>
+            )}
           </Campo>
           <Campo etiqueta="Cantidad del pago" error={mostrar('pago')}>
             <input value={pagoMonto} onChange={(e) => setPagoMonto(e.target.value)} type="number" inputMode="decimal" min="0" placeholder="900" className={`${entradaClase} ${mostrar('pago') ? bordeError : borde}`} />
