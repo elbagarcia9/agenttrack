@@ -23,6 +23,7 @@ import Image from 'next/image';
 import { Logo } from '@/components/Logo';
 import { AvisosAsistente } from '@/components/AvisosAsistente';
 import { ImportarExcel } from '@/components/ImportarExcel';
+import { RegistroOrdenado } from '@/components/RegistroOrdenado';
 
 const BRAND = 'AgentTrack';
 const CTA_HREF = '/onboarding';
@@ -101,6 +102,8 @@ export default function Landing() {
       <AntesDespues />
 
       <AvisosAsistente />
+
+      <RegistroOrdenado />
 
       <ImportarExcel />
 

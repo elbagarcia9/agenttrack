@@ -27,7 +27,7 @@ interface Evento {
 }
 
 const COLOR: Record<Clase, string> = {
-  viaje: "bg-[var(--text-tertiary)] text-white",
+  viaje: "bg-[color-mix(in_oklab,var(--text-tertiary)_38%,white)] text-[var(--text-primary)]",
   alta: "bg-[var(--btn-oro-to)] text-[var(--btn-oro-text)]",
   pago: "bg-[var(--slate)] text-white",
   revision: "bg-[var(--slate)] text-white",
@@ -407,7 +407,7 @@ export default function Calendario() {
         aria-label="Leyenda"
       >
         {[
-          ["bg-[var(--text-tertiary)]", "Viajeros (salida del cliente)"],
+          ["bg-[color-mix(in_oklab,var(--text-tertiary)_38%,white)]", "Viajeros (salida del cliente)"],
           ["bg-[var(--btn-oro-to)]", "Alta en el portal"],
           ["bg-[var(--slate)]", "Pago o revisión"],
           ["bg-[var(--rojo-text)]", "Plazo de reclamo"],
