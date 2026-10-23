@@ -40,7 +40,7 @@ export default function Landing() {
         logo={<Logo alto="h-8 md:h-9" />}
         logoCompleto
         loginHref="/entrar"
-        h1Marked="[acento]Ninguna comisión[/acento] se te vence sin que lo sepas"
+        h1Marked="Registra tus ventas y no pierdas [acento]ninguna comisión[/acento]"
         subtitleMarked="Tu Guardián de ventas avisa: [b]alta a 30 días[/b], [b]reclamo a 18 meses[/b]"
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
@@ -192,7 +192,7 @@ export default function Landing() {
       />
 
       <CtaFinal
-        h2Marked="Duerme sabiendo que [acento]nada se vence[/acento]"
+        h2Marked="Tú tranquila: ahora tienes [acento]todo en orden y con alertas[/acento]"
         futurePacingMarked="Mañana registras tu primera venta y tu asistente empieza a vigilar cada plazo por ti."
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
