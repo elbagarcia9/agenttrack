@@ -1,6 +1,6 @@
 'use client';
 
-// Paso 4 de la secuencia maestra: acceso a la cuenta. Sin contraseñas: enlace de un solo uso + código de números.
+// Paso 4 de la secuencia maestra: acceso a la cuenta. Método principal: correo + contraseña; alternativa: enlace de un solo uso + código de números.
 // Estados diseñados: escribiendo · enviando · enviado (con reenvío a los 60 s) · error · límite de solicitudes.
 // Anti-enumeración: el mensaje de "enviado" es idéntico exista o no la cuenta.
 
@@ -35,8 +35,8 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
   const [intento, setIntento] = useState(false);
   // La casilla NUNCA viene marcada de antemano: la aceptación es una decisión de cada vez
   const [acepto, setAcepto] = useState(false);
-  // Entrar con contraseña (para quien ya la creó en Mi cuenta)
-  const [conClave, setConClave] = useState(false);
+  // Método principal: contraseña. Con el enlace vencido se abre directo en la opción del código
+  const [conClave, setConClave] = useState(aviso !== 'enlace');
   const [clave, setClave] = useState('');
   const [entrandoClave, setEntrandoClave] = useState(false);
   const [espera, setEspera] = useState(0);
@@ -180,11 +180,6 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                   )}
                 </motion.label>
 
-                {error && (
-                  <p role="alert" className="rounded-[var(--radius-card)] bg-[var(--chip-rojo-bg)] p-3 text-sm font-medium text-[var(--rojo-text)]">
-                    {error}
-                  </p>
-                )}
 
                 {conClave && (
                   <motion.label {...entrada(3)} className="block">
@@ -193,11 +188,17 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                       type="password"
                       value={clave}
                       autoComplete="current-password"
-                      placeholder="Mínimo 8 caracteres"
+                      placeholder="Tu contraseña"
                       onChange={(e) => setClave(e.target.value)}
                       className="mt-1 h-14 w-full rounded-[var(--radius-button)] border border-[color-mix(in_oklab,var(--text-tertiary)_35%,transparent)] bg-[var(--surface)] px-4 text-base outline-none focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklab,var(--accent)_30%,transparent)]"
                     />
                   </motion.label>
+                )}
+
+                {error && (
+                  <p role="alert" className="rounded-[var(--radius-card)] bg-[var(--chip-rojo-bg)] p-3 text-sm font-medium text-[var(--rojo-text)]">
+                    {error}
+                  </p>
                 )}
 
                 {!conClave && (
@@ -251,10 +252,10 @@ export function EntrarForm({ plan, aviso = null }: { plan: string | null; aviso?
                     }}
                     className="flex min-h-11 items-center justify-center text-sm font-semibold text-[var(--accent)] underline underline-offset-4"
                   >
-                    {conClave ? 'Prefiero que me manden un código por correo' : 'Entrar con mi contraseña'}
+                    {conClave ? 'Olvidé mi contraseña o es mi primera vez: enviarme un código' : 'Prefiero entrar con mi contraseña'}
                   </button>
                   <p className="text-center text-sm text-[var(--text-secondary)]">
-                    {conClave ? 'Si no creaste una contraseña, pide un código y créala después en Mi cuenta.' : 'Te llega un enlace y un código de un solo uso. Después puedes crear una contraseña para no pedirlo cada vez.'}
+                    {conClave ? 'Si aún no tienes contraseña, pide un código por correo y créala después en Mi cuenta.' : 'Te llega un enlace y un código de un solo uso. Después puedes crear una contraseña para no pedirlo cada vez.'}
                   </p>
                 </motion.div>
               </form>
