@@ -21,15 +21,15 @@ export interface BandaPuenteProps {
 export function BandaPuente({ preguntaMarked, respuestaMarked, fondoArriba = 'var(--bg)', fondoAbajo = 'var(--surface)' }: BandaPuenteProps) {
   const reducir = useReducedMotion();
   return (
-    <div className="relative z-10 px-5" style={{ background: `linear-gradient(to bottom, ${fondoArriba} 50%, ${fondoAbajo} 50%)` }}>
+    <div className="relative z-10 px-3 md:px-5" style={{ background: `linear-gradient(to bottom, ${fondoArriba} 50%, ${fondoAbajo} 50%)` }}>
       <motion.div
         initial={{ opacity: 0, y: reducir ? 0 : 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-        className="mx-auto max-w-5xl rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--surface)_70%,transparent)] bg-[var(--surface-2)] px-6 py-6 text-center shadow-[var(--shadow-2)] md:px-10 md:py-8"
+        className="mx-auto max-w-5xl rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--surface)_70%,transparent)] bg-[var(--surface-2)] px-3 py-6 text-center shadow-[var(--shadow-2)] md:px-10 md:py-8"
       >
-        <p className="text-balance text-[30px] font-bold leading-[1.15] text-[var(--accent)] [font-family:var(--font-display)] md:text-[40px]">
+        <p className="whitespace-nowrap text-[clamp(0.6875rem,3.3vw,2.25rem)] font-bold leading-[1.15] text-[var(--accent)] [font-family:var(--font-display)]">
           <MarkedCopy text={preguntaMarked} />
         </p>
         <p className="mt-2 text-balance text-[17px] font-semibold leading-snug text-[var(--text-primary)] md:text-xl">
