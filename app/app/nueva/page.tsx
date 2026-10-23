@@ -240,9 +240,9 @@ function Formulario() {
         <div className="grid gap-4 sm:grid-cols-2">
           <Campo etiqueta="Fecha del pago">
             <span className="relative block">
-              <input value={pagoFecha} onChange={(e) => setPagoFecha(e.target.value)} type="date" className={`${entradaClase} ${borde} ${pagoFecha ? '' : 'text-transparent'}`} />
+              <input value={pagoFecha} onChange={(e) => setPagoFecha(e.target.value)} type="date" className={`${entradaClase} ${borde} ${pagoFecha ? '' : 'pointer-coarse:text-transparent'}`} />
               {!pagoFecha && (
-                <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-base text-[var(--text-tertiary)]">
+                <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 hidden items-center pointer-coarse:flex text-base text-[var(--text-tertiary)]">
                   Sin fecha
                 </span>
               )}

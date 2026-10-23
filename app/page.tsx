@@ -64,7 +64,7 @@ export default function Landing() {
       />
 
       <BandaPuente
-        preguntaMarked="¿Trabajar el viaje entero de a gratis?"
+        preguntaMarked="¿Trabajar el viaje entero… y perder la comisión?"
         respuestaMarked="Con AgentTrack eso no te vuelve a pasar"
         fondoAbajo="var(--accent)"
       />
