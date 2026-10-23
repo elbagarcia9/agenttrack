@@ -3,7 +3,7 @@
 // CALENDARIO — protagonista: el mes completo, tipo calendario de Google. Cada día muestra lo que hay; un toque abre la lista de ese día.
 
 import { useMemo, useState } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { InsigniaEstatus } from "@/components/app/Insignias";
 import {
   capitalizar,
@@ -27,7 +27,7 @@ interface Evento {
 }
 
 const COLOR: Record<Clase, string> = {
-  viaje: "bg-[var(--accent)] text-white",
+  viaje: "bg-[var(--text-tertiary)] text-white",
   alta: "bg-[var(--btn-oro-to)] text-[var(--btn-oro-text)]",
   pago: "bg-[var(--slate)] text-white",
   revision: "bg-[var(--slate)] text-white",
@@ -62,10 +62,14 @@ export default function Calendario() {
   );
   const [sel, setSel] = useState<Date>(hoy);
   const [verMes, setVerMes] = useState(false);
+  const [verPagos, setVerPagos] = useState(true);
+  const [verViajeros, setVerViajeros] = useState(true);
 
   const eventos = useMemo(() => {
     const mapa = new Map<string, Evento[]>();
     const poner = (e: Evento) => {
+      // Dos agendas en una: "viajeros" (cuándo sale cada cliente) y "pagos" (altas, cobros, revisiones y reclamos)
+      if (e.clase === "viaje" ? !verViajeros : !verPagos) return;
       const k = clave(e.fecha);
       mapa.set(k, [...(mapa.get(k) ?? []), e]);
     };
@@ -132,7 +136,7 @@ export default function Calendario() {
       }
     }
     return mapa;
-  }, [reservas, hoy]);
+  }, [reservas, hoy, verPagos, verViajeros]);
 
   // cuadrícula lunes a domingo
   const primero = mes;
@@ -337,9 +341,11 @@ export default function Calendario() {
           <p className="text-sm text-[var(--text-secondary)]">
             {listo
               ? lista.length === 0
-                ? verMes
-                  ? "Nada este mes."
-                  : "Nada este día."
+                ? !verPagos && !verViajeros
+                  ? "Activa \"Ver pagos\" o \"Ver viajeros\" para ver tu agenda."
+                  : verMes
+                    ? "Nada este mes."
+                    : "Nada este día."
                 : `${lista.length} ${lista.length === 1 ? "elemento" : "elementos"}`
               : "Cargando…"}
           </p>
@@ -373,12 +379,35 @@ export default function Calendario() {
         </aside>
       </div>
 
+      <div role="group" aria-label="Qué ver en la agenda" className="flex flex-wrap gap-2">
+        {[
+          ["Ver pagos", verPagos, setVerPagos],
+          ["Ver viajeros", verViajeros, setVerViajeros],
+        ].map(([texto, activo, cambiar]) => (
+          <button
+            key={texto as string}
+            type="button"
+            aria-pressed={activo as boolean}
+            onClick={() => (cambiar as (v: boolean) => void)(!(activo as boolean))}
+            className={`flex min-h-11 items-center gap-2 rounded-[var(--radius-button)] border px-3 text-sm font-semibold ${activo ? "border-[var(--accent)] bg-[var(--chip-azul-bg)] text-[var(--accent)]" : "border-[color-mix(in_oklab,var(--text-tertiary)_45%,transparent)] bg-[var(--surface)] text-[var(--text-secondary)]"}`}
+          >
+            <span
+              aria-hidden="true"
+              className={`flex size-5 items-center justify-center rounded border ${activo ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-[color-mix(in_oklab,var(--text-tertiary)_60%,transparent)]"}`}
+            >
+              {activo && <Check size={14} strokeWidth={3} />}
+            </span>
+            {texto as string}
+          </button>
+        ))}
+      </div>
+
       <ul
         className="flex flex-wrap gap-x-4 gap-y-1 text-xs font-medium text-[var(--text-secondary)]"
         aria-label="Leyenda"
       >
         {[
-          ["bg-[var(--accent)]", "Sale el cliente"],
+          ["bg-[var(--text-tertiary)]", "Viajeros (salida del cliente)"],
           ["bg-[var(--btn-oro-to)]", "Alta en el portal"],
           ["bg-[var(--slate)]", "Pago o revisión"],
           ["bg-[var(--rojo-text)]", "Plazo de reclamo"],

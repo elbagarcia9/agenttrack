@@ -162,7 +162,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </button>
           )}
         </header>
-        <main className={`mx-auto w-full flex-1 px-4 pb-6 pt-2 md:pt-8 ${path.startsWith('/app/reservas') ? 'max-w-none' : 'max-w-5xl md:px-8'}`}>{children}</main>
+        <main className={`mx-auto w-full flex-1 px-4 pb-6 pt-2 md:pt-8 ${path.startsWith('/app/reservas') ? 'max-w-none' : path.startsWith('/app/calendario') ? 'max-w-7xl md:px-8' : 'max-w-5xl md:px-8'}`}>{children}</main>
       </div>
 
       {!enNueva && (
